@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/colorBlue"
+    >
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="108dp"
+        android:id="@+id/imgView" />
+
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:lineSpacingExtra="14sp"
+        android:fontFamily="casual"
+        android:text="@string/feed"
+        android:textStyle="normal|bold|italic"
+        android:textAllCaps="false"
+        android:textColor="@color/colorDarkBlue" />
+
+    <ListView
+        android:id="@+id/android:list"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>
