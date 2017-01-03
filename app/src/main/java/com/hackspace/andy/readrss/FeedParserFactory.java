@@ -8,7 +8,7 @@ import com.hackspace.andy.readrss.loader.SaxFeedParser;
 import com.hackspace.andy.readrss.loader.XmlPullFeedParser;
 
 public abstract class FeedParserFactory {
-	static String feedUrl = "http://www.androidster.com/android_news.rss";
+	static String feedUrl = "https://habrahabr.ru/rss/feed/posts/6266e7ec4301addaf92d10eb212b4546";
 	
 	public static BaseFeedParser getParser(ParserType type, ILoaderData loaderData){
 		BaseFeedParser parser = null;
