@@ -1,10 +1,9 @@
 package com.hackspace.andy.readrss.loader;
+
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.hackspace.andy.readrss.FeedParser;
-
-import org.xml.sax.InputSource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,7 +51,6 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 
 	protected InputStream getInputStream() {
 		try {
-
 			return feedUrl.openStream();
 		} catch (IOException e) {
 			throw new RuntimeException(e);

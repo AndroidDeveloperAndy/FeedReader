@@ -8,31 +8,33 @@ import android.widget.ImageView;
 
 import java.io.InputStream;
 
-/**
- * Created by Andy on 18.12.16.
- */
-
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-    ImageView bmImage;
+
+    private ImageView imgBmHabra;
+    private String urlDisplay;
+    private Bitmap bmIcon;
+    private InputStream in;
+
+    private static final String TAG = DownloadImageTask.class.getName();
 
     public DownloadImageTask(ImageView bmImage) {
-        this.bmImage = bmImage;
+        this.imgBmHabra = bmImage;
     }
 
     protected Bitmap doInBackground(String... urls) {
-        String urldisplay = urls[0];
-        Bitmap mIcon11 = null;
+        urlDisplay = urls[0];
         try {
-            InputStream in = new java.net.URL(urldisplay).openStream();
-            mIcon11 = BitmapFactory.decodeStream(in);
+            in = new java.net.URL(urlDisplay).openStream();
+            bmIcon = BitmapFactory.decodeStream(in);
         } catch (Exception e) {
-            Log.e("Error", e.getMessage());
+            Log.e(TAG,"Error load image!", e);
             e.printStackTrace();
         }
-        return mIcon11;
+
+        return bmIcon;
     }
 
-    protected void onPostExecute(Bitmap result) {
-        bmImage.setImageBitmap(result);
+    protected void onPostExecute(Bitmap resultImage) {
+        imgBmHabra.setImageBitmap(resultImage);
     }
 }

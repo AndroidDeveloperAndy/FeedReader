@@ -27,6 +27,7 @@ public class RssHandler extends DefaultHandler {
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
 		super.characters(ch, start, length);
+
 		builder.append(ch, start, length);
 	}
 
@@ -46,6 +47,7 @@ public class RssHandler extends DefaultHandler {
 			} else if (localName.equalsIgnoreCase(ITEM)){
 				messages.add(currentMessage);
 			}
+
 			builder.setLength(0);	
 		}
 	}
@@ -53,6 +55,7 @@ public class RssHandler extends DefaultHandler {
 	@Override
 	public void startDocument() throws SAXException {
 		super.startDocument();
+
 		messages = new ArrayList<>();
 		builder = new StringBuilder();
 	}
@@ -61,6 +64,7 @@ public class RssHandler extends DefaultHandler {
 	public void startElement(String uri, String localName, String name,
 							 Attributes attributes) throws SAXException {
 		super.startElement(uri, localName, name, attributes);
+
 		if (localName.equalsIgnoreCase(ITEM)){
 			this.currentMessage = new Message();
 		}

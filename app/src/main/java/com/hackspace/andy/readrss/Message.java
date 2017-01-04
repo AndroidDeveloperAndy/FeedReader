@@ -7,12 +7,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Message implements Comparable<Message> {
-	static SimpleDateFormat FORMATTER =
-		new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");
+
+	static SimpleDateFormat FORMATTER = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");
 	private String title;
 	private URL link;
 	private String description;
 	private Date date;
+	private StringBuilder stringBuilder;
+	private Message copyMessage;
 
 	public String getTitle() {
 		return title;
@@ -58,29 +60,31 @@ public class Message implements Comparable<Message> {
 	}
 	
 	public Message copy(){
-		Message copy = new Message();
-		copy.title = title;
-		copy.link = link;
-		copy.description = description;
-		copy.date = date;
-		return copy;
+		copyMessage = new Message();
+		copyMessage.title = title;
+		copyMessage.link = link;
+		copyMessage.description = description;
+		copyMessage.date = date;
+
+		return copyMessage;
 	}
 	
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Title: ");
-		sb.append(title);
-		sb.append('\n');
-		sb.append("Date: ");
-		sb.append(this.getDate());
-		sb.append('\n');
-		sb.append("Link: ");
-		sb.append(link);
-		sb.append('\n');
-		sb.append("Description: ");
-		sb.append(description);
-		return sb.toString();
+		stringBuilder = new StringBuilder();
+		stringBuilder.append("Title: ");
+		stringBuilder.append(title);
+		stringBuilder.append('\n');
+		stringBuilder.append("Date: ");
+		stringBuilder.append(this.getDate());
+		stringBuilder.append('\n');
+		stringBuilder.append("Link: ");
+		stringBuilder.append(link);
+		stringBuilder.append('\n');
+		stringBuilder.append("Description: ");
+		stringBuilder.append(description);
+
+		return stringBuilder.toString();
 	}
 
 	@Override
@@ -92,6 +96,7 @@ public class Message implements Comparable<Message> {
 				+ ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((link == null) ? 0 : link.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
+
 		return result;
 	}
 	
@@ -129,6 +134,7 @@ public class Message implements Comparable<Message> {
 
 	public int compareTo(Message another) {
 		if (another == null) return 1;
+
 		return another.date.compareTo(date);
 	}
 }

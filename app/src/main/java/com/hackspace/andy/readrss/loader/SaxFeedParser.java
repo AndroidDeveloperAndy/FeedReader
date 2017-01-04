@@ -13,23 +13,28 @@ import javax.xml.parsers.SAXParserFactory;
 
 public class SaxFeedParser extends BaseFeedParser<List<Message>> {
 
+	private SAXParserFactory factoryParser;
+	private SAXParser saxParser;
+	private XMLReader xmlReader;
+	private RssHandler rssHandler;
+	private InputSource inputSource;
+
 	public SaxFeedParser(String feedUrl, ILoaderData<List<Message>> endDataPoint) {
 		super(feedUrl, endDataPoint);
 	}
 	
 	public List<Message> parse() {
 
-		SAXParserFactory factory = SAXParserFactory.newInstance();
+		factoryParser = SAXParserFactory.newInstance();
 
 		try {
-			SAXParser saxParser = factory.newSAXParser();
-			XMLReader xmlReader = saxParser.getXMLReader();
-			RssHandler rssHandler = new RssHandler();
+			saxParser = factoryParser.newSAXParser();
+			xmlReader = saxParser.getXMLReader();
+			rssHandler = new RssHandler();
 			xmlReader.setContentHandler(rssHandler);
 
-			InputSource inputSource = new InputSource(this.getInputStream());
+			inputSource = new InputSource(this.getInputStream());
 
-			/*После этой команды происходит считывание и парсинг файла файла RSS ленты*/
 			xmlReader.parse(inputSource);
 
 			return rssHandler.getMessages();

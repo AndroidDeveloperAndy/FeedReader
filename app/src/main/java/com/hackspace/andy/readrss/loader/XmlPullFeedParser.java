@@ -12,41 +12,45 @@ import java.util.List;
 
 public class XmlPullFeedParser extends BaseFeedParser<List<Message>> {
 
+	private List<Message> messages = null;
+	private Message currentMessage = null;
+	private XmlPullParser xmlPullParser;
+	private int eventType;
+	private boolean done = false;
+	private String name;
+
 	public XmlPullFeedParser(String feedUrl, ILoaderData<List<Message>> endDataPoint) {
 		super(feedUrl, endDataPoint);
 	}
+
 	public List<Message> parse() {
-		List<Message> messages = null;
-		XmlPullParser parser = Xml.newPullParser();
+		xmlPullParser = Xml.newPullParser();
 		try {
-			parser.setInput(this.getInputStream(), null);
-			int eventType = parser.getEventType();
-			Message currentMessage = null;
-			boolean done = false;
+			xmlPullParser.setInput(this.getInputStream(), null);
+			eventType = xmlPullParser.getEventType();
 			while (eventType != XmlPullParser.END_DOCUMENT && !done){
-				String name;
 				switch (eventType){
 					case XmlPullParser.START_DOCUMENT:
 						messages = new ArrayList<>();
 						break;
 					case XmlPullParser.START_TAG:
-						name = parser.getName();
+						name = xmlPullParser.getName();
 						if (name.equalsIgnoreCase(ITEM)){
 							currentMessage = new Message();
 						} else if (currentMessage != null){
 							if (name.equalsIgnoreCase(LINK)){
-								currentMessage.setLink(parser.nextText());
+								currentMessage.setLink(xmlPullParser.nextText());
 							} else if (name.equalsIgnoreCase(DESCRIPTION)){
-								currentMessage.setDescription(parser.nextText());
+								currentMessage.setDescription(xmlPullParser.nextText());
 							} else if (name.equalsIgnoreCase(PUB_DATE)){
-								currentMessage.setDate(parser.nextText());
+								currentMessage.setDate(xmlPullParser.nextText());
 							} else if (name.equalsIgnoreCase(TITLE)){
-								currentMessage.setTitle(parser.nextText());
+								currentMessage.setTitle(xmlPullParser.nextText());
 							}	
 						}
 						break;
 					case XmlPullParser.END_TAG:
-						name = parser.getName();
+						name = xmlPullParser.getName();
 						if (name.equalsIgnoreCase(ITEM) && currentMessage != null){
 							messages.add(currentMessage);
 						} else if (name.equalsIgnoreCase(CHANNEL)){
@@ -54,12 +58,13 @@ public class XmlPullFeedParser extends BaseFeedParser<List<Message>> {
 						}
 						break;
 				}
-				eventType = parser.next();
+				eventType = xmlPullParser.next();
 			}
 		} catch (Exception e) {
 			Log.e("AndroidNews::PullFeedParser", e.getMessage(), e);
 			throw new RuntimeException(e);
 		}
+
 		return messages;
 	}
 }
