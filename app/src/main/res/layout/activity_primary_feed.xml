@@ -9,7 +9,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="108dp"
-        android:id="@+id/imgView" />
+        android:id="@+id/imgHab" />
 
     <TextView
         android:id="@+id/label"
