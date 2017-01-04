@@ -1,4 +1,4 @@
-package com.hackspace.andy.readrss;
+package com.hackspace.andy.readrss.entity;
 
 import java.net.MalformedURLException;
 import java.net.URL;

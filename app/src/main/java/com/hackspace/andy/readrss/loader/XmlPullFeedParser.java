@@ -3,7 +3,7 @@ package com.hackspace.andy.readrss.loader;
 import android.util.Log;
 import android.util.Xml;
 
-import com.hackspace.andy.readrss.Message;
+import com.hackspace.andy.readrss.entity.Message;
 
 import org.xmlpull.v1.XmlPullParser;
 

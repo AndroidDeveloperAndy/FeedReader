@@ -13,9 +13,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.hackspace.andy.readrss.FeedParserFactory;
-import com.hackspace.andy.readrss.Message;
-import com.hackspace.andy.readrss.ParserType;
+import com.hackspace.andy.readrss.loader.FeedParserFactory;
+import com.hackspace.andy.readrss.entity.Message;
+import com.hackspace.andy.readrss.enums.ParserType;
 import com.hackspace.andy.readrss.R;
 import com.hackspace.andy.readrss.loader.BaseFeedParser;
 import com.hackspace.andy.readrss.loader.DownloadImageTask;

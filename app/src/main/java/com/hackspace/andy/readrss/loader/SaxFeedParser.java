@@ -1,7 +1,6 @@
 package com.hackspace.andy.readrss.loader;
 
-import com.hackspace.andy.readrss.Message;
-import com.hackspace.andy.readrss.RssHandler;
+import com.hackspace.andy.readrss.entity.Message;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -16,7 +15,7 @@ public class SaxFeedParser extends BaseFeedParser<List<Message>> {
 	private SAXParserFactory factoryParser;
 	private SAXParser saxParser;
 	private XMLReader xmlReader;
-	private RssHandler rssHandler;
+	private FeedHandler feedHandler;
 	private InputSource inputSource;
 
 	public SaxFeedParser(String feedUrl, ILoaderData<List<Message>> endDataPoint) {
@@ -30,14 +29,14 @@ public class SaxFeedParser extends BaseFeedParser<List<Message>> {
 		try {
 			saxParser = factoryParser.newSAXParser();
 			xmlReader = saxParser.getXMLReader();
-			rssHandler = new RssHandler();
-			xmlReader.setContentHandler(rssHandler);
+			feedHandler = new FeedHandler();
+			xmlReader.setContentHandler(feedHandler);
 
 			inputSource = new InputSource(this.getInputStream());
 
 			xmlReader.parse(inputSource);
 
-			return rssHandler.getMessages();
+			return feedHandler.getMessages();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} 

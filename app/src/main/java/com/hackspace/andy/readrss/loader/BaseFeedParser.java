@@ -3,8 +3,6 @@ package com.hackspace.andy.readrss.loader;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.hackspace.andy.readrss.FeedParser;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -38,7 +36,7 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 		try {
 			tmp = parse();
 		} catch (Exception e) {
-			Log.e(TAG, "error loaded ", e);
+			Log.e(TAG, "Error loaded feed", e);
 		}
 		return tmp;
 	}

@@ -1,6 +1,6 @@
 package com.hackspace.andy.readrss.loader;
 
-import com.hackspace.andy.readrss.Message;
+import com.hackspace.andy.readrss.entity.Message;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
