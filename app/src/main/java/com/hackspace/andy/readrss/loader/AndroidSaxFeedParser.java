@@ -4,7 +4,7 @@ import android.sax.Element;
 import android.sax.RootElement;
 import android.util.Xml;
 
-import com.hackspace.andy.readrss.entity.Message;
+import com.hackspace.andy.readrss.model.Message;
 
 import java.util.ArrayList;
 import java.util.List;
