@@ -13,7 +13,6 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     private ImageView imgBmHabra;
     private String urlDisplay;
     private Bitmap bmIcon;
-    private InputStream in;
 
     private static final String TAG = DownloadImageTask.class.getName();
 
@@ -23,8 +22,7 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
     protected Bitmap doInBackground(String... urls) {
         urlDisplay = urls[0];
-        try {
-            in = new java.net.URL(urlDisplay).openStream();
+        try(final InputStream in = new java.net.URL(urlDisplay).openStream()) {
             bmIcon = BitmapFactory.decodeStream(in);
         } catch (Exception e) {
             Log.e(TAG,"Error load image!", e);

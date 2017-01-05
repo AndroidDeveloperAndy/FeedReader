@@ -1,7 +1,10 @@
 package com.hackspace.andy.readrss.loader;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.sax.Element;
 import android.sax.RootElement;
+import android.util.Log;
 import android.util.Xml;
 
 import com.hackspace.andy.readrss.model.Message;
@@ -11,7 +14,8 @@ import java.util.List;
 
 public class AndroidSaxFeedParser extends BaseFeedParser<List<Message>> {
 
-	private Element channel,item;
+    private static final String TAG = AndroidSaxFeedParser.class.getName();;
+    private Element channel,item;
 
 	static final String RSS = "rss";
 
@@ -19,7 +23,7 @@ public class AndroidSaxFeedParser extends BaseFeedParser<List<Message>> {
 		super(feedUrl, endDataPoint);
 	}
 
-	public List<Message> parse() {
+    public List<Message> parse() {
 		final Message currentMessage = new Message();
 		final RootElement root = new RootElement(RSS);
 		final List<Message> messages = new ArrayList<>();
@@ -35,6 +39,7 @@ public class AndroidSaxFeedParser extends BaseFeedParser<List<Message>> {
 
 			Xml.parse(this.getInputStream(), Xml.Encoding.UTF_8, root.getContentHandler());
 		} catch (Exception e) {
+            Log.e(TAG, "Error parse AndroidSax feed!", e);
 			throw new RuntimeException(e);
 		}
 

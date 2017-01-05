@@ -1,5 +1,7 @@
 package com.hackspace.andy.readrss.loader;
 
+import android.util.Log;
+
 import com.hackspace.andy.readrss.model.Message;
 
 import org.w3c.dom.Document;
@@ -15,6 +17,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 public class DomFeedParser extends BaseFeedParser<List<Message>> {
 
+	private static final String TAG = DomFeedParser.class.getName();
 	private DocumentBuilderFactory builderFactory;
 	private List<Message> messagesList;
 	private DocumentBuilder builder;
@@ -63,6 +66,7 @@ public class DomFeedParser extends BaseFeedParser<List<Message>> {
 				messagesList.add(message);
 			}
 		} catch (Exception e) {
+			Log.e(TAG, "Error parse Dom feed!", e);
 			throw new RuntimeException(e);
 		}
 

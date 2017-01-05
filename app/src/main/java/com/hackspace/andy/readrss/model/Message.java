@@ -1,10 +1,13 @@
 package com.hackspace.andy.readrss.model;
 
+import android.util.Log;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.stream.Stream;
 
 public class Message implements Comparable<Message> {
 
@@ -13,8 +16,11 @@ public class Message implements Comparable<Message> {
 	private URL link;
 	private String description;
 	private Date date;
-	private StringBuilder stringBuilder;
+
+	private String result;
 	private Message copyMessage;
+
+	private static final String TAG = Message.class.getName();
 
 	public String getTitle() {
 		return title;
@@ -55,6 +61,7 @@ public class Message implements Comparable<Message> {
 		try {
 			this.date = FORMATTER.parse(date.trim());
 		} catch (ParseException e) {
+			Log.e(TAG, "Error set date!", e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -71,20 +78,21 @@ public class Message implements Comparable<Message> {
 	
 	@Override
 	public String toString() {
-		stringBuilder = new StringBuilder();
-		stringBuilder.append("Title: ");
-		stringBuilder.append(title);
-		stringBuilder.append('\n');
-		stringBuilder.append("Date: ");
-		stringBuilder.append(this.getDate());
-		stringBuilder.append('\n');
-		stringBuilder.append("Link: ");
-		stringBuilder.append(link);
-		stringBuilder.append('\n');
-		stringBuilder.append("Description: ");
-		stringBuilder.append(description);
+		result = String.valueOf(Stream.builder()
+				.add("Title: ")
+				.add(title)
+				.add('\n')
+				.add("Date: ")
+				.add(this.getDate())
+				.add('\n')
+				.add("Link: ")
+				.add(link)
+				.add('\n')
+				.add("Description: ")
+				.add(description)
+				.build());
 
-		return stringBuilder.toString();
+		return result;
 	}
 
 	@Override

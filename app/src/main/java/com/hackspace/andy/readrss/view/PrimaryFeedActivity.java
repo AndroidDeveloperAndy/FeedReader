@@ -26,16 +26,20 @@ import java.util.List;
 
 public class PrimaryFeedActivity extends ListActivity implements ILoaderData<List<Message>>{
 
-    private List<Message> messages;
+    private static final String TAG = PrimaryFeedActivity.class.getName();
+    private List<Message> messagesList;
     private BaseFeedParser<List<Message>> loader;
     private ParserType type;
     private ArrayAdapter<String> adapterListParsers,adapterListFeed;
     private long start,duration;
     private List<String> titles;
+    //private List<String> date;
 
     private ImageView imgHabra;
 
     private Intent detailIntent;
+
+    private static String feedUrl = "https://habrahabr.ru/rss/feed/posts/6266e7ec4301addaf92d10eb212b4546";
 
     private String urlImageHabr = "https://pp.vk.me/c625620/v625620167/2ac69/m412UXyPZPE.jpg";
 
@@ -46,8 +50,13 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
 
         imgHabra = (ImageView) findViewById(R.id.imgHab);
 
-        new DownloadImageTask(imgHabra).execute(urlImageHabr);
-        loadFeed(ParserType.SAX);
+        try {
+            new DownloadImageTask(imgHabra).execute(urlImageHabr);
+            loadFeed(ParserType.SAX);
+        }catch (Exception e){
+            Log.e(TAG, "Error load home page!", e);
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -82,61 +91,65 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
         super.onListItemClick(l, v, position, id);
 
         detailIntent = new Intent(this, DetailFeedActivity.class);
-        startActivity(detailIntent);
+        detailIntent.putExtra("LINK", messagesList.get(position).toString());
+        detailIntent.putExtra("TITLE", messagesList.get(position).getTitle());
 
-        /*Intent viewMessage = new Intent(Intent.ACTION_VIEW,
-                Uri.parse(messages.get(position).getLink().toExternalForm()));
-        this.startActivity(viewMessage);*/
+        startActivity(detailIntent);
     }
 
     private void loadFeed(ParserType type){
+        try {
+            if ((loader != null) && loader.getStatus() != AsyncTask.Status.RUNNING) {
+                if (loader.isCancelled()) {
+                    loader = FeedParserFactory.getParser(type, this, feedUrl);
 
-        if ((loader != null) && loader.getStatus() != AsyncTask.Status.RUNNING) {
-            if (loader.isCancelled()) {
-                loader = FeedParserFactory.getParser(type, this);
+                    loader.execute((Void[]) null);
+                } else {
+                    loader.cancel(true);
+                    loader = FeedParserFactory.getParser(type, this, feedUrl);
+
+                    loader.execute((Void[]) null);
+                }
+
+            } else if (loader != null && loader.getStatus() == AsyncTask.Status.PENDING) {
+
+                loader = FeedParserFactory.getParser(type, this, feedUrl);
 
                 loader.execute((Void[]) null);
-            } else {
-                loader.cancel(true);
-                loader = FeedParserFactory.getParser(type, this);
+            } else if ((loader != null) && loader.getStatus() == AsyncTask.Status.FINISHED) {
+
+                loader = FeedParserFactory.getParser(type, this, feedUrl);
+
+                loader.execute((Void[]) null);
+            } else if (loader == null) {
+
+                loader = FeedParserFactory.getParser(type, this, feedUrl);
 
                 loader.execute((Void[]) null);
             }
-
-        } else if(loader != null && loader.getStatus() == AsyncTask.Status.PENDING) {
-
-            loader = FeedParserFactory.getParser(type, this);
-
-            loader.execute((Void[]) null);
-        } else if ((loader != null) && loader.getStatus() == AsyncTask.Status.FINISHED) {
-
-            loader = FeedParserFactory.getParser(type, this);
-
-            loader.execute((Void[]) null);
-        } else if (loader == null) {
-
-            loader = FeedParserFactory.getParser(type, this);
-
-            loader.execute((Void[]) null);
+        }catch (Exception e){
+            Log.e(TAG, "Error load feed in the home page!", e);
+            throw new RuntimeException(e);
         }
-
     }
 
     @Override
     public void endLoad(@NonNull List<Message> data) {
         try{
             start = System.currentTimeMillis();
-            messages = data;
+            messagesList = data;
             duration = System.currentTimeMillis() - start;
             Log.i("AndroidNews", "Parser duration=" + duration);
-            titles = new ArrayList<>(messages.size());
-            for (Message msg : messages){
+            titles = new ArrayList<>(messagesList.size());
+            //date = new ArrayList<>(messagesList.size());
+            for (Message msg : messagesList){
                 titles.add(msg.getTitle());
+                //date.add(msg.getDate());
             }
             adapterListFeed = new ArrayAdapter<>(this, R.layout.item, titles);
             this.setListAdapter(adapterListFeed);
         } catch (Throwable t){
-            Log.e("AndroidNews",t.getMessage(),t);
+            Log.e(TAG,t.getMessage(),t);
         }
     }
 }

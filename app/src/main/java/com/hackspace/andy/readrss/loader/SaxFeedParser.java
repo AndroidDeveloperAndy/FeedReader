@@ -1,5 +1,7 @@
 package com.hackspace.andy.readrss.loader;
 
+import android.util.Log;
+
 import com.hackspace.andy.readrss.model.Message;
 
 import org.xml.sax.InputSource;
@@ -12,6 +14,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 public class SaxFeedParser extends BaseFeedParser<List<Message>> {
 
+	private static final String TAG = SaxFeedParser.class.getName();
 	private SAXParserFactory factoryParser;
 	private SAXParser saxParser;
 	private XMLReader xmlReader;
@@ -38,6 +41,7 @@ public class SaxFeedParser extends BaseFeedParser<List<Message>> {
 
 			return feedHandler.getMessages();
 		} catch (Exception e) {
+			Log.e(TAG, "Error parse Sax feed!", e);
 			throw new RuntimeException(e);
 		} 
 	}

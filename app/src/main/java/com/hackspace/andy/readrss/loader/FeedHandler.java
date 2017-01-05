@@ -37,6 +37,7 @@ public class FeedHandler extends DefaultHandler {
 	public void endElement(String uri, String localName, String name)
 			throws SAXException {
 		super.endElement(uri, localName, name);
+
 		if (this.currentMessage != null){
 			if (localName.equalsIgnoreCase(TITLE)){
 				currentMessage.setTitle(builder.toString());

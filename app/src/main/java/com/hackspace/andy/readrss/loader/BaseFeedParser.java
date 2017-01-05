@@ -26,6 +26,7 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 		try {
 			this.feedUrl = new URL(feedUrl);
 		} catch (MalformedURLException e) {
+			Log.e(TAG, "Error url!", e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -36,7 +37,8 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 		try {
 			tmp = parse();
 		} catch (Exception e) {
-			Log.e(TAG, "Error loaded feed", e);
+			Log.e(TAG, "Error loaded feed!", e);
+			throw new RuntimeException(e);
 		}
 		return tmp;
 	}
@@ -51,6 +53,7 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 		try {
 			return feedUrl.openStream();
 		} catch (IOException e) {
+			Log.e(TAG, "Error open Stream!", e);
 			throw new RuntimeException(e);
 		}
 	}

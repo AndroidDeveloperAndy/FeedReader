@@ -12,6 +12,7 @@ import java.util.List;
 
 public class XmlPullFeedParser extends BaseFeedParser<List<Message>> {
 
+	private static final String TAG = XmlPullFeedParser.class.getName();
 	private List<Message> messages = null;
 	private Message currentMessage = null;
 	private XmlPullParser xmlPullParser;
@@ -61,7 +62,7 @@ public class XmlPullFeedParser extends BaseFeedParser<List<Message>> {
 				eventType = xmlPullParser.next();
 			}
 		} catch (Exception e) {
-			Log.e("AndroidNews::PullFeedParser", e.getMessage(), e);
+			Log.e(TAG, "Error parse XmlPull feed!", e);
 			throw new RuntimeException(e);
 		}
 
