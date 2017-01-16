@@ -2,8 +2,6 @@ package com.hackspace.andy.readrss.view;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,39 +34,38 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
     private static String description;
     private static String url;
 
+    //private Document doc;
+
     private Intent intent;
 
     private ImageView imgHabra;
     private TextView txHead,txFeed,txLink,txDate;
-    private AsyncTask<String, Void, Bitmap> mTask;
 
-    private String detailFeed;
+    //private String detailFeed;
 
-
-    protected String urlImageHabr = "https://pp.vk.me/c625620/v625620167/2ac69/m412UXyPZPE.jpg";
+    final static String PICTURE_URL = "https://pp.vk.me/c625620/v625620167/2ac69/m412UXyPZPE.jpg";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_feed);
 
-        getPageStructure();
+        loadViews();
         getInfoFromActivity();
 
         try{
-            mTask = new DownloadImageTask(imgHabra).execute(urlImageHabr);
-            mTask.isCancelled();
+            new DownloadImageTask(imgHabra).execute(PICTURE_URL);
             txHead.setText(title);
             txDate.setText(date);
             txLink.setText(url);
-            new JsoupThreadDetailFeed(txFeed).execute(url);
+            //new JsoupThreadDetailFeed(txFeed).execute();
             txFeed.setText(description);
         }catch (Exception e){
             Log.e(TAG, "Error load detail page!", e);
         }
     }
 
-    public void getPageStructure(){
+    private void loadViews(){
         txHead = (TextView) findViewById(R.id.head);
         txFeed = (TextView) findViewById(R.id.textFeed);
         txLink = (TextView) findViewById(R.id.link);
@@ -83,6 +80,7 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
         date = intent.getStringExtra(ARG_DATE);
         url = intent.getStringExtra(ARG_LINK);
         description = intent.getStringExtra(ARG_DESCRIPTION);
+
     }
 
     @Override
@@ -106,29 +104,32 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
         return startIntent;
     }
 
-    public class JsoupThreadDetailFeed extends AsyncTask<String, Void, String> {
+    /*public class JsoupThreadDetailFeed extends AsyncTask<String, Void, String> {
 
-        private Document doc;
+        private TextView textFeed;
 
         public JsoupThreadDetailFeed(TextView textViewFeed) {
-           DetailFeedActivity.this.txFeed  = textViewFeed;
+           this.textFeed  = textViewFeed;
         }
 
         @Override
         protected String doInBackground(String... params) {
             try {
-                doc = Jsoup.connect(url).get();
+                doc = Jsoup.connect("https://habrahabr.ru/rss/post/319678/").get();
                 doc.select("p");
-                doc.select("a");
-                doc.select("div");
-                doc.select("br");
                 detailFeed = doc.text();
             } catch (IOException e) {
-                e.printStackTrace();
-            }
+            e.printStackTrace();
+        }
             return detailFeed;
         }
-    }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            textFeed.setText(detailFeed);
+        }
+    }*/
 }
 
 

@@ -115,7 +115,7 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.0"
-        sha1="b3a43f43ef76af9487b686e6d7930f685d5b46fe">
+        sha1="7186ff622df9d3c8e7089bca6bacdbb8efa38462">
         <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\instant-run-bootstrap_c7f7467ccdacbf25d61fd91c7777553f457db6b9.jar" />
     </item>
     <item
@@ -403,7 +403,7 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.0"
-        sha1="ea288c9ebad44e56a646f39212cf87a31ff7958e">
+        sha1="48b9bd747ca265f2f5521e34ecc72933a6209a31">
         <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\instant-run_a317d59566dafbf849d6e878ced34c2b1d1c459c.jar" />
     </item>
     <item

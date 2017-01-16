@@ -25,13 +25,19 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         urlDisplay = urls[0];
         try (final InputStream in = new java.net.URL(urlDisplay).openStream()) {
             bmIcon = BitmapFactory.decodeStream(in);
-            isCancelled();
+            if (isCancelled()){
+                return null;
+            }
         } catch (Exception e) {
             Log.e(TAG, "Error load image!", e);
         }
         return bmIcon;
     }
 
+    @Override
+    protected void onCancelled() {
+        super.onCancelled();
+    }
 
     protected void onPostExecute(Bitmap resultImage) {
         imgBmHabra.setImageBitmap(resultImage);

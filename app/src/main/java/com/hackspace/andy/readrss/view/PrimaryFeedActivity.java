@@ -27,7 +27,7 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
     private FeedAdapter adapter;
     private ListView listFeed;
 
-    protected static String feedUrl = "https://habrahabr.ru/rss/feed/posts/6266e7ec4301addaf92d10eb212b4546";
+    protected static String FEED_URL = "https://habrahabr.ru/rss/feed/posts/6266e7ec4301addaf92d10eb212b4546";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,29 +54,29 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
         try {
             if ((loader != null) && loader.getStatus() != AsyncTask.Status.RUNNING) {
                 if (loader.isCancelled()) {
-                    loader = FeedParserFactory.getParser(this, feedUrl);
+                    loader = FeedParserFactory.getParser(this, FEED_URL);
 
                     loader.execute((Void[]) null);
                 } else {
                     loader.cancel(true);
-                    loader = FeedParserFactory.getParser(this, feedUrl);
+                    loader = FeedParserFactory.getParser(this, FEED_URL);
 
                     loader.execute((Void[]) null);
                 }
 
             } else if (loader != null && loader.getStatus() == AsyncTask.Status.PENDING) {
 
-                loader = FeedParserFactory.getParser(this, feedUrl);
+                loader = FeedParserFactory.getParser(this, FEED_URL);
 
                 loader.execute((Void[]) null);
             } else if ((loader != null) && loader.getStatus() == AsyncTask.Status.FINISHED) {
 
-                loader = FeedParserFactory.getParser(this, feedUrl);
+                loader = FeedParserFactory.getParser(this, FEED_URL);
 
                 loader.execute((Void[]) null);
             } else if (loader == null) {
 
-                loader = FeedParserFactory.getParser(this, feedUrl);
+                loader = FeedParserFactory.getParser(this, FEED_URL);
 
                 loader.execute((Void[]) null);
             }
@@ -101,5 +101,6 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
             Log.e(TAG,t.getMessage(),t);
         }
     }
+
 }
 
