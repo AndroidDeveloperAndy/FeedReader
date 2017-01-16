@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import java.io.InputStream;
 
+
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
     private ImageView imgBmHabra;
@@ -22,15 +23,15 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
     protected Bitmap doInBackground(String... urls) {
         urlDisplay = urls[0];
-        try(final InputStream in = new java.net.URL(urlDisplay).openStream()) {
+        try (final InputStream in = new java.net.URL(urlDisplay).openStream()) {
             bmIcon = BitmapFactory.decodeStream(in);
+            isCancelled();
         } catch (Exception e) {
-            Log.e(TAG,"Error load image!", e);
-            e.printStackTrace();
+            Log.e(TAG, "Error load image!", e);
         }
-
         return bmIcon;
     }
+
 
     protected void onPostExecute(Bitmap resultImage) {
         imgBmHabra.setImageBitmap(resultImage);

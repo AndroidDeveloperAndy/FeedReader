@@ -1,23 +1,27 @@
 package com.hackspace.andy.readrss.model;
 
+import android.content.pm.LabeledIntent;
 import android.util.Log;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.stream.Stream;
 
 public class Message implements Comparable<Message> {
 
 	static SimpleDateFormat FORMATTER = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");
 	private String title;
-	private URL link;
+	private String link;
 	private String description;
 	private Date date;
 
-	private String result;
+	private String detailFeed;
+	private Document doc;
+
 	private Message copyMessage;
 
 	private static final String TAG = Message.class.getName();
@@ -30,16 +34,12 @@ public class Message implements Comparable<Message> {
 		this.title = title.trim();
 	}
 
-	public URL getLink() {
+	public String getLink() {
 		return link;
 	}
-	
+
 	public void setLink(String link) {
-		try {
-			this.link = new URL(link);
-		} catch (MalformedURLException e) {
-			throw new RuntimeException(e);
-		}
+		this.link = link;
 	}
 
 	public String getDescription() {
@@ -62,7 +62,6 @@ public class Message implements Comparable<Message> {
 			this.date = FORMATTER.parse(date.trim());
 		} catch (ParseException e) {
 			Log.e(TAG, "Error set date!", e);
-			throw new RuntimeException(e);
 		}
 	}
 	
@@ -72,27 +71,18 @@ public class Message implements Comparable<Message> {
 		copyMessage.link = link;
 		copyMessage.description = description;
 		copyMessage.date = date;
-
 		return copyMessage;
 	}
-	
+
 	@Override
 	public String toString() {
-		result = String.valueOf(Stream.builder()
-				.add("Title: ")
-				.add(title)
-				.add('\n')
-				.add("Date: ")
-				.add(this.getDate())
-				.add('\n')
-				.add("Link: ")
-				.add(link)
-				.add('\n')
-				.add("Description: ")
-				.add(description)
-				.build());
-
-		return result;
+		return "Message{" +
+				"title='" + title + '\'' +
+				", link=" + link +
+				", description='" + description + '\'' +
+				", date=" + date +
+				", copyMessage=" + copyMessage +
+				'}';
 	}
 
 	@Override
@@ -104,7 +94,6 @@ public class Message implements Comparable<Message> {
 				+ ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((link == null) ? 0 : link.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
-
 		return result;
 	}
 	
@@ -142,7 +131,6 @@ public class Message implements Comparable<Message> {
 
 	public int compareTo(Message another) {
 		if (another == null) return 1;
-
 		return another.date.compareTo(date);
 	}
 }

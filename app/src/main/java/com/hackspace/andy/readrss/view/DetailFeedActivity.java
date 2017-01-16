@@ -1,88 +1,124 @@
 package com.hackspace.andy.readrss.view;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hackspace.andy.readrss.R;
-import com.hackspace.andy.readrss.enums.ParserType;
 import com.hackspace.andy.readrss.loader.BaseFeedParser;
-import com.hackspace.andy.readrss.loader.FeedParserFactory;
+import com.hackspace.andy.readrss.loader.DownloadImageTask;
 import com.hackspace.andy.readrss.loader.ILoaderData;
 import com.hackspace.andy.readrss.model.Message;
 
 import java.util.List;
 
-public class DetailFeedActivity extends AppCompatActivity implements ILoaderData <String>{
+
+public class DetailFeedActivity extends AppCompatActivity implements ILoaderData <List<Message>>{
 
     private static final String TAG = DetailFeedActivity.class.getName();
-    private BaseFeedParser<List<Message>> loader;
-    private static String url;
+    private static final String ARG_TITLE = "_TITLE_ARGUMENT";
+    private static final String ARG_DATE = "_DATE_ARGUMENT";
+    private static final String ARG_DESCRIPTION = "_DESCRIPTION_ARGUMENT";
+    private static final String ARG_LINK = "_LINK_ARGUMENT";
+
     private static String title;
-    TextView txHead,txFeed;
+    private static String date;
+    private static String description;
+    private static String url;
+
+    private Intent intent;
+
+    private ImageView imgHabra;
+    private TextView txHead,txFeed,txLink,txDate;
+    AsyncTask<String, Void, Bitmap> mTask;
+
+    protected String urlImageHabr = "https://pp.vk.me/c625620/v625620167/2ac69/m412UXyPZPE.jpg";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_feed);
 
-        txHead = (TextView) findViewById(R.id.head);
-        txFeed = (TextView) findViewById(R.id.textFeed);
+        getPageStructure();
+        getInfoFromActivity();
 
         try{
-            loadFeed(ParserType.SAX);
+            mTask = new DownloadImageTask(imgHabra).execute(urlImageHabr);
+            mTask.isCancelled();
             txHead.setText(title);
+            txDate.setText(date);
+            txLink.setText(url);
+            //new JsoupThreadDetailFeed(txFeed).execute(url);
+            txFeed.setText(description);
         }catch (Exception e){
             Log.e(TAG, "Error load detail page!", e);
-            throw new RuntimeException(e);
         }
     }
 
-    private void loadFeed(ParserType type){
-        try {
-            Intent intent = getIntent();
-            url = intent.getStringExtra("LINK");
-            title = intent.getStringExtra("TITLE");
-            if ((loader != null) && loader.getStatus() != AsyncTask.Status.RUNNING) {
-                if (loader.isCancelled()) {
-                    loader = FeedParserFactory.getParser(type, this, url);
+    public void getPageStructure(){
+        txHead = (TextView) findViewById(R.id.head);
+        txFeed = (TextView) findViewById(R.id.textFeed);
+        txLink = (TextView) findViewById(R.id.link);
+        txDate = (TextView) findViewById(R.id.detailFeedDate);
+        imgHabra = (ImageView) findViewById(R.id.imgHab);
+    }
 
-                    loader.execute((Void[]) null);
-                } else {
-                    loader.cancel(true);
-                    loader = FeedParserFactory.getParser(type, this, url);
+    public void getInfoFromActivity(){
+        intent = getIntent();
 
-                    loader.execute((Void[]) null);
-                }
-
-            } else if (loader != null && loader.getStatus() == AsyncTask.Status.PENDING) {
-
-                loader = FeedParserFactory.getParser(type, this, url);
-
-                loader.execute((Void[]) null);
-            } else if ((loader != null) && loader.getStatus() == AsyncTask.Status.FINISHED) {
-
-                loader = FeedParserFactory.getParser(type, this, url);
-
-                loader.execute((Void[]) null);
-            } else if (loader == null) {
-
-                loader = FeedParserFactory.getParser(type, this, url);
-
-                loader.execute((Void[]) null);
-            }
-        }catch (Exception e){
-            Log.e(TAG, "Error load feed!", e);
-            throw new RuntimeException(e);
-        }
+        title = intent.getStringExtra(ARG_TITLE);
+        date = intent.getStringExtra(ARG_DATE);
+        url = intent.getStringExtra(ARG_LINK);
+        description = intent.getStringExtra(ARG_DESCRIPTION);
     }
 
     @Override
-    public void endLoad(@NonNull String data) {
-
+    public void endLoad(@NonNull List<Message> data) {
+        if(data.size() > 0){
+            txHead.setText(getIntent().getStringExtra(ARG_TITLE));
+            txDate.setText(getIntent().getStringExtra(ARG_DATE));
+            txLink.setText(getIntent().getStringExtra(ARG_LINK));
+            txFeed.setText(getIntent().getStringExtra(ARG_DESCRIPTION));
+        }
     }
+
+    public static Intent newInstance(Context context, String title, String date, String link, String description){
+        Intent startIntent = new Intent(context, DetailFeedActivity.class);
+
+        startIntent.putExtra(ARG_TITLE, title);
+        startIntent.putExtra(ARG_DATE, date);
+        startIntent.putExtra(ARG_LINK, link);
+        startIntent.putExtra(ARG_DESCRIPTION, description);
+
+        return startIntent;
+    }
+
+    /*public class JsoupThreadDetailFeed extends AsyncTask<String, Void, String> {
+
+        private Document doc;
+
+        public JsoupThreadDetailFeed(TextView textViewFeed) {
+           DetailFeedActivity.this.txFeed  = textViewFeed;
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                doc = Jsoup.connect(url).get();
+                detailFeed = doc.select("#mp-itn b a").text();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return detailFeed;
+        }
+    }*/
 }
+
+

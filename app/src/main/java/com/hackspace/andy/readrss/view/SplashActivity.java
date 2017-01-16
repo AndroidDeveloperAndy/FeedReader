@@ -1,22 +1,23 @@
 package com.hackspace.andy.readrss.view;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
-import com.hackspace.andy.readrss.R;
 
 public class SplashActivity extends AppCompatActivity {
 
     private Intent homeIntent;
+    private int LENGTH = 1500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
 
-        homeIntent = new Intent(this, PrimaryFeedActivity.class);
+        new Handler().postDelayed(()->{
+        homeIntent = new Intent(SplashActivity.this, PrimaryFeedActivity.class);
         startActivity(homeIntent);
         finish();
+        },LENGTH);
     }
 }

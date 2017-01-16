@@ -9,6 +9,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.hackspace.andy.readrss.loader.BaseFeedParser.CHANNEL;
 import static com.hackspace.andy.readrss.loader.BaseFeedParser.DESCRIPTION;
 import static com.hackspace.andy.readrss.loader.BaseFeedParser.ITEM;
 import static com.hackspace.andy.readrss.loader.BaseFeedParser.LINK;
@@ -41,6 +42,8 @@ public class FeedHandler extends DefaultHandler {
 		if (this.currentMessage != null){
 			if (localName.equalsIgnoreCase(TITLE)){
 				currentMessage.setTitle(builder.toString());
+			} else if (localName.equalsIgnoreCase(CHANNEL)){
+				currentMessage.setLink(builder.toString());
 			} else if (localName.equalsIgnoreCase(LINK)){
 				currentMessage.setLink(builder.toString());
 			} else if (localName.equalsIgnoreCase(DESCRIPTION)){
@@ -50,7 +53,6 @@ public class FeedHandler extends DefaultHandler {
 			} else if (localName.equalsIgnoreCase(ITEM)){
 				messages.add(currentMessage);
 			}
-
 			builder.setLength(0);	
 		}
 	}

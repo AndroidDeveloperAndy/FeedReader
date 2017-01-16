@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">ReadRSS</string>
-    <string name="feed">Feed:</string>
+    <string name="app_name">Habrahabr</string>
+    <string name="feed">News from Habrahabr</string>
 </resources>
