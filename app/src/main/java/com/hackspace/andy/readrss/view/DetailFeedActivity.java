@@ -12,11 +12,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hackspace.andy.readrss.R;
-import com.hackspace.andy.readrss.loader.BaseFeedParser;
 import com.hackspace.andy.readrss.loader.DownloadImageTask;
 import com.hackspace.andy.readrss.loader.ILoaderData;
 import com.hackspace.andy.readrss.model.Message;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.io.IOException;
 import java.util.List;
 
 
@@ -37,7 +40,10 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
 
     private ImageView imgHabra;
     private TextView txHead,txFeed,txLink,txDate;
-    AsyncTask<String, Void, Bitmap> mTask;
+    private AsyncTask<String, Void, Bitmap> mTask;
+
+    private String detailFeed;
+
 
     protected String urlImageHabr = "https://pp.vk.me/c625620/v625620167/2ac69/m412UXyPZPE.jpg";
 
@@ -55,7 +61,7 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
             txHead.setText(title);
             txDate.setText(date);
             txLink.setText(url);
-            //new JsoupThreadDetailFeed(txFeed).execute(url);
+            new JsoupThreadDetailFeed(txFeed).execute(url);
             txFeed.setText(description);
         }catch (Exception e){
             Log.e(TAG, "Error load detail page!", e);
@@ -100,7 +106,7 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
         return startIntent;
     }
 
-    /*public class JsoupThreadDetailFeed extends AsyncTask<String, Void, String> {
+    public class JsoupThreadDetailFeed extends AsyncTask<String, Void, String> {
 
         private Document doc;
 
@@ -112,13 +118,17 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
         protected String doInBackground(String... params) {
             try {
                 doc = Jsoup.connect(url).get();
-                detailFeed = doc.select("#mp-itn b a").text();
+                doc.select("p");
+                doc.select("a");
+                doc.select("div");
+                doc.select("br");
+                detailFeed = doc.text();
             } catch (IOException e) {
                 e.printStackTrace();
             }
             return detailFeed;
         }
-    }*/
+    }
 }
 
 

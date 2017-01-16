@@ -1,12 +1,9 @@
 package com.hackspace.andy.readrss.model;
 
-import android.content.pm.LabeledIntent;
 import android.util.Log;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,9 +15,6 @@ public class Message implements Comparable<Message> {
 	private String link;
 	private String description;
 	private Date date;
-
-	private String detailFeed;
-	private Document doc;
 
 	private Message copyMessage;
 
