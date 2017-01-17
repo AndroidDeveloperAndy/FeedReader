@@ -2,6 +2,7 @@ package com.hackspace.andy.readrss.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import com.hackspace.andy.readrss.model.Message;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,16 +36,14 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
     private static String description;
     private static String url;
 
-    //private Document doc;
+    private Document doc;
 
     private Intent intent;
 
     private ImageView imgHabra;
     private TextView txHead,txFeed,txLink,txDate;
 
-    //private String detailFeed;
-
-    final static String PICTURE_URL = "https://pp.vk.me/c625620/v625620167/2ac69/m412UXyPZPE.jpg";
+    private String detailFeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,12 +54,11 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
         getInfoFromActivity();
 
         try{
-            new DownloadImageTask(imgHabra).execute(PICTURE_URL);
+            new DownloadImageTask(imgHabra).execute();
             txHead.setText(title);
             txDate.setText(date);
             txLink.setText(url);
-            //new JsoupThreadDetailFeed(txFeed).execute();
-            txFeed.setText(description);
+            new ThreadDetailFeed(txFeed).execute(url);
         }catch (Exception e){
             Log.e(TAG, "Error load detail page!", e);
         }
@@ -80,7 +79,6 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
         date = intent.getStringExtra(ARG_DATE);
         url = intent.getStringExtra(ARG_LINK);
         description = intent.getStringExtra(ARG_DESCRIPTION);
-
     }
 
     @Override
@@ -104,23 +102,23 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
         return startIntent;
     }
 
-    /*public class JsoupThreadDetailFeed extends AsyncTask<String, Void, String> {
+    public class ThreadDetailFeed extends AsyncTask<String, Void, String> {
 
         private TextView textFeed;
 
-        public JsoupThreadDetailFeed(TextView textViewFeed) {
+        public ThreadDetailFeed(TextView textViewFeed) {
            this.textFeed  = textViewFeed;
         }
 
         @Override
         protected String doInBackground(String... params) {
-            try {
-                doc = Jsoup.connect("https://habrahabr.ru/rss/post/319678/").get();
-                doc.select("p");
-                detailFeed = doc.text();
-            } catch (IOException e) {
-            e.printStackTrace();
-        }
+            doc = Jsoup.parse(description);
+            doc.select("p");
+            doc.select("a[href]");
+            doc.select("br");
+            doc.select("img[src$=.png]");
+            doc.select("div");
+            detailFeed = doc.text();
             return detailFeed;
         }
 
@@ -129,7 +127,7 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
             super.onPostExecute(s);
             textFeed.setText(detailFeed);
         }
-    }*/
+    }
 }
 
 

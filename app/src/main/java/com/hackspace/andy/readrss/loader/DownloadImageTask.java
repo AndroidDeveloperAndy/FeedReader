@@ -12,7 +12,7 @@ import java.io.InputStream;
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
     private ImageView imgBmHabra;
-    private String urlDisplay;
+    final static String PICTURE_URL = "https://pp.vk.me/c625620/v625620167/2ac69/m412UXyPZPE.jpg";
     private Bitmap bmIcon;
 
     private static final String TAG = DownloadImageTask.class.getName();
@@ -22,12 +22,8 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     }
 
     protected Bitmap doInBackground(String... urls) {
-        urlDisplay = urls[0];
-        try (final InputStream in = new java.net.URL(urlDisplay).openStream()) {
+        try (final InputStream in = new java.net.URL(PICTURE_URL).openStream()) {
             bmIcon = BitmapFactory.decodeStream(in);
-            if (isCancelled()){
-                return null;
-            }
         } catch (Exception e) {
             Log.e(TAG, "Error load image!", e);
         }

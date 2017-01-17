@@ -80,6 +80,7 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
 
                 loader.execute((Void[]) null);
             }
+
         }catch (Exception e){
             Log.e(TAG, "Error load feed in the home page!", e);
         }
@@ -98,9 +99,8 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
 
             listFeed.setAdapter(adapter);
         } catch (Throwable t){
-            Log.e(TAG,t.getMessage(),t);
+            Log.e(TAG,"Error load list feed!",t);
         }
     }
-
 }
 
