@@ -38,23 +38,38 @@
         android:id="@+id/detailFeedDate"
         android:textColor="@color/colorWhite" />
 
-    <TextView
-        android:text="TextView"
+    <ScrollView
         android:layout_width="match_parent"
-        android:id="@+id/textFeed"
+        android:layout_height="match_parent"
         android:layout_below="@+id/detailFeedDate"
-        android:layout_alignParentStart="true"
-        android:textColor="@android:color/black"
-        android:layout_height="250dp" />
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/link">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:text="TextView"
+                android:layout_width="match_parent"
+                android:id="@+id/textFeed"
+                android:layout_below="@+id/detailFeedDate"
+                android:layout_alignParentStart="true"
+                android:textColor="@android:color/black"
+                android:layout_height="291dp" />
+        </LinearLayout>
+    </ScrollView>
 
     <TextView
         android:text="TextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textFeed"
-        android:layout_alignParentStart="true"
         android:id="@+id/link"
         android:autoLink="web"
-        android:textColor="@color/colorDarkBlue" />
+        android:textColor="@color/colorDarkBlue"
+        android:layout_marginBottom="17dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
