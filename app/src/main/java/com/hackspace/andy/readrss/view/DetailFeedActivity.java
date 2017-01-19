@@ -52,7 +52,10 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
 
         loadViews();
         getInfoFromActivity();
+        loadDetailFeed();
+    }
 
+    private void loadDetailFeed(){
         try{
             new DownloadImageTask(imgHabra).execute();
             txHead.setText(title);

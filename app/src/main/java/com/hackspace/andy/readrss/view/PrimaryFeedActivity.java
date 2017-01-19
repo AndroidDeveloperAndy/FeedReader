@@ -3,9 +3,12 @@ package com.hackspace.andy.readrss.view;
 import android.app.ListActivity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.hackspace.andy.readrss.adapter.FeedAdapter;
@@ -14,6 +17,8 @@ import com.hackspace.andy.readrss.model.Message;
 import com.hackspace.andy.readrss.R;
 import com.hackspace.andy.readrss.loader.BaseFeedParser;
 import com.hackspace.andy.readrss.loader.ILoaderData;
+import com.hackspace.andy.readrss.refresh.PullToRefreshComponent;
+import com.hackspace.andy.readrss.refresh.RefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +30,10 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
     private BaseFeedParser<List<Message>> loader;
     private List<String> news;
     private FeedAdapter adapter;
+    private PullToRefreshComponent pullToRefresh;
+
     private ListView listFeed;
+    private ViewGroup upperButton,lowerButton;
 
     protected static String FEED_URL = "https://habrahabr.ru/rss/feed/posts/6266e7ec4301addaf92d10eb212b4546";
 
@@ -34,9 +42,52 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_primary_feed);
 
+        upperButton = (ViewGroup) this
+                .findViewById(R.id.refresh_upper_button);
+        lowerButton = (ViewGroup) this
+                .findViewById(R.id.refresh_lower_button);
+        this.adapter = new FeedAdapter(this, messagesList);
+        this.getListView().setAdapter(this.adapter);
         listFeed = (ListView) findViewById(android.R.id.list);
 
         loadFeed();
+        this.pullToRefresh = new PullToRefreshComponent(upperButton,
+                lowerButton, this.getListView(), new Handler());
+        this.pullToRefresh.setOnPullDownRefreshAction(new RefreshListener() {
+
+            @Override
+            public void refreshFinished() {
+                PrimaryFeedActivity.this.runOnUiThread(() ->loadFeed());
+                Log.i(TAG,"pull down");
+            }
+
+            @Override
+            public void doRefresh() {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        this.pullToRefresh.setOnPullUpRefreshAction(new RefreshListener() {
+
+            @Override
+            public void refreshFinished() {
+                PrimaryFeedActivity.this.runOnUiThread(() -> loadFeed());
+                Log.i(TAG,"pull up");
+            }
+
+            @Override
+            public void doRefresh() {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
