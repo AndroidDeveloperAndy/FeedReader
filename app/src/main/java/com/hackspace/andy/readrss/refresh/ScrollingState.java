@@ -9,5 +9,4 @@ public interface ScrollingState {
 
 	boolean handleMovement(MotionEvent event,
 			PullToRefreshComponent pullToRefreshComponent);
-
 }

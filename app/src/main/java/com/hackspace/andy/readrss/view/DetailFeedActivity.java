@@ -3,10 +3,12 @@ package com.hackspace.andy.readrss.view;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,12 +16,12 @@ import com.hackspace.andy.readrss.R;
 import com.hackspace.andy.readrss.loader.DownloadImageTask;
 import com.hackspace.andy.readrss.loader.ILoaderData;
 import com.hackspace.andy.readrss.model.Message;
+import com.hackspace.andy.readrss.refresh.PullToRefreshComponent;
+import com.hackspace.andy.readrss.refresh.RefreshListener;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
-import java.io.IOException;
 import java.util.List;
 
 
@@ -44,15 +46,61 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
     private TextView txHead,txFeed,txLink,txDate;
 
     private String detailFeed;
+    private PullToRefreshComponent pullToRefresh;
+
+    private ViewGroup upperButton,lowerButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_feed);
 
+        upperButton = (ViewGroup) this
+                .findViewById(R.id.refresh_upper_button);
+        lowerButton = (ViewGroup) this
+                .findViewById(R.id.refresh_lower_button);
+
         loadViews();
         getInfoFromActivity();
         loadDetailFeed();
+
+        this.pullToRefresh = new PullToRefreshComponent(upperButton,
+                lowerButton,null, new Handler()); //TODO getList from PrimaryActivity
+        this.pullToRefresh.setOnPullDownRefreshAction(new RefreshListener() {
+
+            @Override
+            public void refreshFinished() {
+                DetailFeedActivity.this.runOnUiThread(() ->loadDetailFeed());
+                Log.i(TAG,"pull down");
+            }
+
+            @Override
+            public void doRefresh() {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        this.pullToRefresh.setOnPullUpRefreshAction(new RefreshListener() {
+
+            @Override
+            public void refreshFinished() {
+                DetailFeedActivity.this.runOnUiThread(() -> loadDetailFeed());
+                Log.i(TAG,"pull up");
+            }
+
+            @Override
+            public void doRefresh() {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private void loadDetailFeed(){

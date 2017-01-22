@@ -17,11 +17,15 @@ import com.hackspace.andy.readrss.model.Message;
 import com.hackspace.andy.readrss.R;
 import com.hackspace.andy.readrss.loader.BaseFeedParser;
 import com.hackspace.andy.readrss.loader.ILoaderData;
+import com.hackspace.andy.readrss.model.MessageService;
+import com.hackspace.andy.readrss.model.MessagesServiceImpl;
 import com.hackspace.andy.readrss.refresh.PullToRefreshComponent;
 import com.hackspace.andy.readrss.refresh.RefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.realm.Realm;
 
 public class PrimaryFeedActivity extends ListActivity implements ILoaderData<List<Message>>{
 
@@ -34,6 +38,8 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
 
     private ListView listFeed;
     private ViewGroup upperButton,lowerButton;
+
+    private MessagesServiceImpl realm;
 
     protected static String FEED_URL = "https://habrahabr.ru/rss/feed/posts/6266e7ec4301addaf92d10eb212b4546";
 
@@ -50,7 +56,15 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
         this.getListView().setAdapter(this.adapter);
         listFeed = (ListView) findViewById(android.R.id.list);
 
-        loadFeed();
+        /*if (realm.hasMessages()){
+            messagesList = realm.query();
+            adapter = new FeedAdapter(this, messagesList);    //TODO DB
+            listFeed.setAdapter(adapter);
+        }
+        else {*/
+            loadFeed();
+        //}
+
         this.pullToRefresh = new PullToRefreshComponent(upperButton,
                 lowerButton, this.getListView(), new Handler());
         this.pullToRefresh.setOnPullDownRefreshAction(new RefreshListener() {
@@ -131,7 +145,6 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
 
                 loader.execute((Void[]) null);
             }
-
         }catch (Exception e){
             Log.e(TAG, "Error load feed in the home page!", e);
         }
@@ -146,6 +159,8 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
                 news.add(msg.getTitle());
                 news.add(msg.getDate());
             }
+            //realm.insert(messagesList);
+
             adapter = new FeedAdapter(this, messagesList);
 
             listFeed.setAdapter(adapter);

@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hackspace.andy.readrss.R;
+import com.hackspace.andy.readrss.view.PrimaryFeedActivity;
 
 public class PullToRefreshListView extends RelativeLayout {
 

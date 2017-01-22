@@ -20,7 +20,6 @@ public class PullToRefreshComponent {
 	protected static int firstVisibleItem = 0;
 
 	private View upperView;
-
 	private View lowerView;
 	private ListView listView;
 	private Handler uiThreadHandler;
