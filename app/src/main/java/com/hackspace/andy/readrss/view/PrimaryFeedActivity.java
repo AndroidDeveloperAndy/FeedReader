@@ -1,6 +1,9 @@
 package com.hackspace.andy.readrss.view;
 
 import android.app.ListActivity;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,8 +11,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.hackspace.andy.readrss.adapter.FeedAdapter;
 import com.hackspace.andy.readrss.loader.FeedParserFactory;
@@ -18,20 +21,18 @@ import com.hackspace.andy.readrss.R;
 import com.hackspace.andy.readrss.loader.BaseFeedParser;
 import com.hackspace.andy.readrss.loader.ILoaderData;
 import com.hackspace.andy.readrss.model.MessageService;
-import com.hackspace.andy.readrss.model.MessagesServiceImpl;
 import com.hackspace.andy.readrss.refresh.PullToRefreshComponent;
 import com.hackspace.andy.readrss.refresh.RefreshListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.RealmResults;
 
 public class PrimaryFeedActivity extends ListActivity implements ILoaderData<List<Message>>{
 
     private static final String TAG = PrimaryFeedActivity.class.getName();
+
     private List<Message> messagesList;
     private BaseFeedParser<List<Message>> loader;
     private FeedAdapter adapter;
@@ -41,74 +42,30 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
     private ViewGroup upperButton,lowerButton;
 
     private MessageService realm;
+    private RealmConfiguration configRealm;
 
-    protected static String FEED_URL = "https://habrahabr.ru/rss/feed/posts/6266e7ec4301addaf92d10eb212b4546";
+    private static ConnectivityManager managerConnect;
+    private static NetworkInfo netInfo;
+
+    protected static final String FEED_URL = "https://habrahabr.ru/rss/feed/posts/6266e7ec4301addaf92d10eb212b4546";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_primary_feed);
 
-        upperButton = (ViewGroup) this
-                .findViewById(R.id.refresh_upper_button);
-        lowerButton = (ViewGroup) this
-                .findViewById(R.id.refresh_lower_button);
+        createViews();
 
-        RealmConfiguration config = new RealmConfiguration.Builder(getApplicationContext())
-                .build();
-        Realm.setDefaultConfiguration(config);
-        realm = new MessageService(this);
-
-        this.adapter = new FeedAdapter(this, messagesList);
-        this.getListView().setAdapter(this.adapter);
-        listFeed = (ListView) findViewById(android.R.id.list);
-
-        if(realm.hasMessages()){
-            messagesList = realm.query();
-            adapter = new FeedAdapter(this, messagesList);
-            listFeed.setAdapter(adapter);
+        if(isOnline(this)){
+            getFeedFromNetwork();
+            Toast.makeText(this,"Выполнена загрузка данных из Интернета",Toast.LENGTH_LONG).show();
         }
         else {
-            loadFeed();
+            getFeedFromDatabase();
+            Toast.makeText(this,"Выполнена загрузка данных из базы данных",Toast.LENGTH_LONG).show();
         }
 
-        this.pullToRefresh = new PullToRefreshComponent(upperButton,
-                lowerButton, this.getListView(), new Handler());
-        this.pullToRefresh.setOnPullDownRefreshAction(new RefreshListener() {
-
-            @Override
-            public void refreshFinished() {
-                PrimaryFeedActivity.this.runOnUiThread(() ->loadFeed());
-                Log.i(TAG,"pull down");
-            }
-
-            @Override
-            public void doRefresh() {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        this.pullToRefresh.setOnPullUpRefreshAction(new RefreshListener() {
-
-            @Override
-            public void refreshFinished() {
-                PrimaryFeedActivity.this.runOnUiThread(() -> loadFeed());
-                Log.i(TAG,"pull up");
-            }
-
-            @Override
-            public void doRefresh() {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        PullToRefreshWithPrimaryActivity();
     }
 
     @Override
@@ -122,7 +79,7 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
                         messagesList.get(position).getDescription()));
     }
 
-    private void loadFeed(){
+    private void getFeedFromNetwork(){
         try {
             if ((loader != null) && loader.getStatus() != AsyncTask.Status.RUNNING) {
                 if (loader.isCancelled()) {
@@ -157,6 +114,74 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
         }
     }
 
+    private void PullToRefreshWithPrimaryActivity(){
+        this.pullToRefresh = new PullToRefreshComponent(upperButton,
+                lowerButton, this.getListView(), new Handler());
+        this.pullToRefresh.setOnPullDownRefreshAction(new RefreshListener() {
+
+            @Override
+            public void refreshFinished() {
+                if(isOnline(getApplicationContext())) {
+                    PrimaryFeedActivity.this.runOnUiThread(() -> getFeedFromNetwork());
+                }else {
+                    Toast.makeText(getApplicationContext(),"Обновление невозможно.\nПодключитесь к интернету.",Toast.LENGTH_LONG).show();
+                }
+                Log.d(TAG,"pull down");
+            }
+
+            @Override
+            public void doRefresh() {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        this.pullToRefresh.setOnPullUpRefreshAction(new RefreshListener() {
+
+            @Override
+            public void refreshFinished() {
+                if(isOnline(getApplicationContext())) {
+                PrimaryFeedActivity.this.runOnUiThread(() -> getFeedFromNetwork());
+                }else {
+                    Toast.makeText(getApplicationContext(),"Обновление невозможно.\nПодключитесь к интернету.",Toast.LENGTH_LONG).show();
+                }
+                Log.d(TAG,"pull up");
+            }
+
+            @Override
+            public void doRefresh() {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void getFeedFromDatabase(){
+        messagesList = realm.query();
+        adapter = new FeedAdapter(this, messagesList);
+        listFeed.setAdapter(adapter);
+    }
+
+    protected void createViews(){
+        upperButton = (ViewGroup) this.findViewById(R.id.refresh_upper_button);
+        lowerButton = (ViewGroup) this.findViewById(R.id.refresh_lower_button);
+        listFeed = (ListView) findViewById(android.R.id.list);
+
+        this.adapter = new FeedAdapter(this, messagesList);
+        this.getListView().setAdapter(this.adapter);
+
+        configRealm = new RealmConfiguration.Builder(getApplicationContext()).build();
+        Realm.setDefaultConfiguration(configRealm);
+
+        realm = new MessageService(this);
+    }
+
     @Override
     public void endLoad(@NonNull List<Message> data) {
         try{
@@ -167,15 +192,24 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
                 msg.getDescription();
                 msg.getLink();
             }
-
             //realm.insert(messagesList);
-
             adapter = new FeedAdapter(this, messagesList);
 
             listFeed.setAdapter(adapter);
         } catch (Throwable t){
             Log.e(TAG,"Error load list feed!",t);
         }
+    }
+
+    private static boolean isOnline(Context context)
+    {
+        managerConnect = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        netInfo = managerConnect.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnectedOrConnecting())
+        {
+            return true;
+        }
+        return false;
     }
 }
 

@@ -4,7 +4,6 @@ import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import io.realm.RealmObject;
 import io.realm.annotations.Required;

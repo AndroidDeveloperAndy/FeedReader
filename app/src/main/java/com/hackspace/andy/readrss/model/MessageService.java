@@ -48,8 +48,4 @@ public class MessageService implements MessagesServiceImpl{
     public boolean hasMessages() {
         return !mRealm.allObjects(Message.class).isEmpty();
     }
-
-    public Realm getRealm() {
-        return mRealm;
-    }
 }
