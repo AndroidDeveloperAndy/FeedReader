@@ -26,20 +26,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 
 public class PrimaryFeedActivity extends ListActivity implements ILoaderData<List<Message>>{
 
     private static final String TAG = PrimaryFeedActivity.class.getName();
     private List<Message> messagesList;
     private BaseFeedParser<List<Message>> loader;
-    private List<String> news;
     private FeedAdapter adapter;
     private PullToRefreshComponent pullToRefresh;
 
     private ListView listFeed;
     private ViewGroup upperButton,lowerButton;
 
-    private MessagesServiceImpl realm;
+    private MessageService realm;
 
     protected static String FEED_URL = "https://habrahabr.ru/rss/feed/posts/6266e7ec4301addaf92d10eb212b4546";
 
@@ -52,18 +53,24 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
                 .findViewById(R.id.refresh_upper_button);
         lowerButton = (ViewGroup) this
                 .findViewById(R.id.refresh_lower_button);
+
+        RealmConfiguration config = new RealmConfiguration.Builder(getApplicationContext())
+                .build();
+        Realm.setDefaultConfiguration(config);
+        realm = new MessageService(this);
+
         this.adapter = new FeedAdapter(this, messagesList);
         this.getListView().setAdapter(this.adapter);
         listFeed = (ListView) findViewById(android.R.id.list);
 
-        /*if (realm.hasMessages()){
+        if(realm.hasMessages()){
             messagesList = realm.query();
-            adapter = new FeedAdapter(this, messagesList);    //TODO DB
+            adapter = new FeedAdapter(this, messagesList);
             listFeed.setAdapter(adapter);
         }
-        else {*/
+        else {
             loadFeed();
-        //}
+        }
 
         this.pullToRefresh = new PullToRefreshComponent(upperButton,
                 lowerButton, this.getListView(), new Handler());
@@ -154,11 +161,13 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
     public void endLoad(@NonNull List<Message> data) {
         try{
             messagesList = data;
-            news = new ArrayList<>(messagesList.size());
             for (Message msg : messagesList){
-                news.add(msg.getTitle());
-                news.add(msg.getDate());
+                msg.getTitle();
+                msg.getDate();
+                msg.getDescription();
+                msg.getLink();
             }
+
             //realm.insert(messagesList);
 
             adapter = new FeedAdapter(this, messagesList);
