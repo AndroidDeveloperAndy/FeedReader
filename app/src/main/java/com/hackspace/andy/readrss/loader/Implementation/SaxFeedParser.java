@@ -1,6 +1,7 @@
-package com.hackspace.andy.readrss.loader;
+package com.hackspace.andy.readrss.loader.Implementation;
 
-import com.hackspace.andy.readrss.model.Message;
+import com.hackspace.andy.readrss.loader.ILoaderData;
+import com.hackspace.andy.readrss.model.Entity.Message;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;

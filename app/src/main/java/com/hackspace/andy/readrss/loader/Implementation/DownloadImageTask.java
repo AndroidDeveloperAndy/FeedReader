@@ -1,4 +1,4 @@
-package com.hackspace.andy.readrss.loader;
+package com.hackspace.andy.readrss.loader.Implementation;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

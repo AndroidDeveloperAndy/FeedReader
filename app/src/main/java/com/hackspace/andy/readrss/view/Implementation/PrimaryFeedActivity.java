@@ -1,4 +1,4 @@
-package com.hackspace.andy.readrss.view;
+package com.hackspace.andy.readrss.view.Implementation;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -14,19 +14,19 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.hackspace.andy.readrss.adapter.FeedAdapter;
-import com.hackspace.andy.readrss.loader.FeedParserFactory;
-import com.hackspace.andy.readrss.model.Message;
+import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.R;
-import com.hackspace.andy.readrss.loader.BaseFeedParser;
+import com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser;
 import com.hackspace.andy.readrss.loader.ILoaderData;
-import com.hackspace.andy.readrss.model.MessageService;
+import com.hackspace.andy.readrss.model.Implementation.MessageService;
+import com.hackspace.andy.readrss.view.PrimaryFeedView;
 
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-public class PrimaryFeedActivity extends ListActivity implements ILoaderData<List<Message>>{
+public class PrimaryFeedActivity extends ListActivity implements ILoaderData<List<Message>>,PrimaryFeedView {
 
     private static final String TAG = PrimaryFeedActivity.class.getName();
 
@@ -54,11 +54,11 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
 
         if(isOnline(this)){
             getFeedFromNetwork();
-            Toast.makeText(this,"Выполнена загрузка данных из Интернета",Toast.LENGTH_LONG).show();
+            Toast.makeText(this,R.string.load_from_network,Toast.LENGTH_LONG).show();
         }
         else {
             getFeedFromDatabase();
-            Toast.makeText(this,"Выполнена загрузка данных из базы данных",Toast.LENGTH_LONG).show();
+            Toast.makeText(this,R.string.load_from_database,Toast.LENGTH_LONG).show();
         }
     }
 
@@ -73,33 +73,34 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
                         messagesList.get(position).getDescription()));
     }
 
-    private void getFeedFromNetwork(){
+    @Override
+    public void getFeedFromNetwork(){
         try {
             if ((loader != null) && loader.getStatus() != AsyncTask.Status.RUNNING) {
                 if (loader.isCancelled()) {
-                    loader = FeedParserFactory.getParser(this, FEED_URL);
+                    loader = BaseFeedParser.getParser(this, FEED_URL);
 
                     loader.execute((Void[]) null);
                 } else {
                     loader.cancel(true);
-                    loader = FeedParserFactory.getParser(this, FEED_URL);
+                    loader = BaseFeedParser.getParser(this, FEED_URL);
 
                     loader.execute((Void[]) null);
                 }
 
             } else if (loader != null && loader.getStatus() == AsyncTask.Status.PENDING) {
 
-                loader = FeedParserFactory.getParser(this, FEED_URL);
+                loader = BaseFeedParser.getParser(this, FEED_URL);
 
                 loader.execute((Void[]) null);
             } else if ((loader != null) && loader.getStatus() == AsyncTask.Status.FINISHED) {
 
-                loader = FeedParserFactory.getParser(this, FEED_URL);
+                loader = BaseFeedParser.getParser(this, FEED_URL);
 
                 loader.execute((Void[]) null);
             } else if (loader == null) {
 
-                loader = FeedParserFactory.getParser(this, FEED_URL);
+                loader = BaseFeedParser.getParser(this, FEED_URL);
 
                 loader.execute((Void[]) null);
             }
@@ -108,20 +109,22 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
         }
     }
 
-    private void getFeedFromDatabase(){
+    @Override
+    public void getFeedFromDatabase(){
         messagesList = realm.query();
         adapter = new FeedAdapter(this, messagesList);
         listFeed.setAdapter(adapter);
     }
 
-    protected void createViews(){
+    @Override
+    public void createViews(){
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             if(isOnline(getApplicationContext())) {
                 PrimaryFeedActivity.this.runOnUiThread(() -> getFeedFromNetwork());
-                Toast.makeText(getApplicationContext(),"Данные обновлены.",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),R.string.update_data,Toast.LENGTH_LONG).show();
             }else {
-                Toast.makeText(getApplicationContext(),"Обновление невозможно.\nПодключитесь к интернету.",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),R.string.dont_update+"\n"+R.string.check_network,Toast.LENGTH_LONG).show();
             }
             mSwipeRefreshLayout.setRefreshing(false);
         });

@@ -1,4 +1,4 @@
-package com.hackspace.andy.readrss.view;
+package com.hackspace.andy.readrss.view.Implementation;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,10 +16,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hackspace.andy.readrss.R;
-import com.hackspace.andy.readrss.loader.DownloadImageTask;
+import com.hackspace.andy.readrss.loader.Implementation.DownloadImageTask;
 import com.hackspace.andy.readrss.loader.ILoaderData;
-import com.hackspace.andy.readrss.model.Message;
-import com.hackspace.andy.readrss.model.MessageService;
+import com.hackspace.andy.readrss.model.Entity.Message;
+import com.hackspace.andy.readrss.model.Implementation.MessageService;
+import com.hackspace.andy.readrss.view.DetailFeedView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -29,7 +30,7 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-public class DetailFeedActivity extends AppCompatActivity implements ILoaderData <List<Message>>,SwipeRefreshLayout.OnRefreshListener{
+public class DetailFeedActivity extends AppCompatActivity implements ILoaderData <List<Message>>,SwipeRefreshLayout.OnRefreshListener,DetailFeedView {
 
     private static final String TAG = DetailFeedActivity.class.getName();
 
@@ -68,15 +69,16 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
 
         if(isOnline(this)) {
             loadDetailFeed();
-            Toast.makeText(this,"Выполнена загрузка данных из Интернета",Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.load_from_network,Toast.LENGTH_LONG).show();
         }else {
-            Toast.makeText(this,"Ошибка загрузки картинки.\nПодключитесь к интернету.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error_load_picture+"\n"+R.string.check_network,Toast.LENGTH_SHORT).show();
             getDetailFeedFromDatabase();
-            Toast.makeText(this,"Выполнена загрузка данных из базы данных",Toast.LENGTH_LONG).show();
+            Toast.makeText(this,R.string.load_from_database,Toast.LENGTH_LONG).show();
         }
     }
 
-    private void loadDetailFeed(){
+    @Override
+    public void loadDetailFeed(){
         try{
             new DownloadImageTask(imgHabra).execute();
             txHead.setText(title);
@@ -88,9 +90,9 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
         }
     }
 
-    protected void loadViews(){
+    @Override
+    public void loadViews(){
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
-        mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.CYAN);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         imgHabra = (ImageView) findViewById(R.id.imgHab);
         txHead = (TextView) findViewById(R.id.head);
@@ -104,7 +106,8 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
         realm = new MessageService(this);
     }
 
-    protected void getInfoFromActivity(){
+    @Override
+    public void getInfoFromActivity(){
         intent = getIntent();
 
         title = intent.getStringExtra(ARG_TITLE);
@@ -134,7 +137,8 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
         return startIntent;
     }
 
-    private void getDetailFeedFromDatabase(){
+    @Override
+    public void getDetailFeedFromDatabase(){
         list = realm.query();
         for (Message msg : list){
             txHead.setText(msg.getTitle());
@@ -160,9 +164,9 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
         mSwipeRefreshLayout.setRefreshing(false);
         if(isOnline(getApplicationContext())) {
             DetailFeedActivity.this.runOnUiThread(() -> loadDetailFeed());
-            Toast.makeText(getApplicationContext(),"Данные обновлены.",Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),R.string.update_data,Toast.LENGTH_LONG).show();
         }else {
-            Toast.makeText(getApplicationContext(),"Обновление невозможно.\nПодключитесь к интернету.",Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),R.string.dont_update+"\n"+R.string.check_network,Toast.LENGTH_LONG).show();
         }
 
     }

@@ -1,7 +1,10 @@
-package com.hackspace.andy.readrss.loader;
+package com.hackspace.andy.readrss.loader.Implementation;
 
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.hackspace.andy.readrss.loader.FeedParser;
+import com.hackspace.andy.readrss.loader.ILoaderData;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +24,7 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 
 	private final URL feedUrl;
 	private ILoaderData<T> endDataPoint;
+	static private BaseFeedParser parser = null;
 
 	protected BaseFeedParser(String feedUrl, ILoaderData<T> endDataPoint){
 		this.endDataPoint = endDataPoint;
@@ -29,6 +33,11 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static BaseFeedParser getParser(ILoaderData loaderData, String feedUrl) {
+		parser = new SaxFeedParser(feedUrl, loaderData);
+		return parser;
 	}
 
 	@Override

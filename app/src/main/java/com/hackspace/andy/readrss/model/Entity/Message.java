@@ -1,4 +1,4 @@
-package com.hackspace.andy.readrss.model;
+package com.hackspace.andy.readrss.model.Entity;
 
 import android.util.Log;
 

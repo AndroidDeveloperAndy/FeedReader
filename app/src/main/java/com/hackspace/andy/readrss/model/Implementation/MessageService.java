@@ -1,14 +1,17 @@
-package com.hackspace.andy.readrss.model;
+package com.hackspace.andy.readrss.model.Implementation;
 
 import android.app.Activity;
 import android.content.Context;
+
+import com.hackspace.andy.readrss.model.MessagesServiceImpl;
+import com.hackspace.andy.readrss.model.Entity.Message;
 
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class MessageService implements MessagesServiceImpl{
+public class MessageService implements MessagesServiceImpl {
 
     private Realm mRealm;
     private static MessageService instance;

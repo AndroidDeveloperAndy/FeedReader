@@ -12,69 +12,6 @@
     </item>
     <item
         is-multidex="false"
-        jar="C:\Users\Andy\.gradle\caches\modules-2\files-2.1\com.googlecode.json-simple\json-simple\1.1\5e303a03d04e6788dddfa3655272580ae0fc13bb\json-simple-1.1.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="5e303a03d04e6788dddfa3655272580ae0fc13bb">
-        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\json-simple-1.1_6fcf81fee43e1a83b0881f49714266b32aa2716f.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="C:\Users\Andy\.gradle\caches\modules-2\files-2.1\org.jsoup\jsoup\1.8.3\65fd012581ded67bc20945d85c32b4598c3a9cf1\jsoup-1.8.3.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="65fd012581ded67bc20945d85c32b4598c3a9cf1">
-        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\jsoup-1.8.3_7f7d2552d1121696a1baff2dafcd87ea32a7fded.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\support-media-compat\25.0.0\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="76fb65a4b41ea42dab8a1310ed772a2420c96b52">
-        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\com.android.support-support-media-compat-25.0.0_b288026e1b7e3d2e8d98487d22732ba3edc8f838.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="B:\Android\Work\FeedReader\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="3627041acb58f1a41bf8cace0e278c2a25bea25b">
-        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\instant-run-bootstrap_c7f7467ccdacbf25d61fd91c7777553f457db6b9.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="C:\Users\Andy\.gradle\caches\modules-2\files-2.1\io.realm\realm-android\0.87.4\97d167507fcf75bc96d2123af0f3b1b5614ca3b7\realm-android-0.87.4.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="97d167507fcf75bc96d2123af0f3b1b5614ca3b7">
-        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\realm-android-0.87.4_09f0de0bbf78abc87f8f4f717faba69fcb9d7cd7.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\25.0.0\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="8bc45ce1f63d1a391fd38b32a201be5a42f9c95d">
-        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\com.android.support-appcompat-v7-25.0.0_ec3011e8377567ad8db263c3dceadf1eddf5826a.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\25.0.0\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="d29714cc76b38157e3cbd034c66e1ec808eb4c19">
-        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\com.android.support-support-vector-drawable-25.0.0_f1caa52c10115eaf960df99e3b3f996afaf6ea4c.jar" />
-    </item>
-    <item
-        is-multidex="false"
         jar="B:\Android\Work\FeedReader\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
         jumboMode="true"
         optimize="true"
@@ -90,6 +27,15 @@
         revision="25.0.0"
         sha1="4ccbcda5c72027c7f7c14be9ff8640d9cb0d8da0">
         <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\com.android.support-support-core-utils-25.0.0_6e0e367d70c7adb6a788bfca2930013b9427fee5.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Andy\.gradle\caches\modules-2\files-2.1\com.googlecode.json-simple\json-simple\1.1\5e303a03d04e6788dddfa3655272580ae0fc13bb\json-simple-1.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="5e303a03d04e6788dddfa3655272580ae0fc13bb">
+        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\json-simple-1.1_6fcf81fee43e1a83b0881f49714266b32aa2716f.jar" />
     </item>
     <item
         is-multidex="false"
@@ -129,6 +75,24 @@
     </item>
     <item
         is-multidex="false"
+        jar="C:\Users\Andy\.gradle\caches\modules-2\files-2.1\org.jsoup\jsoup\1.8.3\65fd012581ded67bc20945d85c32b4598c3a9cf1\jsoup-1.8.3.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="65fd012581ded67bc20945d85c32b4598c3a9cf1">
+        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\jsoup-1.8.3_7f7d2552d1121696a1baff2dafcd87ea32a7fded.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\support-media-compat\25.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="76fb65a4b41ea42dab8a1310ed772a2420c96b52">
+        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\com.android.support-support-media-compat-25.0.0_b288026e1b7e3d2e8d98487d22732ba3edc8f838.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\support-core-ui\25.0.0\jars\classes.jar"
         jumboMode="true"
         optimize="true"
@@ -144,6 +108,42 @@
         revision="25.0.0"
         sha1="07daa0b6e1d455c82a38422ffe287c18823d339a">
         <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\com.android.support-support-fragment-25.0.0_318fb8e09eb70dc1e47cdda5f8e1d879e52c857f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="B:\Android\Work\FeedReader\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="44ff7caf1ff5f1cdd9c7721cec7d888df6f6d96d">
+        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\instant-run-bootstrap_c7f7467ccdacbf25d61fd91c7777553f457db6b9.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Andy\.gradle\caches\modules-2\files-2.1\io.realm\realm-android\0.87.4\97d167507fcf75bc96d2123af0f3b1b5614ca3b7\realm-android-0.87.4.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="97d167507fcf75bc96d2123af0f3b1b5614ca3b7">
+        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\realm-android-0.87.4_09f0de0bbf78abc87f8f4f717faba69fcb9d7cd7.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\25.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="8bc45ce1f63d1a391fd38b32a201be5a42f9c95d">
+        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\com.android.support-appcompat-v7-25.0.0_ec3011e8377567ad8db263c3dceadf1eddf5826a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\25.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="d29714cc76b38157e3cbd034c66e1ec808eb4c19">
+        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\com.android.support-support-vector-drawable-25.0.0_f1caa52c10115eaf960df99e3b3f996afaf6ea4c.jar" />
     </item>
     <item
         is-multidex="false"

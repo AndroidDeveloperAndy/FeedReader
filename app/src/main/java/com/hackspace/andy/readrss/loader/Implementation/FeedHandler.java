@@ -1,6 +1,6 @@
-package com.hackspace.andy.readrss.loader;
+package com.hackspace.andy.readrss.loader.Implementation;
 
-import com.hackspace.andy.readrss.model.Message;
+import com.hackspace.andy.readrss.model.Entity.Message;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -9,12 +9,12 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.hackspace.andy.readrss.loader.BaseFeedParser.CHANNEL;
-import static com.hackspace.andy.readrss.loader.BaseFeedParser.DESCRIPTION;
-import static com.hackspace.andy.readrss.loader.BaseFeedParser.ITEM;
-import static com.hackspace.andy.readrss.loader.BaseFeedParser.LINK;
-import static com.hackspace.andy.readrss.loader.BaseFeedParser.PUB_DATE;
-import static com.hackspace.andy.readrss.loader.BaseFeedParser.TITLE;
+import static com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser.CHANNEL;
+import static com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser.DESCRIPTION;
+import static com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser.ITEM;
+import static com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser.LINK;
+import static com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser.PUB_DATE;
+import static com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser.TITLE;
 
 public class FeedHandler extends DefaultHandler {
 

@@ -1,12 +1,14 @@
 package com.hackspace.andy.readrss.model;
 
+import com.hackspace.andy.readrss.model.Entity.Message;
+
 import java.util.List;
 
 import io.realm.RealmResults;
 
 public interface MessagesServiceImpl {
 
-    public void insert(List<Message> messages);
+    void insert(List<Message> messages);
     RealmResults<Message> query();
-    public boolean hasMessages();
+    boolean hasMessages();
 }
