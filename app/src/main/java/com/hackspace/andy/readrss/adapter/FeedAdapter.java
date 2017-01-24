@@ -10,7 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.hackspace.andy.readrss.R;
-import com.hackspace.andy.readrss.model.Message;
+import com.hackspace.andy.readrss.model.Entity.Message;
 
 import java.util.List;
 
