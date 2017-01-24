@@ -2,27 +2,24 @@ package com.hackspace.andy.readrss.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hackspace.andy.readrss.R;
-import com.hackspace.andy.readrss.adapter.FeedAdapter;
 import com.hackspace.andy.readrss.loader.DownloadImageTask;
 import com.hackspace.andy.readrss.loader.ILoaderData;
 import com.hackspace.andy.readrss.model.Message;
 import com.hackspace.andy.readrss.model.MessageService;
-import com.hackspace.andy.readrss.refresh.PullToRefreshComponent;
-import com.hackspace.andy.readrss.refresh.RefreshListener;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -32,7 +29,7 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-public class DetailFeedActivity extends AppCompatActivity implements ILoaderData <List<Message>>{
+public class DetailFeedActivity extends AppCompatActivity implements ILoaderData <List<Message>>,SwipeRefreshLayout.OnRefreshListener{
 
     private static final String TAG = DetailFeedActivity.class.getName();
 
@@ -50,11 +47,10 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
     private List<Message> list;
     private Intent intent;
     private String detailFeed;
-    private PullToRefreshComponent pullToRefresh;
 
     private ImageView imgHabra;
     private TextView txHead,txFeed,txLink,txDate;
-    private ViewGroup upperButton,lowerButton;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private MessageService realm;
     private RealmConfiguration configRealmWithDetailFeed;
@@ -78,8 +74,6 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
             getDetailFeedFromDatabase();
             Toast.makeText(this,"Выполнена загрузка данных из базы данных",Toast.LENGTH_LONG).show();
         }
-
-        //PullToRefreshWithDetailActivity();
     }
 
     private void loadDetailFeed(){
@@ -95,21 +89,19 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
     }
 
     protected void loadViews(){
-        upperButton = (ViewGroup) this.findViewById(R.id.refresh_upper_button);
-
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.CYAN);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
         imgHabra = (ImageView) findViewById(R.id.imgHab);
         txHead = (TextView) findViewById(R.id.head);
         txDate = (TextView) findViewById(R.id.detailFeedDate);
         txFeed = (TextView) findViewById(R.id.textFeed);
         txLink = (TextView) findViewById(R.id.link);
 
-        lowerButton = (ViewGroup) this.findViewById(R.id.refresh_lower_button);
-
         configRealmWithDetailFeed = new RealmConfiguration.Builder(getApplicationContext()).build();
         Realm.setDefaultConfiguration(configRealmWithDetailFeed);
 
         realm = new MessageService(this);
-
     }
 
     protected void getInfoFromActivity(){
@@ -142,55 +134,6 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
         return startIntent;
     }
 
-    private void PullToRefreshWithDetailActivity(){
-
-        this.pullToRefresh = new PullToRefreshComponent(upperButton,
-                lowerButton,null, new Handler()); //TODO getList from PrimaryActivity
-        this.pullToRefresh.setOnPullDownRefreshAction(new RefreshListener() {
-
-            @Override
-            public void refreshFinished() {
-                if(isOnline(getApplicationContext())) {
-                    DetailFeedActivity.this.runOnUiThread(() -> loadDetailFeed());
-                }else {
-                    Toast.makeText(getApplicationContext(),"Обновление невозможно.\nПодключитесь к интернету.",Toast.LENGTH_LONG).show();
-                }
-                Log.d(TAG,"pull down");
-            }
-
-            @Override
-            public void doRefresh() {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        this.pullToRefresh.setOnPullUpRefreshAction(new RefreshListener() {
-
-            @Override
-            public void refreshFinished() {
-                if(isOnline(getApplicationContext())) {
-                    DetailFeedActivity.this.runOnUiThread(() -> loadDetailFeed());
-                }else {
-                    Toast.makeText(getApplicationContext(),"Обновление невозможно.\nПодключитесь к интернету.",Toast.LENGTH_LONG).show();
-                }
-                Log.d(TAG,"pull up");
-            }
-
-            @Override
-            public void doRefresh() {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
     private void getDetailFeedFromDatabase(){
         list = realm.query();
         for (Message msg : list){
@@ -210,6 +153,18 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onRefresh() {
+        mSwipeRefreshLayout.setRefreshing(false);
+        if(isOnline(getApplicationContext())) {
+            DetailFeedActivity.this.runOnUiThread(() -> loadDetailFeed());
+            Toast.makeText(getApplicationContext(),"Данные обновлены.",Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(getApplicationContext(),"Обновление невозможно.\nПодключитесь к интернету.",Toast.LENGTH_LONG).show();
+        }
+
     }
 
     private class ThreadDetailFeed extends AsyncTask<String, Void, String> {

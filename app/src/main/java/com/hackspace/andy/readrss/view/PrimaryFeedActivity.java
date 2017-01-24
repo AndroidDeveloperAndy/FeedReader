@@ -6,11 +6,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,8 +20,6 @@ import com.hackspace.andy.readrss.R;
 import com.hackspace.andy.readrss.loader.BaseFeedParser;
 import com.hackspace.andy.readrss.loader.ILoaderData;
 import com.hackspace.andy.readrss.model.MessageService;
-import com.hackspace.andy.readrss.refresh.PullToRefreshComponent;
-import com.hackspace.andy.readrss.refresh.RefreshListener;
 
 import java.util.List;
 
@@ -36,10 +33,9 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
     private List<Message> messagesList;
     private BaseFeedParser<List<Message>> loader;
     private FeedAdapter adapter;
-    private PullToRefreshComponent pullToRefresh;
 
     private ListView listFeed;
-    private ViewGroup upperButton,lowerButton;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private MessageService realm;
     private RealmConfiguration configRealm;
@@ -64,8 +60,6 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
             getFeedFromDatabase();
             Toast.makeText(this,"Выполнена загрузка данных из базы данных",Toast.LENGTH_LONG).show();
         }
-
-        PullToRefreshWithPrimaryActivity();
     }
 
     @Override
@@ -114,54 +108,6 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
         }
     }
 
-    private void PullToRefreshWithPrimaryActivity(){
-        this.pullToRefresh = new PullToRefreshComponent(upperButton,
-                lowerButton, this.getListView(), new Handler());
-        this.pullToRefresh.setOnPullDownRefreshAction(new RefreshListener() {
-
-            @Override
-            public void refreshFinished() {
-                if(isOnline(getApplicationContext())) {
-                    PrimaryFeedActivity.this.runOnUiThread(() -> getFeedFromNetwork());
-                }else {
-                    Toast.makeText(getApplicationContext(),"Обновление невозможно.\nПодключитесь к интернету.",Toast.LENGTH_LONG).show();
-                }
-                Log.d(TAG,"pull down");
-            }
-
-            @Override
-            public void doRefresh() {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        this.pullToRefresh.setOnPullUpRefreshAction(new RefreshListener() {
-
-            @Override
-            public void refreshFinished() {
-                if(isOnline(getApplicationContext())) {
-                PrimaryFeedActivity.this.runOnUiThread(() -> getFeedFromNetwork());
-                }else {
-                    Toast.makeText(getApplicationContext(),"Обновление невозможно.\nПодключитесь к интернету.",Toast.LENGTH_LONG).show();
-                }
-                Log.d(TAG,"pull up");
-            }
-
-            @Override
-            public void doRefresh() {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
     private void getFeedFromDatabase(){
         messagesList = realm.query();
         adapter = new FeedAdapter(this, messagesList);
@@ -169,8 +115,17 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
     }
 
     protected void createViews(){
-        upperButton = (ViewGroup) this.findViewById(R.id.refresh_upper_button);
-        lowerButton = (ViewGroup) this.findViewById(R.id.refresh_lower_button);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            if(isOnline(getApplicationContext())) {
+                PrimaryFeedActivity.this.runOnUiThread(() -> getFeedFromNetwork());
+                Toast.makeText(getApplicationContext(),"Данные обновлены.",Toast.LENGTH_LONG).show();
+            }else {
+                Toast.makeText(getApplicationContext(),"Обновление невозможно.\nПодключитесь к интернету.",Toast.LENGTH_LONG).show();
+            }
+            mSwipeRefreshLayout.setRefreshing(false);
+        });
+
         listFeed = (ListView) findViewById(android.R.id.list);
 
         this.adapter = new FeedAdapter(this, messagesList);
