@@ -10,6 +10,8 @@ import io.realm.annotations.Required;
 
 public class Message extends RealmObject  {
 
+	private static final String TAG = Message.class.getName();
+
 	static SimpleDateFormat FORMATTER = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");
 
 	@Required
@@ -23,8 +25,6 @@ public class Message extends RealmObject  {
 
 	@Required
 	private String date;
-
-	private static final String TAG = Message.class.getName();
 
 	public String getTitle() {
 		return title;
