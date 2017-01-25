@@ -5,4 +5,5 @@ public interface DetailFeedView {
     void getInfoFromActivity();
     void loadDetailFeed();
     void getDetailFeedFromDatabase();
+    void getData();
 }

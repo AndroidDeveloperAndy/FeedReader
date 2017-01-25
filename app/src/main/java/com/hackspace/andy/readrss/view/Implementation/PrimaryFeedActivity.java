@@ -1,19 +1,22 @@
 package com.hackspace.andy.readrss.view.Implementation;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import com.hackspace.andy.readrss.adapter.FeedAdapter;
+import com.hackspace.andy.readrss.adapter.RVAdapter;
+import com.hackspace.andy.readrss.adapter.RecyclerClickListener;
 import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.R;
 import com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser;
@@ -26,15 +29,15 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-public class PrimaryFeedActivity extends ListActivity implements ILoaderData<List<Message>>,PrimaryFeedView {
+public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Message>>,PrimaryFeedView {
 
     private static final String TAG = PrimaryFeedActivity.class.getName();
 
     private List<Message> messagesList;
     private BaseFeedParser<List<Message>> loader;
-    private FeedAdapter adapter;
+    private RVAdapter adapter;
 
-    private ListView listFeed;
+    private RecyclerView rvList;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private MessageService realm;
@@ -42,6 +45,7 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
 
     private static ConnectivityManager managerConnect;
     private static NetworkInfo netInfo;
+
 
     protected static final String FEED_URL = "https://habrahabr.ru/rss/feed/posts/6266e7ec4301addaf92d10eb212b4546";
 
@@ -51,7 +55,11 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
         setContentView(R.layout.activity_primary_feed);
 
         createViews();
+        getData();
+    }
 
+    @Override
+    public void getData(){
         if(isOnline(this)){
             getFeedFromNetwork();
             Toast.makeText(this,R.string.load_from_network,Toast.LENGTH_LONG).show();
@@ -60,17 +68,6 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
             getFeedFromDatabase();
             Toast.makeText(this,R.string.load_from_database,Toast.LENGTH_LONG).show();
         }
-    }
-
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-
-        startActivity(DetailFeedActivity.newInstance(this,
-                        messagesList.get(position).getTitle(),
-                        messagesList.get(position).getDate().toString(),
-                        messagesList.get(position).getLink(),
-                        messagesList.get(position).getDescription()));
     }
 
     @Override
@@ -112,13 +109,14 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
     @Override
     public void getFeedFromDatabase(){
         messagesList = realm.query();
-        adapter = new FeedAdapter(this, messagesList);
-        listFeed.setAdapter(adapter);
+        adapter = new RVAdapter(messagesList);
+        rvList.setAdapter(adapter);
     }
 
     @Override
     public void createViews(){
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE);
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             if(isOnline(getApplicationContext())) {
                 PrimaryFeedActivity.this.runOnUiThread(() -> getFeedFromNetwork());
@@ -129,10 +127,24 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
             mSwipeRefreshLayout.setRefreshing(false);
         });
 
-        listFeed = (ListView) findViewById(android.R.id.list);
 
-        this.adapter = new FeedAdapter(this, messagesList);
-        this.getListView().setAdapter(this.adapter);
+        rvList=(RecyclerView)findViewById(android.R.id.list);
+
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        rvList.setLayoutManager(llm);
+        rvList.setHasFixedSize(true);
+
+        rvList.addOnItemTouchListener(new RecyclerClickListener(this) {
+            @Override
+            public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
+
+                startActivity(DetailFeedActivity.newInstance(PrimaryFeedActivity.this,
+                        messagesList.get(position).getTitle(),
+                        messagesList.get(position).getDate().toString(),
+                        messagesList.get(position).getLink(),
+                        messagesList.get(position).getDescription()));
+            }
+        });
 
         configRealm = new RealmConfiguration.Builder(getApplicationContext()).build();
         Realm.setDefaultConfiguration(configRealm);
@@ -151,9 +163,9 @@ public class PrimaryFeedActivity extends ListActivity implements ILoaderData<Lis
                 msg.getLink();
             }
             //realm.insert(messagesList);
-            adapter = new FeedAdapter(this, messagesList);
+            RVAdapter adapter = new RVAdapter(messagesList);
+            rvList.setAdapter(adapter);
 
-            listFeed.setAdapter(adapter);
         } catch (Throwable t){
             Log.e(TAG,"Error load list feed!",t);
         }
