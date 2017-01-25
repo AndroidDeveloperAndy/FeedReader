@@ -2,7 +2,9 @@
 /local.properties
 /.idea/
 .DS_Store
-/build/
 proguard-rules.pro
 /.gradle/
+/*/build/
+build/
 
+app/libs/
