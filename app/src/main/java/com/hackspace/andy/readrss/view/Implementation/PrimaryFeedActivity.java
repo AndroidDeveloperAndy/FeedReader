@@ -162,7 +162,8 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
                 msg.getDescription();
                 msg.getLink();
             }
-            //realm.insert(messagesList);
+
+            realm.insert(messagesList);
             RVAdapter adapter = new RVAdapter(messagesList);
             rvList.setAdapter(adapter);
 
