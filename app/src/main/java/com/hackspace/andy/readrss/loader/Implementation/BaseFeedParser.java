@@ -46,6 +46,7 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 		try {
 			tmp = parse();
 		} catch (Exception e) {
+			//TODO do not ignore exceptions, think about business logic to notify user by TOAST ore some dialogue interaction (cancel, retry)
 			Log.e(TAG, "Error loaded feed!", e);
 		}
 		return tmp;

@@ -13,7 +13,7 @@ import com.hackspace.andy.readrss.loader.Implementation.DownloadImageTask;
 import com.hackspace.andy.readrss.model.Entity.Message;
 
 import java.util.List;
-
+//TODO naming should be more descriptive. Something like PersonAdapter.
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
 
     public static class PersonViewHolder extends RecyclerView.ViewHolder {
@@ -25,10 +25,13 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder>{
 
         PersonViewHolder(View itemView) {
             super(itemView);
+            //TODO How about to create custom View init all fields in this View add public method setContent ant pass Entity in this method,
+            //instead of boilerplate with findViewById.
             cv = (CardView)itemView.findViewById(R.id.cv);
             nameFeed = (TextView)itemView.findViewById(R.id.feed);
             dateFeed = (TextView)itemView.findViewById(R.id.dateFeed);
             imgHabra = (ImageView)itemView.findViewById(R.id.imgHab);
+            //TODO business logic should placed in Presenter layer.
             new DownloadImageTask(imgHabra).execute();
         }
     }

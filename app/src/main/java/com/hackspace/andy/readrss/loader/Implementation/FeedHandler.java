@@ -40,6 +40,14 @@ public class FeedHandler extends DefaultHandler {
 		super.endElement(uri, localName, name);
 
 		if (this.currentMessage != null){
+			//TODO Use switch case instead of if else block.
+			/*switch (localName) {
+				case TITLE:
+					currentMessage.setTitle(builder.toString());
+				break;
+				default:
+					break;
+			}*/
 			if (localName.equalsIgnoreCase(TITLE)){
 				currentMessage.setTitle(builder.toString());
 			} else if (localName.equalsIgnoreCase(CHANNEL)){

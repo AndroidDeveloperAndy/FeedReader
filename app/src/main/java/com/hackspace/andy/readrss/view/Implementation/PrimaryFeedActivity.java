@@ -46,7 +46,7 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
     private static ConnectivityManager managerConnect;
     private static NetworkInfo netInfo;
 
-
+    //TODO this constant shouldn't be in View, more looks like Model layer.
     protected static final String FEED_URL = "https://habrahabr.ru/rss/feed/posts/6266e7ec4301addaf92d10eb212b4546";
 
     @Override

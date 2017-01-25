@@ -11,11 +11,13 @@ import java.io.InputStream;
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
     private ImageView imgBmHabra;
+    //TODO talk with me please, explane hardcode url.
     final static String PICTURE_URL = "https://pp.vk.me/c625620/v625620167/2ac69/m412UXyPZPE.jpg";
     private Bitmap bmIcon;
 
     private static final String TAG = DownloadImageTask.class.getName();
 
+    //TODO AsyncTask should't know about View layer. If you load an image return image bitmap.
     public DownloadImageTask(ImageView bmImage) {
         this.imgBmHabra = bmImage;
     }

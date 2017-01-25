@@ -6,17 +6,18 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-public abstract class RecyclerClickListener implements RecyclerView.OnItemTouchListener{
+public abstract class RecyclerClickListener implements RecyclerView.OnItemTouchListener {
     private GestureDetector gestureDetector;
 
-    private GestureDetector.OnGestureListener gestureListener =
-            new GestureDetector.SimpleOnGestureListener() {
-                @Override
-                public boolean onSingleTapUp(MotionEvent e) {
-                    return true;
-                }
-            };
+    private GestureDetector.OnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            return true;
+        }
+    };
 
+    //TODO Remove constructor move initialization logic of GestureDetector to onIntercept method instead.
+    //You can get context from RecyclerView.
     public RecyclerClickListener(Context context) {
         gestureDetector = new GestureDetector(context, gestureListener);
     }

@@ -74,6 +74,7 @@ public class DetailFeedActivity extends Activity implements ILoaderData <List<Me
             loadDetailFeed();
             Toast.makeText(this, R.string.load_from_network,Toast.LENGTH_LONG).show();
         }else {
+            //TODO Use String.format instead of + concatenation. In this case you have a bug, resource id will converts to String with two numbers separated by \n symbol.
             Toast.makeText(this, R.string.error_load_picture+"\n"+R.string.check_network,Toast.LENGTH_SHORT).show();
             getDetailFeedFromDatabase();
             Toast.makeText(this,R.string.load_from_database,Toast.LENGTH_LONG).show();
@@ -157,11 +158,15 @@ public class DetailFeedActivity extends Activity implements ILoaderData <List<Me
     {
         cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         netInfo = cm.getActiveNetworkInfo();
-        if (netInfo != null && netInfo.isConnectedOrConnecting())
+        //TODO Very complex why not write code like this.
+
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+
+        /*if (netInfo != null && netInfo.isConnectedOrConnecting())
         {
             return true;
         }
-        return false;
+        return false;*/
     }
 
     @Override
@@ -171,6 +176,7 @@ public class DetailFeedActivity extends Activity implements ILoaderData <List<Me
             DetailFeedActivity.this.runOnUiThread(() -> loadDetailFeed());
             Toast.makeText(getApplicationContext(),R.string.update_data,Toast.LENGTH_LONG).show();
         }else {
+            //TODO Use String.format instead of + concatenation. In this case you have a bug, resource id will converts to String with two numbers separated by \n symbol.
             Toast.makeText(getApplicationContext(),R.string.dont_update+"\n"+R.string.check_network,Toast.LENGTH_LONG).show();
         }
 
@@ -187,6 +193,7 @@ public class DetailFeedActivity extends Activity implements ILoaderData <List<Me
         @Override
         protected String doInBackground(String... params) {
             doc = Jsoup.parse(description);
+            //TODO Named constants.
             doc.select("p");
             doc.select("a[href]");
             doc.select("br");
