@@ -10,3 +10,5 @@ proguard-rules.pro
 build/
 
 /build
+/.idea
+/*.iml
