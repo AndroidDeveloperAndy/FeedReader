@@ -24,7 +24,7 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 
 	private final URL feedUrl;
 	private ILoaderData<T> endDataPoint;
-	static private BaseFeedParser parser = null;
+	static private BaseFeedParser parser;
 
 	protected BaseFeedParser(String feedUrl, ILoaderData<T> endDataPoint){
 		this.endDataPoint = endDataPoint;

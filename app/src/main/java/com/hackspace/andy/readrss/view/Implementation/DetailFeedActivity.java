@@ -1,5 +1,6 @@
 package com.hackspace.andy.readrss.view.Implementation;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -8,15 +9,13 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hackspace.andy.readrss.R;
-import com.hackspace.andy.readrss.loader.Implementation.DownloadImageTask;
 import com.hackspace.andy.readrss.loader.ILoaderData;
 import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.model.Implementation.MessageService;
@@ -30,7 +29,7 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-public class DetailFeedActivity extends AppCompatActivity implements ILoaderData <List<Message>>,SwipeRefreshLayout.OnRefreshListener,DetailFeedView {
+public class DetailFeedActivity extends Activity implements ILoaderData <List<Message>>,SwipeRefreshLayout.OnRefreshListener,DetailFeedView {
 
     private static final String TAG = DetailFeedActivity.class.getName();
 
@@ -49,9 +48,9 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
     private Intent intent;
     private String detailFeed;
 
-    private ImageView imgHabra;
     private TextView txHead,txFeed,txLink,txDate;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private CardView cardViewDF;
 
     private MessageService realm;
     private RealmConfiguration configRealmWithDetailFeed;
@@ -66,7 +65,11 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
 
         loadViews();
         getInfoFromActivity();
+        getData();
+    }
 
+    @Override
+    public void getData(){
         if(isOnline(this)) {
             loadDetailFeed();
             Toast.makeText(this, R.string.load_from_network,Toast.LENGTH_LONG).show();
@@ -80,7 +83,6 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
     @Override
     public void loadDetailFeed(){
         try{
-            new DownloadImageTask(imgHabra).execute();
             txHead.setText(title);
             txDate.setText(date);
             txLink.setText(url);
@@ -94,7 +96,10 @@ public class DetailFeedActivity extends AppCompatActivity implements ILoaderData
     public void loadViews(){
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        imgHabra = (ImageView) findViewById(R.id.imgHab);
+        mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE);
+
+        cardViewDF = (CardView) findViewById(R.id.cv);
+
         txHead = (TextView) findViewById(R.id.head);
         txDate = (TextView) findViewById(R.id.detailFeedDate);
         txFeed = (TextView) findViewById(R.id.textFeed);
