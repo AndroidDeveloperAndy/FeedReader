@@ -1,8 +1,9 @@
 *.iml
 /local.properties
-/.idea
+/.idea/
 .DS_Store
-/build
 proguard-rules.pro
 /.gradle/
+/*/build/
+build/
 
