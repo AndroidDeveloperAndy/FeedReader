@@ -26,12 +26,14 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 	private final URL mFeedUrl;
 	private ILoaderData<T> mEndDataPoint;
 	static private BaseFeedParser sParser;
+	private T mObjectParse;
 
 	protected BaseFeedParser(String feedUrl, ILoaderData<T> endDataPoint){
 		this.mEndDataPoint = endDataPoint;
 		try {
 			this.mFeedUrl = new URL(feedUrl);
 		} catch (MalformedURLException e) {
+			e.getMessage();
 			throw new RuntimeException(e);
 		}
 	}
@@ -43,14 +45,7 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 
 	@Override
 	protected T doInBackground(Void... params) {
-		T tmp = null;
-		try {
-			tmp = parse();
-		} catch (Exception e) {
-			//TODO do not ignore exceptions, think about business logic to notify user by TOAST ore some dialogue interaction (cancel, retry)
-			Log.e(TAG, "Error loaded feed!", e);
-		}
-		return tmp;
+		return mObjectParse = parse();
 	}
 
 	@Override
@@ -63,12 +58,8 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 		try {
 			return mFeedUrl.openStream();
 		} catch (IOException e) {
+			e.getMessage();
 			throw new RuntimeException(e);
 		}
-	}
-
-	@Override
-	protected void onCancelled() {
-		super.onCancelled();
 	}
 }

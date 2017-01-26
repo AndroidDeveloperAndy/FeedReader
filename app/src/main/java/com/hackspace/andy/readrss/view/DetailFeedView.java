@@ -6,4 +6,5 @@ public interface DetailFeedView {
     void loadDetailFeed();
     void getDetailFeedFromDatabase();
     void getData();
+    void getAlertDialog();
 }

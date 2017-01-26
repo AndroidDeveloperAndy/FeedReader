@@ -105,6 +105,8 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
                 mListLoader.execute((Void[]) null);
             }
         }catch (Exception e){
+            getAlertDialog();
+            e.getMessage();
             Log.e(TAG, "Error load feed in the home page!", e);
         }
     }
@@ -120,6 +122,7 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
     public void createViews(){
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE);
+
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             if(isOnline(getApplicationContext())) {
                 PrimaryFeedActivity.this.runOnUiThread(() -> getFeedFromNetwork());
@@ -129,7 +132,6 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
             }
             mSwipeRefreshLayout.setRefreshing(false);
         });
-
 
         mRvList =(RecyclerView)findViewById(android.R.id.list);
 
@@ -171,22 +173,27 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
             mRvList.setAdapter(adapter);
 
         } catch (Throwable t){
-            mAlertDialog = new AlertDialog.Builder(getApplicationContext());
-            mAlertDialog.setTitle("Dialog");
-            mAlertDialog.setMessage("Error load feed.");
-            mAlertDialog.setPositiveButton("Retry", (dialog, which) -> {
-                getFeedFromNetwork();
-            });
-            mAlertDialog.setNegativeButton("Cancel", (dialog, which) -> {
-                t.getMessage();
-                Log.e(TAG,"Error load list feed!",t);
-            });
-            mAlertDialog.setCancelable(true);
-            mAlertDialog.setOnCancelListener(dialog -> {
-                t.getMessage();
-                Log.e(TAG,"Error load list feed!",t);
-            });
+            getAlertDialog();
+            t.getMessage();
+            Log.e(TAG,"Error load list feed!",t);
         }
+    }
+
+    @Override
+    public void getAlertDialog(){
+        mAlertDialog = new AlertDialog.Builder(getApplicationContext());
+        mAlertDialog.setTitle("Dialog");
+        mAlertDialog.setMessage("Error load feed.");
+        mAlertDialog.setPositiveButton("Retry", (dialog, which) -> {
+            getFeedFromNetwork();
+        });
+        mAlertDialog.setNegativeButton("Cancel", (dialog, which) -> {
+            PrimaryFeedActivity.this.finish();
+        });
+        mAlertDialog.setCancelable(true);
+        mAlertDialog.setOnCancelListener(dialog -> {
+            PrimaryFeedActivity.this.finish();
+        });
     }
 
     private static boolean isOnline(Context context)

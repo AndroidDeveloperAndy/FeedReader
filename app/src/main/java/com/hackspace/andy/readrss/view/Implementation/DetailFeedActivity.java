@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.widget.TextView;
@@ -60,6 +61,8 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     private static ConnectivityManager mConnectManager;
     private static NetworkInfo mNetworkInfo;
 
+    private AlertDialog.Builder mAlertDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +92,8 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
             mTxLink.setText(sUrl);
             new ThreadDetailFeed(mTxFeed).execute(sUrl);
         } catch (Exception e) {
+            getAlertDialog();
+            e.getMessage();
             Log.e(TAG, "Error load detail page!", e);
         }
     }
@@ -152,6 +157,23 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
             new ThreadDetailFeed(mTxFeed).execute(sUrl);
             mTxLink.setText(msg.getLink());
         }
+    }
+
+    @Override
+    public void getAlertDialog(){
+        mAlertDialog = new AlertDialog.Builder(getApplicationContext());
+        mAlertDialog.setTitle("Dialog");
+        mAlertDialog.setMessage("Error load feed.");
+        mAlertDialog.setPositiveButton("Retry", (dialog, which) -> {
+            loadDetailFeed();
+        });
+        mAlertDialog.setNegativeButton("Cancel", (dialog, which) -> {
+            DetailFeedActivity.this.finish();
+        });
+        mAlertDialog.setCancelable(true);
+        mAlertDialog.setOnCancelListener(dialog -> {
+            DetailFeedActivity.this.finish();
+        });
     }
 
     private static boolean isOnline(Context context) {

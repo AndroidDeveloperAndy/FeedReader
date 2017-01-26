@@ -5,4 +5,5 @@ public interface PrimaryFeedView {
     void getFeedFromNetwork();
     void getFeedFromDatabase();
     void getData();
+    void getAlertDialog();
 }
