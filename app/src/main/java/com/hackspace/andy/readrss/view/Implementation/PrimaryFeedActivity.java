@@ -9,13 +9,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.hackspace.andy.readrss.adapter.RVAdapter;
+import com.hackspace.andy.readrss.adapter.FeedAdapter;
 import com.hackspace.andy.readrss.adapter.RecyclerClickListener;
 import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.R;
@@ -33,20 +34,22 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
 
     private static final String TAG = PrimaryFeedActivity.class.getName();
 
-    private List<Message> messagesList;
-    private BaseFeedParser<List<Message>> loader;
-    private RVAdapter adapter;
+    private List<Message> mMessagesList;
+    private BaseFeedParser<List<Message>> mListLoader;
+    private FeedAdapter mFeedAdapter;
 
-    private RecyclerView rvList;
+    private RecyclerView mRvList;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private MessageService realm;
-    private RealmConfiguration configRealm;
+    private MessageService mRealmService;
+    private RealmConfiguration mConfigRealm;
 
-    private static ConnectivityManager managerConnect;
-    private static NetworkInfo netInfo;
+    private static ConnectivityManager mManagerConnect;
+    private static NetworkInfo mNetworkInfo;
 
+    private AlertDialog.Builder mAlertDialog;
 
+    //TODO this constant shouldn't be in View, more looks like Model layer.
     protected static final String FEED_URL = "https://habrahabr.ru/rss/feed/posts/6266e7ec4301addaf92d10eb212b4546";
 
     @Override
@@ -73,33 +76,33 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
     @Override
     public void getFeedFromNetwork(){
         try {
-            if ((loader != null) && loader.getStatus() != AsyncTask.Status.RUNNING) {
-                if (loader.isCancelled()) {
-                    loader = BaseFeedParser.getParser(this, FEED_URL);
+            if ((mListLoader != null) && mListLoader.getStatus() != AsyncTask.Status.RUNNING) {
+                if (mListLoader.isCancelled()) {
+                    mListLoader = BaseFeedParser.getParser(this, FEED_URL);
 
-                    loader.execute((Void[]) null);
+                    mListLoader.execute((Void[]) null);
                 } else {
-                    loader.cancel(true);
-                    loader = BaseFeedParser.getParser(this, FEED_URL);
+                    mListLoader.cancel(true);
+                    mListLoader = BaseFeedParser.getParser(this, FEED_URL);
 
-                    loader.execute((Void[]) null);
+                    mListLoader.execute((Void[]) null);
                 }
 
-            } else if (loader != null && loader.getStatus() == AsyncTask.Status.PENDING) {
+            } else if (mListLoader != null && mListLoader.getStatus() == AsyncTask.Status.PENDING) {
 
-                loader = BaseFeedParser.getParser(this, FEED_URL);
+                mListLoader = BaseFeedParser.getParser(this, FEED_URL);
 
-                loader.execute((Void[]) null);
-            } else if ((loader != null) && loader.getStatus() == AsyncTask.Status.FINISHED) {
+                mListLoader.execute((Void[]) null);
+            } else if ((mListLoader != null) && mListLoader.getStatus() == AsyncTask.Status.FINISHED) {
 
-                loader = BaseFeedParser.getParser(this, FEED_URL);
+                mListLoader = BaseFeedParser.getParser(this, FEED_URL);
 
-                loader.execute((Void[]) null);
-            } else if (loader == null) {
+                mListLoader.execute((Void[]) null);
+            } else if (mListLoader == null) {
 
-                loader = BaseFeedParser.getParser(this, FEED_URL);
+                mListLoader = BaseFeedParser.getParser(this, FEED_URL);
 
-                loader.execute((Void[]) null);
+                mListLoader.execute((Void[]) null);
             }
         }catch (Exception e){
             Log.e(TAG, "Error load feed in the home page!", e);
@@ -108,9 +111,9 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
 
     @Override
     public void getFeedFromDatabase(){
-        messagesList = realm.query();
-        adapter = new RVAdapter(messagesList);
-        rvList.setAdapter(adapter);
+        mMessagesList = mRealmService.query();
+        mFeedAdapter = new FeedAdapter(mMessagesList);
+        mRvList.setAdapter(mFeedAdapter);
     }
 
     @Override
@@ -122,65 +125,75 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
                 PrimaryFeedActivity.this.runOnUiThread(() -> getFeedFromNetwork());
                 Toast.makeText(getApplicationContext(),R.string.update_data,Toast.LENGTH_LONG).show();
             }else {
-                Toast.makeText(getApplicationContext(),R.string.dont_update+"\n"+R.string.check_network,Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),String.format("%s\n%s",getString(R.string.dont_update),getString(R.string.check_network)),Toast.LENGTH_LONG).show();
             }
             mSwipeRefreshLayout.setRefreshing(false);
         });
 
 
-        rvList=(RecyclerView)findViewById(android.R.id.list);
+        mRvList =(RecyclerView)findViewById(android.R.id.list);
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
-        rvList.setLayoutManager(llm);
-        rvList.setHasFixedSize(true);
+        mRvList.setLayoutManager(llm);
+        mRvList.setHasFixedSize(true);
 
-        rvList.addOnItemTouchListener(new RecyclerClickListener(this) {
+        mRvList.addOnItemTouchListener(new RecyclerClickListener(this) {
             @Override
             public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
 
                 startActivity(DetailFeedActivity.newInstance(PrimaryFeedActivity.this,
-                        messagesList.get(position).getTitle(),
-                        messagesList.get(position).getDate().toString(),
-                        messagesList.get(position).getLink(),
-                        messagesList.get(position).getDescription()));
+                        mMessagesList.get(position).getTitle(),
+                        mMessagesList.get(position).getDate().toString(),
+                        mMessagesList.get(position).getLink(),
+                        mMessagesList.get(position).getDescription()));
             }
         });
 
-        configRealm = new RealmConfiguration.Builder(getApplicationContext()).build();
-        Realm.setDefaultConfiguration(configRealm);
+        mConfigRealm = new RealmConfiguration.Builder(getApplicationContext()).build();
+        Realm.setDefaultConfiguration(mConfigRealm);
 
-        realm = new MessageService(this);
+        mRealmService = new MessageService(this);
     }
 
     @Override
     public void endLoad(@NonNull List<Message> data) {
         try{
-            messagesList = data;
-            for (Message msg : messagesList){
+            mMessagesList = data;
+            for (Message msg : mMessagesList){
                 msg.getTitle();
                 msg.getDate();
                 msg.getDescription();
                 msg.getLink();
             }
 
-            realm.insert(messagesList);
-            RVAdapter adapter = new RVAdapter(messagesList);
-            rvList.setAdapter(adapter);
+            mRealmService.insert(mMessagesList);
+            FeedAdapter adapter = new FeedAdapter(mMessagesList);
+            mRvList.setAdapter(adapter);
 
         } catch (Throwable t){
-            Log.e(TAG,"Error load list feed!",t);
+            mAlertDialog = new AlertDialog.Builder(getApplicationContext());
+            mAlertDialog.setTitle("Dialog");
+            mAlertDialog.setMessage("Error load feed.");
+            mAlertDialog.setPositiveButton("Retry", (dialog, which) -> {
+                getFeedFromNetwork();
+            });
+            mAlertDialog.setNegativeButton("Cancel", (dialog, which) -> {
+                t.getMessage();
+                Log.e(TAG,"Error load list feed!",t);
+            });
+            mAlertDialog.setCancelable(true);
+            mAlertDialog.setOnCancelListener(dialog -> {
+                t.getMessage();
+                Log.e(TAG,"Error load list feed!",t);
+            });
         }
     }
 
     private static boolean isOnline(Context context)
     {
-        managerConnect = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        netInfo = managerConnect.getActiveNetworkInfo();
-        if (netInfo != null && netInfo.isConnectedOrConnecting())
-        {
-            return true;
-        }
-        return false;
+        mManagerConnect = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        mNetworkInfo = mManagerConnect.getActiveNetworkInfo();
+        return mNetworkInfo != null && mNetworkInfo.isConnectedOrConnecting();
     }
 }
 

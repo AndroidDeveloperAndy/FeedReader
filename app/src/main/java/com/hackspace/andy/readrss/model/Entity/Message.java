@@ -10,7 +10,8 @@ import io.realm.annotations.Required;
 
 public class Message extends RealmObject  {
 
-	static SimpleDateFormat FORMATTER = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");
+	private static final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss Z";
+	private static final SimpleDateFormat FORMATTER = new SimpleDateFormat(DATE_FORMAT);
 
 	@Required
 	private String title;
@@ -55,9 +56,6 @@ public class Message extends RealmObject  {
 	}
 
 	public void setDate(String date) {
-		while (!date.endsWith("00")){
-			date += "0";
-		}
 		try {
 			this.date = String.valueOf(FORMATTER.parse(date.trim()));
 		} catch (ParseException e) {

@@ -13,31 +13,30 @@ import javax.xml.parsers.SAXParserFactory;
 
 public class SaxFeedParser extends BaseFeedParser<List<Message>> {
 
-	private SAXParserFactory factoryParser;
-	private SAXParser saxParser;
-	private XMLReader xmlReader;
-	private FeedHandler feedHandler;
-	private InputSource inputSource;
+	private SAXParserFactory mFactoryParser = SAXParserFactory.newInstance();
+	private SAXParser SaxParser;
+	private XMLReader XmlReader;
+	private FeedHandler mFeedHandler;
+	private InputSource mInputSource;
 
 	public SaxFeedParser(String feedUrl, ILoaderData<List<Message>> endDataPoint) {
 		super(feedUrl, endDataPoint);
 	}
 	
 	public List<Message> parse() {
-		factoryParser = SAXParserFactory.newInstance();
-
 		try {
-			saxParser = factoryParser.newSAXParser();
-			xmlReader = saxParser.getXMLReader();
-			feedHandler = new FeedHandler();
-			xmlReader.setContentHandler(feedHandler);
+			SaxParser = mFactoryParser.newSAXParser();
+			XmlReader = SaxParser.getXMLReader();
+			mFeedHandler = new FeedHandler();
+			XmlReader.setContentHandler(mFeedHandler);
 
-			inputSource = new InputSource(this.getInputStream());
+			mInputSource = new InputSource(this.getInputStream());
 
-			xmlReader.parse(inputSource);
+			XmlReader.parse(mInputSource);
 
-			return feedHandler.getMessages();
+			return mFeedHandler.getMessages();
 		} catch (Exception e) {
+			//TODO Check all similar cases, remember do not ignore exceptions like this, only if it's not necessary.
 			throw new RuntimeException(e);
 		}
 	}

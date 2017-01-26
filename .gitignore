@@ -7,4 +7,3 @@ proguard-rules.pro
 /*/build/
 build/
 
-app/libs/

@@ -138,6 +138,15 @@
     </item>
     <item
         is-multidex="false"
+        jar="C:\Users\Andy\.gradle\caches\modules-2\files-2.1\com.squareup.picasso\picasso\2.5.2\7446d06ec8d4f7ffcc53f1da37c95f200dcb9387\picasso-2.5.2.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="7446d06ec8d4f7ffcc53f1da37c95f200dcb9387">
+        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\picasso-2.5.2_acc44a7e6d6592ab52d737990c77bf13fd610e0b.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\support-core-ui\25.0.0\jars\classes.jar"
         jumboMode="true"
         optimize="true"
