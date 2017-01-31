@@ -14,30 +14,28 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.PersonViewHolder>{
 
     public static class PersonViewHolder extends RecyclerView.ViewHolder {
 
-        private CardView mCardView;
-        private TextView mNameFeed;
-        private TextView mDateFeed;
-        private ImageView mImgHabra;
+        @BindView(R.id.cv) CardView mCardView;
+        @BindView(R.id.feed) TextView mNameFeed;
+        @BindView(R.id.dateFeed) TextView mDateFeed;
+        @BindView(R.id.imgHab) ImageView mImgHabra;
 
         PersonViewHolder(View itemView) {
             super(itemView);
-            //TODO How about to create custom View init all fields in this View add public method setContent ant pass Entity in this method,instead of boilerplate with findViewById.
-            mCardView = (CardView) itemView.findViewById(R.id.cv);
-            mNameFeed = (TextView) itemView.findViewById(R.id.feed);
-            mDateFeed = (TextView) itemView.findViewById(R.id.dateFeed);
-            mImgHabra = (ImageView) itemView.findViewById(R.id.imgHab);
+            ButterKnife.bind(this, itemView);
         }
     }
 
     private List<Message> mMessageList;
     private View mViewItem;
     private PersonViewHolder mPersonViewHolder;
-    final static String PICTURE_URL = "https://pp.vk.me/c625620/v625620167/2ac69/m412UXyPZPE.jpg";
-
+    final static String PICTURE_URL = "https://habrastorage.org/getpro/habr/app/566/b4a/0ef/566b4a0efc6eb3f762c632a89f4a03a3.jpg";
 
     public FeedAdapter(List<Message> messages){
         this.mMessageList = messages;

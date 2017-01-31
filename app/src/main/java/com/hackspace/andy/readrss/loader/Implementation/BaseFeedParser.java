@@ -23,23 +23,25 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 
 	private static final String TAG = BaseFeedParser.class.getName();
 
+	private static final String FEED_URL = "https://habrahabr.ru/rss/feed/posts/6266e7ec4301addaf92d10eb212b4546";
+
 	private final URL mFeedUrl;
 	private ILoaderData<T> mEndDataPoint;
 	static private BaseFeedParser sParser;
 	private T mObjectParse;
 
-	protected BaseFeedParser(String feedUrl, ILoaderData<T> endDataPoint){
+	protected BaseFeedParser(ILoaderData<T> endDataPoint){
 		this.mEndDataPoint = endDataPoint;
 		try {
-			this.mFeedUrl = new URL(feedUrl);
+			this.mFeedUrl = new URL(FEED_URL);
 		} catch (MalformedURLException e) {
 			e.getMessage();
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static BaseFeedParser getParser(ILoaderData loaderData, String feedUrl) {
-		sParser = new SaxFeedParser(feedUrl, loaderData);
+	public static BaseFeedParser getParser(ILoaderData loaderData) {
+		sParser = new SaxFeedParser(loaderData);
 		return sParser;
 	}
 

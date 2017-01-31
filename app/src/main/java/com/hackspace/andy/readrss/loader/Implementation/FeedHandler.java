@@ -40,26 +40,27 @@ public class FeedHandler extends DefaultHandler {
 		super.endElement(uri, localName, name);
 
 		if (this.mCurrentMessage != null){
-			//TODO Use switch case instead of if else block.
-			/*switch (localName) {
+			switch (localName) {
  				case TITLE:
- 					currentMessage.setTitle(builder.toString());
+					mCurrentMessage.setTitle(mBuilder.toString());
  				break;
- 				default:
- 					break;
- 			}*/
-			if (localName.equalsIgnoreCase(TITLE)){
-				mCurrentMessage.setTitle(mBuilder.toString());
-			} else if (localName.equalsIgnoreCase(CHANNEL)){
-				mCurrentMessage.setLink(mBuilder.toString());
-			} else if (localName.equalsIgnoreCase(LINK)){
-				mCurrentMessage.setLink(mBuilder.toString());
-			} else if (localName.equalsIgnoreCase(DESCRIPTION)){
-				mCurrentMessage.setDescription(mBuilder.toString());
-			} else if (localName.equalsIgnoreCase(PUB_DATE)){
-				mCurrentMessage.setDate(mBuilder.toString());
-			} else if (localName.equalsIgnoreCase(ITEM)){
-				mMessages.add(mCurrentMessage);
+ 				case CHANNEL:
+					mCurrentMessage.setLink(mBuilder.toString());
+ 				break;
+ 				case LINK:
+					mCurrentMessage.setLink(mBuilder.toString());
+ 				break;
+ 				case DESCRIPTION:
+					mCurrentMessage.setDescription(mBuilder.toString());
+ 				break;
+				case PUB_DATE:
+					mCurrentMessage.setDate(mBuilder.toString());
+					break;
+				case ITEM:
+					mMessages.add(mCurrentMessage);
+					break;
+				default:
+					break;
 			}
 			mBuilder.setLength(0);
 		}

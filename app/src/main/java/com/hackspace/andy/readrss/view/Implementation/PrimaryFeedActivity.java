@@ -38,8 +38,8 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
     private BaseFeedParser<List<Message>> mListLoader;
     private FeedAdapter mFeedAdapter;
 
-    private RecyclerView mRvList;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private RecyclerView mRvList;
 
     private MessageService mRealmService;
     private RealmConfiguration mConfigRealm;
@@ -48,9 +48,6 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
     private static NetworkInfo mNetworkInfo;
 
     private AlertDialog.Builder mAlertDialog;
-
-    //TODO this constant shouldn't be in View, more looks like Model layer.
-    protected static final String FEED_URL = "https://habrahabr.ru/rss/feed/posts/6266e7ec4301addaf92d10eb212b4546";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,29 +75,29 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
         try {
             if ((mListLoader != null) && mListLoader.getStatus() != AsyncTask.Status.RUNNING) {
                 if (mListLoader.isCancelled()) {
-                    mListLoader = BaseFeedParser.getParser(this, FEED_URL);
+                    mListLoader = BaseFeedParser.getParser(this);
 
                     mListLoader.execute((Void[]) null);
                 } else {
                     mListLoader.cancel(true);
-                    mListLoader = BaseFeedParser.getParser(this, FEED_URL);
+                    mListLoader = BaseFeedParser.getParser(this);
 
                     mListLoader.execute((Void[]) null);
                 }
 
             } else if (mListLoader != null && mListLoader.getStatus() == AsyncTask.Status.PENDING) {
 
-                mListLoader = BaseFeedParser.getParser(this, FEED_URL);
+                mListLoader = BaseFeedParser.getParser(this);
 
                 mListLoader.execute((Void[]) null);
             } else if ((mListLoader != null) && mListLoader.getStatus() == AsyncTask.Status.FINISHED) {
 
-                mListLoader = BaseFeedParser.getParser(this, FEED_URL);
+                mListLoader = BaseFeedParser.getParser(this);
 
                 mListLoader.execute((Void[]) null);
             } else if (mListLoader == null) {
 
-                mListLoader = BaseFeedParser.getParser(this, FEED_URL);
+                mListLoader = BaseFeedParser.getParser(this);
 
                 mListLoader.execute((Void[]) null);
             }
@@ -133,7 +130,7 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
             mSwipeRefreshLayout.setRefreshing(false);
         });
 
-        mRvList =(RecyclerView)findViewById(android.R.id.list);
+        mRvList = (RecyclerView) findViewById(android.R.id.list);
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
         mRvList.setLayoutManager(llm);
