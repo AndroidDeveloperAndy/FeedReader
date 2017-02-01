@@ -12,6 +12,24 @@
     </item>
     <item
         is-multidex="false"
+        jar="C:\Users\Andy\.gradle\caches\modules-2\files-2.1\com.googlecode.json-simple\json-simple\1.1\5e303a03d04e6788dddfa3655272580ae0fc13bb\json-simple-1.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="5e303a03d04e6788dddfa3655272580ae0fc13bb">
+        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\json-simple-1.1_6fcf81fee43e1a83b0881f49714266b32aa2716f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Andy\.gradle\caches\modules-2\files-2.1\com.jakewharton\butterknife-annotations\8.5.1\bb67dad90bab7cd77a8f7f1b8442b47e3a2326bc\butterknife-annotations-8.5.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="bb67dad90bab7cd77a8f7f1b8442b47e3a2326bc">
+        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\butterknife-annotations-8.5.1_4d8989021b6f3ce4747b0fe912814b5295e9c06e.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="C:\Users\Andy\.gradle\caches\modules-2\files-2.1\org.jsoup\jsoup\1.8.3\65fd012581ded67bc20945d85c32b4598c3a9cf1\jsoup-1.8.3.jar"
         jumboMode="true"
         optimize="true"
@@ -34,7 +52,7 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.0"
-        sha1="b417a9accb5165c07cc80457ebc1afda1dd93502">
+        sha1="f0dc693d884daf14e18fd20953ca250bdaf8501a">
         <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\instant-run-bootstrap_c7f7467ccdacbf25d61fd91c7777553f457db6b9.jar" />
     </item>
     <item
@@ -48,12 +66,48 @@
     </item>
     <item
         is-multidex="false"
+        jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\25.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="8bc45ce1f63d1a391fd38b32a201be5a42f9c95d">
+        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\com.android.support-appcompat-v7-25.0.0_ec3011e8377567ad8db263c3dceadf1eddf5826a.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\25.0.0\jars\classes.jar"
         jumboMode="true"
         optimize="true"
         revision="25.0.0"
         sha1="d29714cc76b38157e3cbd034c66e1ec808eb4c19">
         <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\com.android.support-support-vector-drawable-25.0.0_f1caa52c10115eaf960df99e3b3f996afaf6ea4c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="B:\Android\Work\FeedReader\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="9a66bfc5e19b8f32fe39c6d5d358c84021c30f3e">
+        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\instant-run_a317d59566dafbf849d6e878ced34c2b1d1c459c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\support-core-utils\25.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="4ccbcda5c72027c7f7c14be9ff8640d9cb0d8da0">
+        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\com.android.support-support-core-utils-25.0.0_6e0e367d70c7adb6a788bfca2930013b9427fee5.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\support-v4\25.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\com.android.support-support-v4-25.0.0_ff816613c087134dacf0407673b8b597165594b4.jar" />
     </item>
     <item
         is-multidex="false"
@@ -84,78 +138,6 @@
     </item>
     <item
         is-multidex="false"
-        jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\support-fragment\25.0.0\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="07daa0b6e1d455c82a38422ffe287c18823d339a">
-        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\com.android.support-support-fragment-25.0.0_318fb8e09eb70dc1e47cdda5f8e1d879e52c857f.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\support-fragment\25.0.0\jars\libs\internal_impl-25.0.0.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="ee5faf4dee5b6a4364bf51587871047dde7c703a">
-        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\internal_impl-25.0.0_bf57033b006bca4101c537ce661a2d4cc2a5fbc1.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="C:\Users\Andy\.gradle\caches\modules-2\files-2.1\com.googlecode.json-simple\json-simple\1.1\5e303a03d04e6788dddfa3655272580ae0fc13bb\json-simple-1.1.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="5e303a03d04e6788dddfa3655272580ae0fc13bb">
-        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\json-simple-1.1_6fcf81fee43e1a83b0881f49714266b32aa2716f.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="C:\Users\Andy\.gradle\caches\modules-2\files-2.1\com.jakewharton\butterknife-annotations\8.5.1\bb67dad90bab7cd77a8f7f1b8442b47e3a2326bc\butterknife-annotations-8.5.1.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="bb67dad90bab7cd77a8f7f1b8442b47e3a2326bc">
-        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\butterknife-annotations-8.5.1_4d8989021b6f3ce4747b0fe912814b5295e9c06e.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\25.0.0\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="8bc45ce1f63d1a391fd38b32a201be5a42f9c95d">
-        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\com.android.support-appcompat-v7-25.0.0_ec3011e8377567ad8db263c3dceadf1eddf5826a.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="B:\Android\Work\FeedReader\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="3c05fcdc18058449361d502e432822af7ead8609">
-        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\instant-run_a317d59566dafbf849d6e878ced34c2b1d1c459c.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\support-core-utils\25.0.0\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="4ccbcda5c72027c7f7c14be9ff8640d9cb0d8da0">
-        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\com.android.support-support-core-utils-25.0.0_6e0e367d70c7adb6a788bfca2930013b9427fee5.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\support-v4\25.0.0\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.0"
-        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
-        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\com.android.support-support-v4-25.0.0_ff816613c087134dacf0407673b8b597165594b4.jar" />
-    </item>
-    <item
-        is-multidex="false"
         jar="C:\Users\Andy\.gradle\caches\modules-2\files-2.1\com.squareup.picasso\picasso\2.5.2\7446d06ec8d4f7ffcc53f1da37c95f200dcb9387\picasso-2.5.2.jar"
         jumboMode="true"
         optimize="true"
@@ -174,6 +156,15 @@
     </item>
     <item
         is-multidex="false"
+        jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\support-fragment\25.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="07daa0b6e1d455c82a38422ffe287c18823d339a">
+        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\com.android.support-support-fragment-25.0.0_318fb8e09eb70dc1e47cdda5f8e1d879e52c857f.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\21.0.3\jars\classes.jar"
         jumboMode="true"
         optimize="true"
@@ -189,6 +180,15 @@
         revision="25.0.0"
         sha1="53a420cd4f49274db6bd43475f8006ba67ef6bbd">
         <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\com.android.support-animated-vector-drawable-25.0.0_e0a89df7a9478d9881d2d95d07a6edb771dac30e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\com.android.support\support-fragment\25.0.0\jars\libs\internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="ee5faf4dee5b6a4364bf51587871047dde7c703a">
+        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\internal_impl-25.0.0_bf57033b006bca4101c537ce661a2d4cc2a5fbc1.jar" />
     </item>
     <item
         is-multidex="false"

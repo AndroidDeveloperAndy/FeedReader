@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -20,9 +19,10 @@ import com.hackspace.andy.readrss.adapter.FeedAdapter;
 import com.hackspace.andy.readrss.adapter.RecyclerClickListener;
 import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.R;
-import com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser;
 import com.hackspace.andy.readrss.loader.ILoaderData;
 import com.hackspace.andy.readrss.model.Implementation.MessageService;
+import com.hackspace.andy.readrss.presenter.Implementation.PrimaryFeedPresenter;
+import com.hackspace.andy.readrss.presenter.PrimaryFeedPresenterImpl;
 import com.hackspace.andy.readrss.view.PrimaryFeedView;
 
 import java.util.List;
@@ -30,12 +30,12 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Message>>,PrimaryFeedView {
+public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,ILoaderData<List<Message>>{
 
     private static final String TAG = PrimaryFeedActivity.class.getName();
+    PrimaryFeedPresenterImpl mPrimaryFeedPresenter = new PrimaryFeedPresenter(this);
 
     private List<Message> mMessagesList;
-    private BaseFeedParser<List<Message>> mListLoader;
     private FeedAdapter mFeedAdapter;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -46,8 +46,8 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
 
     private static ConnectivityManager mManagerConnect;
     private static NetworkInfo mNetworkInfo;
-
     private AlertDialog.Builder mAlertDialog;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,7 +60,7 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
 
     @Override
     public void getData(){
-        if(isOnline(this)){
+        if(isOnline()){
             getFeedFromNetwork();
             Toast.makeText(this,R.string.load_from_network,Toast.LENGTH_LONG).show();
         }
@@ -71,46 +71,29 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
     }
 
     @Override
+    public void getAlertDialog() {
+        mAlertDialog = new AlertDialog.Builder(this);
+        mAlertDialog.setTitle("Dialog");
+        mAlertDialog.setMessage("Error load feed.");
+        mAlertDialog.setPositiveButton("Retry", (dialog, which) -> {
+            getFeedFromNetwork();
+        });
+        mAlertDialog.setNegativeButton("Cancel", (dialog, which) -> {
+        });
+        mAlertDialog.setCancelable(false);
+    }
+
+    @Override
     public void getFeedFromNetwork(){
-        try {
-            if ((mListLoader != null) && mListLoader.getStatus() != AsyncTask.Status.RUNNING) {
-                if (mListLoader.isCancelled()) {
-                    mListLoader = BaseFeedParser.getParser(this);
-
-                    mListLoader.execute((Void[]) null);
-                } else {
-                    mListLoader.cancel(true);
-                    mListLoader = BaseFeedParser.getParser(this);
-
-                    mListLoader.execute((Void[]) null);
-                }
-
-            } else if (mListLoader != null && mListLoader.getStatus() == AsyncTask.Status.PENDING) {
-
-                mListLoader = BaseFeedParser.getParser(this);
-
-                mListLoader.execute((Void[]) null);
-            } else if ((mListLoader != null) && mListLoader.getStatus() == AsyncTask.Status.FINISHED) {
-
-                mListLoader = BaseFeedParser.getParser(this);
-
-                mListLoader.execute((Void[]) null);
-            } else if (mListLoader == null) {
-
-                mListLoader = BaseFeedParser.getParser(this);
-
-                mListLoader.execute((Void[]) null);
-            }
-        }catch (Exception e){
-            getAlertDialog();
-            e.getMessage();
-            Log.e(TAG, "Error load feed in the home page!", e);
-        }
+        mMessagesList = mPrimaryFeedPresenter.getNewsN();
+        FeedAdapter adapter = new FeedAdapter(mMessagesList);
+        mRvList.setAdapter(adapter);
     }
 
     @Override
     public void getFeedFromDatabase(){
-        mMessagesList = mRealmService.query();
+        mRealmService = new MessageService(this);
+        mMessagesList = mPrimaryFeedPresenter.getNewsD();
         mFeedAdapter = new FeedAdapter(mMessagesList);
         mRvList.setAdapter(mFeedAdapter);
     }
@@ -121,7 +104,7 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
         mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE);
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            if(isOnline(getApplicationContext())) {
+            if(isOnline()) {
                 PrimaryFeedActivity.this.runOnUiThread(() -> getFeedFromNetwork());
                 Toast.makeText(getApplicationContext(),R.string.update_data,Toast.LENGTH_LONG).show();
             }else {
@@ -150,8 +133,17 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
 
         mConfigRealm = new RealmConfiguration.Builder(getApplicationContext()).build();
         Realm.setDefaultConfiguration(mConfigRealm);
+    }
 
-        mRealmService = new MessageService(this);
+    @Override
+    public boolean isOnline()
+    {
+        if(getApplicationContext() == null) {
+            return false;
+        }
+        mManagerConnect = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        mNetworkInfo = mManagerConnect.getActiveNetworkInfo();
+        return mNetworkInfo != null && mNetworkInfo.isConnectedOrConnecting();
     }
 
     @Override
@@ -164,40 +156,14 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
                 msg.getDescription();
                 msg.getLink();
             }
-
+            //mRealmService = new MessageService(this);
             mRealmService.insert(mMessagesList);
-            FeedAdapter adapter = new FeedAdapter(mMessagesList);
-            mRvList.setAdapter(adapter);
 
         } catch (Throwable t){
-            getAlertDialog();
+            //getAlertDialog();
             t.getMessage();
             Log.e(TAG,"Error load list feed!",t);
         }
-    }
-
-    @Override
-    public void getAlertDialog(){
-        mAlertDialog = new AlertDialog.Builder(getApplicationContext());
-        mAlertDialog.setTitle("Dialog");
-        mAlertDialog.setMessage("Error load feed.");
-        mAlertDialog.setPositiveButton("Retry", (dialog, which) -> {
-            getFeedFromNetwork();
-        });
-        mAlertDialog.setNegativeButton("Cancel", (dialog, which) -> {
-            PrimaryFeedActivity.this.finish();
-        });
-        mAlertDialog.setCancelable(true);
-        mAlertDialog.setOnCancelListener(dialog -> {
-            PrimaryFeedActivity.this.finish();
-        });
-    }
-
-    private static boolean isOnline(Context context)
-    {
-        mManagerConnect = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        mNetworkInfo = mManagerConnect.getActiveNetworkInfo();
-        return mNetworkInfo != null && mNetworkInfo.isConnectedOrConnecting();
     }
 }
 

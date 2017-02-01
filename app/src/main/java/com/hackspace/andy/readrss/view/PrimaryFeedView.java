@@ -6,4 +6,5 @@ public interface PrimaryFeedView {
     void getFeedFromDatabase();
     void getData();
     void getAlertDialog();
+    boolean isOnline();
 }
