@@ -93,7 +93,7 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
     @Override
     public void getFeedFromDatabase(){
         mRealmService = new MessageService(this);
-        mMessagesList = mPrimaryFeedPresenter.getNewsD();
+        mMessagesList = mRealmService.query();
         mFeedAdapter = new FeedAdapter(mMessagesList);
         mRvList.setAdapter(mFeedAdapter);
     }
@@ -156,11 +156,11 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
                 msg.getDescription();
                 msg.getLink();
             }
-            //mRealmService = new MessageService(this);
+            mRealmService = new MessageService(this);
             mRealmService.insert(mMessagesList);
 
         } catch (Throwable t){
-            //getAlertDialog();
+            getAlertDialog();
             t.getMessage();
             Log.e(TAG,"Error load list feed!",t);
         }

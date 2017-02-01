@@ -75,7 +75,7 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
 
     @Override
     public void getData() {
-        if (isOnline(this)) {
+        if (isOnline()) {
             loadDetailFeed();
             Toast.makeText(this, R.string.load_from_network, Toast.LENGTH_LONG).show();
         } else {
@@ -176,8 +176,12 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
         });
     }
 
-    private static boolean isOnline(Context context) {
-        mConnectManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    @Override
+    public boolean isOnline() {
+        if(getApplicationContext() == null) {
+            return false;
+        }
+        mConnectManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         mNetworkInfo = mConnectManager.getActiveNetworkInfo();
         return mNetworkInfo != null && mNetworkInfo.isConnectedOrConnecting();
     }
@@ -185,7 +189,7 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     @Override
     public void onRefresh() {
         mSwipeRefreshLayout.setRefreshing(false);
-        if (isOnline(getApplicationContext())) {
+        if (isOnline()) {
             DetailFeedActivity.this.runOnUiThread(() -> loadDetailFeed());
             Toast.makeText(getApplicationContext(), R.string.update_data, Toast.LENGTH_LONG).show();
         } else {

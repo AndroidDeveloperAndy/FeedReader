@@ -7,4 +7,5 @@ public interface DetailFeedView {
     void getDetailFeedFromDatabase();
     void getData();
     void getAlertDialog();
+    boolean isOnline();
 }

@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser;
 import com.hackspace.andy.readrss.model.Entity.Message;
-import com.hackspace.andy.readrss.model.Implementation.MessageService;
 import com.hackspace.andy.readrss.presenter.PrimaryFeedPresenterImpl;
 import com.hackspace.andy.readrss.view.Implementation.PrimaryFeedActivity;
 import com.hackspace.andy.readrss.view.PrimaryFeedView;
@@ -16,7 +15,6 @@ public class PrimaryFeedPresenter implements PrimaryFeedPresenterImpl {
 
     private static final String TAG = PrimaryFeedPresenter.class.getName();
     private BaseFeedParser<List<Message>> mListLoader;
-    private MessageService mRealmService;
     private List<Message> mMessagesList;
     private final PrimaryFeedView mPrimaryFeedView;
 
@@ -63,10 +61,5 @@ public class PrimaryFeedPresenter implements PrimaryFeedPresenterImpl {
             Log.e(TAG, "Error load feed in the home page!", e);
         }
         return mMessagesList;
-    }
-
-    @Override
-    public List<Message> getNewsD() {
-        return mMessagesList = mRealmService.query();
     }
 }

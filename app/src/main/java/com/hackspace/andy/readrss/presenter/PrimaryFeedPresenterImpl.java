@@ -6,5 +6,4 @@ import java.util.List;
 
 public interface PrimaryFeedPresenterImpl {
     List<Message> getNewsN();
-    List<Message> getNewsD();
 }
