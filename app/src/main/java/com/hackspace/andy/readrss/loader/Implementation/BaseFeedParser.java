@@ -1,8 +1,6 @@
 package com.hackspace.andy.readrss.loader.Implementation;
 
 import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.hackspace.andy.readrss.loader.FeedParser;
 import com.hackspace.andy.readrss.loader.ILoaderData;
@@ -20,8 +18,6 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 	public static final String LINK = "link";
 	public static final String TITLE = "title";
 	public static final String ITEM = "item";
-
-	private static final String TAG = BaseFeedParser.class.getName();
 
 	private static final String FEED_URL = "https://habrahabr.ru/rss/feed/posts/6266e7ec4301addaf92d10eb212b4546";
 

@@ -48,26 +48,13 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
     private static NetworkInfo mNetworkInfo;
     private AlertDialog.Builder mAlertDialog;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_primary_feed);
 
         createViews();
-        getData();
-    }
-
-    @Override
-    public void getData(){
-        if(isOnline()){
-            getFeedFromNetwork();
-            Toast.makeText(this,R.string.load_from_network,Toast.LENGTH_LONG).show();
-        }
-        else {
-            getFeedFromDatabase();
-            Toast.makeText(this,R.string.load_from_database,Toast.LENGTH_LONG).show();
-        }
+        getFeedFromNetwork();
     }
 
     @Override
@@ -85,17 +72,20 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
 
     @Override
     public void getFeedFromNetwork(){
-        mMessagesList = mPrimaryFeedPresenter.getNewsN();
+        mMessagesList = mPrimaryFeedPresenter.getNews();
         FeedAdapter adapter = new FeedAdapter(mMessagesList);
         mRvList.setAdapter(adapter);
+        Toast.makeText(this,R.string.load_from_network,Toast.LENGTH_LONG).show();
     }
 
     @Override
-    public void getFeedFromDatabase(){
+    public List<Message> getFeedFromDatabase(){
         mRealmService = new MessageService(this);
         mMessagesList = mRealmService.query();
         mFeedAdapter = new FeedAdapter(mMessagesList);
         mRvList.setAdapter(mFeedAdapter);
+        Toast.makeText(this,R.string.load_from_database,Toast.LENGTH_LONG).show();
+        return mMessagesList;
     }
 
     @Override
@@ -119,18 +109,12 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
         mRvList.setLayoutManager(llm);
         mRvList.setHasFixedSize(true);
 
-        mRvList.addOnItemTouchListener(new RecyclerClickListener(this) {
-            @Override
-            public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
-
-                startActivity(DetailFeedActivity.newInstance(PrimaryFeedActivity.this,
-                        mMessagesList.get(position).getTitle(),
-                        mMessagesList.get(position).getDate().toString(),
-                        mMessagesList.get(position).getLink(),
-                        mMessagesList.get(position).getDescription()));
-            }
-        });
-
+        mRvList.addOnItemTouchListener(new RecyclerClickListener(this, (view, position) -> startActivity(DetailFeedActivity.newInstance(PrimaryFeedActivity.this,
+                mMessagesList.get(position).getTitle(),
+                mMessagesList.get(position).getDate().toString(),
+                mMessagesList.get(position).getLink(),
+                mMessagesList.get(position).getDescription())))
+        );
         mConfigRealm = new RealmConfiguration.Builder(getApplicationContext()).build();
         Realm.setDefaultConfiguration(mConfigRealm);
     }

@@ -23,42 +23,45 @@ public class PrimaryFeedPresenter implements PrimaryFeedPresenterImpl {
     }
 
     @Override
-    public List<Message> getNewsN() {
-        if(mPrimaryFeedView.isOnline())
-        try {
-            if ((mListLoader != null) && mListLoader.getStatus() != AsyncTask.Status.RUNNING) {
-                if (mListLoader.isCancelled()) {
+    public List<Message> getNews() {
+        if(mPrimaryFeedView.isOnline()) {
+            try {
+                if ((mListLoader != null) && mListLoader.getStatus() != AsyncTask.Status.RUNNING) {
+                    if (mListLoader.isCancelled()) {
+                        mListLoader = BaseFeedParser.getParser(PrimaryFeedActivity.class.newInstance());
+
+                        mListLoader.execute((Void[]) null);
+                    } else {
+                        mListLoader.cancel(true);
+                        mListLoader = BaseFeedParser.getParser(PrimaryFeedActivity.class.newInstance());
+
+                        mListLoader.execute((Void[]) null);
+                    }
+
+                } else if (mListLoader != null && mListLoader.getStatus() == AsyncTask.Status.PENDING) {
+
                     mListLoader = BaseFeedParser.getParser(PrimaryFeedActivity.class.newInstance());
 
                     mListLoader.execute((Void[]) null);
-                } else {
-                    mListLoader.cancel(true);
+                } else if ((mListLoader != null) && mListLoader.getStatus() == AsyncTask.Status.FINISHED) {
+
                     mListLoader = BaseFeedParser.getParser(PrimaryFeedActivity.class.newInstance());
 
                     mListLoader.execute((Void[]) null);
+                } else if (mListLoader == null) {
+
+                    mListLoader = BaseFeedParser.getParser(PrimaryFeedActivity.class.newInstance());
+
+                    mListLoader.execute((Void[]) null);
+                    mMessagesList = mListLoader.get();
                 }
-
-            } else if (mListLoader != null && mListLoader.getStatus() == AsyncTask.Status.PENDING) {
-
-                mListLoader = BaseFeedParser.getParser(PrimaryFeedActivity.class.newInstance());
-
-                mListLoader.execute((Void[]) null);
-            } else if ((mListLoader != null) && mListLoader.getStatus() == AsyncTask.Status.FINISHED) {
-
-                mListLoader = BaseFeedParser.getParser(PrimaryFeedActivity.class.newInstance());
-
-                mListLoader.execute((Void[]) null);
-            } else if (mListLoader == null) {
-
-                mListLoader = BaseFeedParser.getParser(PrimaryFeedActivity.class.newInstance());
-
-                mListLoader.execute((Void[]) null);
-                mMessagesList = mListLoader.get();
+            } catch (Exception e) {
+                mPrimaryFeedView.getAlertDialog();
+                e.getMessage();
+                Log.e(TAG, "Error load feed in the home page!", e);
             }
-        }catch (Exception e){
-            mPrimaryFeedView.getAlertDialog();
-            e.getMessage();
-            Log.e(TAG, "Error load feed in the home page!", e);
+        }else {
+            mMessagesList = mPrimaryFeedView.getFeedFromDatabase();
         }
         return mMessagesList;
     }

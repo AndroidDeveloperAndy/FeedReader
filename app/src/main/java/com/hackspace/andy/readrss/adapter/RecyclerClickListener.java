@@ -6,41 +6,36 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-public abstract class RecyclerClickListener implements RecyclerView.OnItemTouchListener{
+public class RecyclerClickListener implements RecyclerView.OnItemTouchListener{
     private GestureDetector mGestureDetector;
+    private OnItemClickListener mListener;
 
-    private GestureDetector.OnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
-                @Override
-                public boolean onSingleTapUp(MotionEvent e) {
-                    return true;
-                }
-            };
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
+    }
 
     //TODO Remove constructor move initialization logic of GestureDetector to onIntercept method instead.
     //You can get context from RecyclerView.
-    public RecyclerClickListener(Context context) {
-        mGestureDetector = new GestureDetector(context, gestureListener);
+    public RecyclerClickListener(Context context, OnItemClickListener listener) {
+        this.mListener = listener;
+        mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                return true;
+            }
+        });
     }
 
     @Override
     public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-        if (mGestureDetector.onTouchEvent(e)) {
-            View clickedChild = rv.findChildViewUnder(e.getX(), e.getY());
-            if (clickedChild != null && !clickedChild.dispatchTouchEvent(e)) {
-                int clickedPosition = rv.getChildPosition(clickedChild);
-                if (clickedPosition != RecyclerView.NO_POSITION) {
-                    onItemClick(rv, clickedChild, clickedPosition);
-                    return true;
-                }
-            }
+        View childView = rv.findChildViewUnder(e.getX(), e.getY());
+        if (childView != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
+            mListener.onItemClick(childView, rv.getChildPosition(childView));
         }
         return false;
     }
 
     @Override
-    public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-    }
-
-    public abstract void onItemClick(RecyclerView recyclerView, View itemView, int position);
+    public void onTouchEvent(RecyclerView rv, MotionEvent e) {}
 }
 
