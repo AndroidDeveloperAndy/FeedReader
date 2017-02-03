@@ -8,6 +8,7 @@ public interface PrimaryFeedView {
     void createViews();
     void getFeedFromNetwork();
     List<Message> getFeedFromDatabase();
-    void getAlertDialog();
+    void getAlertDialogForConnectionError();
     boolean isOnline();
+    void messageBox(String method, String message);
 }

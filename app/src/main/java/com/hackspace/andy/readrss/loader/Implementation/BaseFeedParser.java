@@ -4,6 +4,8 @@ import android.os.AsyncTask;
 
 import com.hackspace.andy.readrss.loader.FeedParser;
 import com.hackspace.andy.readrss.loader.ILoaderData;
+import com.hackspace.andy.readrss.view.Implementation.PrimaryFeedActivity;
+import com.hackspace.andy.readrss.view.PrimaryFeedView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,13 +27,14 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 	private ILoaderData<T> mEndDataPoint;
 	static private BaseFeedParser sParser;
 	private T mObjectParse;
+	private PrimaryFeedView mFeedView = new PrimaryFeedActivity();
 
 	protected BaseFeedParser(ILoaderData<T> endDataPoint){
 		this.mEndDataPoint = endDataPoint;
 		try {
 			this.mFeedUrl = new URL(FEED_URL);
 		} catch (MalformedURLException e) {
-			e.getMessage();
+			mFeedView.messageBox("BaseFeedParser",e.getMessage());
 			throw new RuntimeException(e);
 		}
 	}
@@ -56,7 +59,7 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 		try {
 			return mFeedUrl.openStream();
 		} catch (IOException e) {
-			e.getMessage();
+			mFeedView.messageBox("getInputStream",e.getMessage());
 			throw new RuntimeException(e);
 		}
 	}

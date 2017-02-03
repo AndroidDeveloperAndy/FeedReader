@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.hackspace.andy.readrss.loader.ILoaderData;
 import com.hackspace.andy.readrss.model.Entity.Message;
+import com.hackspace.andy.readrss.view.Implementation.PrimaryFeedActivity;
+import com.hackspace.andy.readrss.view.PrimaryFeedView;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -18,6 +20,7 @@ public class SaxFeedParser extends BaseFeedParser<List<Message>> {
 	private static final String TAG = SaxFeedParser.class.getName();
 
 	private SAXParserFactory mFactoryParser = SAXParserFactory.newInstance();
+	private PrimaryFeedView mFeedView = new PrimaryFeedActivity();
 	private SAXParser SaxParser;
 	private XMLReader XmlReader;
 	private FeedHandler mFeedHandler;
@@ -40,8 +43,7 @@ public class SaxFeedParser extends BaseFeedParser<List<Message>> {
 
 			return mFeedHandler.getMessages();
 		} catch (Exception e) {
-			e.getMessage();
-			Log.d(TAG,"Error parse feed!");
+			mFeedView.messageBox("parse",e.getMessage());
 			throw new RuntimeException(e);
 		}
 	}

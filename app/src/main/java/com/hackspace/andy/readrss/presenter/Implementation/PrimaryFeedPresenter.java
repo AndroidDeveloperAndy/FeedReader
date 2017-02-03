@@ -56,7 +56,7 @@ public class PrimaryFeedPresenter implements PrimaryFeedPresenterImpl {
                     mMessagesList = mListLoader.get();
                 }
             } catch (Exception e) {
-                mPrimaryFeedView.getAlertDialog();
+                mPrimaryFeedView.getAlertDialogForConnectionError();
                 e.getMessage();
                 Log.e(TAG, "Error load feed in the home page!", e);
             }

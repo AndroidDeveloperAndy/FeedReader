@@ -58,10 +58,8 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     private MessageService mRealm;
     private RealmConfiguration mConfigRealmWithDetailFeed;
 
-    private static ConnectivityManager mConnectManager;
-    private static NetworkInfo mNetworkInfo;
-
-    private AlertDialog.Builder mAlertDialog;
+    private static ConnectivityManager sConnectManager;
+    private static NetworkInfo sNetworkInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,8 +90,7 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
             mTxLink.setText(sUrl);
             new ThreadDetailFeed(mTxFeed).execute(sUrl);
         } catch (Exception e) {
-            getAlertDialog();
-            e.getMessage();
+            messageBox("loadDetailFeed",e.getMessage());
             Log.e(TAG, "Error load detail page!", e);
         }
     }
@@ -150,30 +147,17 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
 
     @Override
     public void getDetailFeedFromDatabase() {
-        mList = mRealm.query();
-        for (Message msg : mList) {
-            mTxHead.setText(msg.getTitle());
-            mTxDate.setText(msg.getDate());
-            new ThreadDetailFeed(mTxFeed).execute(sUrl);
-            mTxLink.setText(msg.getLink());
+        try {
+            mList = mRealm.query();
+            for (Message msg : mList) {
+                mTxHead.setText(msg.getTitle());
+                mTxDate.setText(msg.getDate());
+                new ThreadDetailFeed(mTxFeed).execute(sUrl);
+                mTxLink.setText(sUrl);
+            }
+        }catch (Exception e){
+            messageBox("getDetailFeedFromDatabase",e.getMessage());
         }
-    }
-
-    @Override
-    public void getAlertDialog(){
-        mAlertDialog = new AlertDialog.Builder(getApplicationContext());
-        mAlertDialog.setTitle("Dialog");
-        mAlertDialog.setMessage("Error load feed.");
-        mAlertDialog.setPositiveButton("Retry", (dialog, which) -> {
-            loadDetailFeed();
-        });
-        mAlertDialog.setNegativeButton("Cancel", (dialog, which) -> {
-            DetailFeedActivity.this.finish();
-        });
-        mAlertDialog.setCancelable(true);
-        mAlertDialog.setOnCancelListener(dialog -> {
-            DetailFeedActivity.this.finish();
-        });
     }
 
     @Override
@@ -181,9 +165,9 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
         if(getApplicationContext() == null) {
             return false;
         }
-        mConnectManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        mNetworkInfo = mConnectManager.getActiveNetworkInfo();
-        return mNetworkInfo != null && mNetworkInfo.isConnectedOrConnecting();
+        sConnectManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        sNetworkInfo = sConnectManager.getActiveNetworkInfo();
+        return sNetworkInfo != null && sNetworkInfo.isConnectedOrConnecting();
     }
 
     @Override
@@ -198,6 +182,19 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
 
     }
 
+    @Override
+    public void messageBox(String method, String message)
+    {
+        Log.d("EXCEPTION: " + method,  message);
+
+        AlertDialog.Builder messageBox = new AlertDialog.Builder(this);
+        messageBox.setTitle(method);
+        messageBox.setMessage(message);
+        messageBox.setCancelable(false);
+        messageBox.setNeutralButton("OK", null);
+        messageBox.show();
+    }
+
     private class ThreadDetailFeed extends AsyncTask<String, Void, String> {
 
         private TextView mTextViewFeed;
@@ -208,8 +205,12 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
 
         @Override
         protected String doInBackground(String... params) {
-            mStructureDetailFeed = Jsoup.parse(sDescription);
-            mStructureDetailFeed.select(P);
+            try {
+                mStructureDetailFeed = Jsoup.parse(sDescription);
+                mStructureDetailFeed.select(P);
+            }catch (Exception e){
+                messageBox("ThreadDetailFeed",e.getMessage());
+            }
             return mDetailFeed = mStructureDetailFeed.text();
         }
 
