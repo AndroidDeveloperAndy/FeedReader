@@ -14,7 +14,7 @@ public class RecyclerClickListener implements RecyclerView.OnItemTouchListener{
         void onItemClick(View view, int position);
     }
 
-    //TODO Remove constructor move initialization logic of GestureDetector to onIntercept method instead.
+    //TODO Remove constructor move initialization logic of GestureDetector to onIntercept method instead.  -  //I tried to do what you wanted, and I could not get.
     //You can get context from RecyclerView.
     public RecyclerClickListener(Context context, OnItemClickListener listener) {
         this.mListener = listener;
