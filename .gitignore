@@ -79,3 +79,4 @@ proguard-rules.pro
 /*/build/
 build/
 
+/build
