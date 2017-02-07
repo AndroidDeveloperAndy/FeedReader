@@ -24,5 +24,18 @@ android {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'org.jsoup:jsoup:1.8.3'
+    compile  'io.reactivex:rxjava:1.1.6'
+
+    compile 'com.googlecode.json-simple:json-simple:1.1'
+    compile 'io.realm:realm-android:0.87.4'
+
+    compile 'com.android.support:cardview-v7:21.0.+'
+    compile 'com.android.support:recyclerview-v7:21.0.+'
+
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
+    compile 'com.jakewharton:butterknife:8.5.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 }
 

@@ -72,3 +72,10 @@ out/
 .DS_Store
 /.idea
 /local.properties
+/.idea/
+.DS_Store
+proguard-rules.pro
+/.gradle/
+/*/build/
+build/
+
