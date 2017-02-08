@@ -5,23 +5,23 @@ import android.content.Context;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
-import com.hackspace.andy.readrss.adapter.RVAdapter;
+import com.hackspace.andy.readrss.adapter.FeedAdapter;
 import com.hackspace.andy.readrss.adapter.RecyclerClickListener;
 import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.R;
-import com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser;
 import com.hackspace.andy.readrss.loader.ILoaderData;
 import com.hackspace.andy.readrss.model.Implementation.MessageService;
+import com.hackspace.andy.readrss.presenter.Implementation.PrimaryFeedPresenter;
+import com.hackspace.andy.readrss.presenter.PrimaryFeedPresenterImpl;
 import com.hackspace.andy.readrss.view.PrimaryFeedView;
 
 import java.util.List;
@@ -29,25 +29,23 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Message>>,PrimaryFeedView {
+public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,ILoaderData<List<Message>>{
 
     private static final String TAG = PrimaryFeedActivity.class.getName();
+    private PrimaryFeedPresenterImpl mPrimaryFeedPresenter = new PrimaryFeedPresenter(this);
 
-    private List<Message> messagesList;
-    private BaseFeedParser<List<Message>> loader;
-    private RVAdapter adapter;
+    private List<Message> mMessagesList;
+    private FeedAdapter mFeedAdapter;
 
-    private RecyclerView rvList;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private RecyclerView mRvList;
 
-    private MessageService realm;
-    private RealmConfiguration configRealm;
+    private MessageService mRealmService;
+    private RealmConfiguration mConfigRealm;
 
-    private static ConnectivityManager managerConnect;
-    private static NetworkInfo netInfo;
-
-    //TODO this constant shouldn't be in View, more looks like Model layer.
-    protected static final String FEED_URL = "https://habrahabr.ru/rss/feed/posts/6266e7ec4301addaf92d10eb212b4546";
+    private static ConnectivityManager sManagerConnect;
+    private static NetworkInfo sNetworkInfo;
+    private AlertDialog.Builder mAlertDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,132 +53,124 @@ public class PrimaryFeedActivity extends Activity implements ILoaderData<List<Me
         setContentView(R.layout.activity_primary_feed);
 
         createViews();
-        getData();
+        getFeedFromNetwork();
     }
 
     @Override
-    public void getData(){
-        if(isOnline(this)){
+    public void getAlertDialogForConnectionError() {
+        mAlertDialog = new AlertDialog.Builder(this);
+        mAlertDialog.setTitle("Dialog");
+        mAlertDialog.setMessage("Error load feed. Reconnect for internet.");
+        mAlertDialog.setPositiveButton("Retry", (dialog, which) -> {
             getFeedFromNetwork();
-            Toast.makeText(this,R.string.load_from_network,Toast.LENGTH_LONG).show();
-        }
-        else {
-            getFeedFromDatabase();
-            Toast.makeText(this,R.string.load_from_database,Toast.LENGTH_LONG).show();
-        }
+        });
+        mAlertDialog.setNegativeButton("Cancel", (dialog, which) -> {
+        });
+        mAlertDialog.setCancelable(false);
+        mAlertDialog.show();
     }
 
     @Override
     public void getFeedFromNetwork(){
         try {
-            if ((loader != null) && loader.getStatus() != AsyncTask.Status.RUNNING) {
-                if (loader.isCancelled()) {
-                    loader = BaseFeedParser.getParser(this, FEED_URL);
-
-                    loader.execute((Void[]) null);
-                } else {
-                    loader.cancel(true);
-                    loader = BaseFeedParser.getParser(this, FEED_URL);
-
-                    loader.execute((Void[]) null);
-                }
-
-            } else if (loader != null && loader.getStatus() == AsyncTask.Status.PENDING) {
-
-                loader = BaseFeedParser.getParser(this, FEED_URL);
-
-                loader.execute((Void[]) null);
-            } else if ((loader != null) && loader.getStatus() == AsyncTask.Status.FINISHED) {
-
-                loader = BaseFeedParser.getParser(this, FEED_URL);
-
-                loader.execute((Void[]) null);
-            } else if (loader == null) {
-
-                loader = BaseFeedParser.getParser(this, FEED_URL);
-
-                loader.execute((Void[]) null);
-            }
-        }catch (Exception e){
-            Log.e(TAG, "Error load feed in the home page!", e);
+        mMessagesList = mPrimaryFeedPresenter.getNews();
+        FeedAdapter adapter = new FeedAdapter(mMessagesList);
+        mRvList.setAdapter(adapter);
+        Toast.makeText(this,R.string.load_from_network,Toast.LENGTH_LONG).show();
+        }
+        catch (Exception e){
+            messageBox("getFeedFromNetwork",e.getMessage());
+            getAlertDialogForConnectionError();
         }
     }
 
     @Override
-    public void getFeedFromDatabase(){
-        messagesList = realm.query();
-        adapter = new RVAdapter(messagesList);
-        rvList.setAdapter(adapter);
+    public List<Message> getFeedFromDatabase(){
+        try {
+            mRealmService = new MessageService(this);
+            mMessagesList = mRealmService.query();
+            mFeedAdapter = new FeedAdapter(mMessagesList);
+            mRvList.setAdapter(mFeedAdapter);
+            Toast.makeText(this, R.string.load_from_database, Toast.LENGTH_LONG).show();
+        }
+        catch (Exception e){
+            messageBox("getFeedFromDatabase",e.getMessage());
+        }
+        return mMessagesList;
     }
 
     @Override
     public void createViews(){
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE);
+
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            if(isOnline(getApplicationContext())) {
+            if(isOnline()) {
                 PrimaryFeedActivity.this.runOnUiThread(() -> getFeedFromNetwork());
                 Toast.makeText(getApplicationContext(),R.string.update_data,Toast.LENGTH_LONG).show();
             }else {
-                Toast.makeText(getApplicationContext(),R.string.dont_update+"\n"+R.string.check_network,Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),String.format("%s\n%s",getString(R.string.dont_update),getString(R.string.check_network)),Toast.LENGTH_LONG).show();
             }
             mSwipeRefreshLayout.setRefreshing(false);
         });
 
-
-        rvList=(RecyclerView)findViewById(android.R.id.list);
+        mRvList = (RecyclerView) findViewById(android.R.id.list);
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
-        rvList.setLayoutManager(llm);
-        rvList.setHasFixedSize(true);
+        mRvList.setLayoutManager(llm);
+        mRvList.setHasFixedSize(true);
 
-        rvList.addOnItemTouchListener(new RecyclerClickListener(this) {
-            @Override
-            public void onItemClick(RecyclerView recyclerView, View itemView, int position) {
+        mRvList.addOnItemTouchListener(new RecyclerClickListener(this, (view, position) -> startActivity(DetailFeedActivity.newInstance(PrimaryFeedActivity.this,
+                mMessagesList.get(position).getTitle(),
+                mMessagesList.get(position).getDate().toString(),
+                mMessagesList.get(position).getLink(),
+                mMessagesList.get(position).getDescription())))
+        );
+        mConfigRealm = new RealmConfiguration.Builder(getApplicationContext()).build();
+        Realm.setDefaultConfiguration(mConfigRealm);
+    }
 
-                startActivity(DetailFeedActivity.newInstance(PrimaryFeedActivity.this,
-                        messagesList.get(position).getTitle(),
-                        messagesList.get(position).getDate().toString(),
-                        messagesList.get(position).getLink(),
-                        messagesList.get(position).getDescription()));
-            }
-        });
-
-        configRealm = new RealmConfiguration.Builder(getApplicationContext()).build();
-        Realm.setDefaultConfiguration(configRealm);
-
-        realm = new MessageService(this);
+    @Override
+    public boolean isOnline()
+    {
+        if(getApplicationContext() == null) {
+            return false;
+        }
+        sManagerConnect = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        sNetworkInfo = sManagerConnect.getActiveNetworkInfo();
+        return sNetworkInfo != null && sNetworkInfo.isConnectedOrConnecting();
     }
 
     @Override
     public void endLoad(@NonNull List<Message> data) {
         try{
-            messagesList = data;
-            for (Message msg : messagesList){
+            mMessagesList = data;
+            for (Message msg : mMessagesList){
                 msg.getTitle();
                 msg.getDate();
                 msg.getDescription();
                 msg.getLink();
             }
-
-            realm.insert(messagesList);
-            RVAdapter adapter = new RVAdapter(messagesList);
-            rvList.setAdapter(adapter);
+            mRealmService = new MessageService(this);
+            mRealmService.insert(mMessagesList);
 
         } catch (Throwable t){
+            messageBox("endLoad",t.getMessage());
             Log.e(TAG,"Error load list feed!",t);
         }
     }
 
-    private static boolean isOnline(Context context)
+    @Override
+    public void messageBox(String method, String message)
     {
-        managerConnect = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        netInfo = managerConnect.getActiveNetworkInfo();
-        if (netInfo != null && netInfo.isConnectedOrConnecting())
-        {
-            return true;
-        }
-        return false;
+        Log.d("EXCEPTION: " + method,  message);
+
+        AlertDialog.Builder messageBox = new AlertDialog.Builder(this);
+        messageBox.setTitle(method);
+        messageBox.setMessage(message);
+        messageBox.setCancelable(false);
+        messageBox.setNeutralButton("OK", null);
+        messageBox.show();
     }
 }
 

@@ -18,12 +18,12 @@ import static com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser.TI
 
 public class FeedHandler extends DefaultHandler {
 
-	private List<Message> messages;
-	private Message currentMessage;
-	private StringBuilder builder;
+	private List<Message> mMessages;
+	private Message mCurrentMessage;
+	private StringBuilder mBuilder;
 	
 	public List<Message> getMessages(){
-		return this.messages;
+		return this.mMessages;
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class FeedHandler extends DefaultHandler {
 			throws SAXException {
 		super.characters(ch, start, length);
 
-		builder.append(ch, start, length);
+		mBuilder.append(ch, start, length);
 	}
 
 	@Override
@@ -39,29 +39,30 @@ public class FeedHandler extends DefaultHandler {
 			throws SAXException {
 		super.endElement(uri, localName, name);
 
-		if (this.currentMessage != null){
-			//TODO Use switch case instead of if else block.
-			/*switch (localName) {
-				case TITLE:
-					currentMessage.setTitle(builder.toString());
-				break;
+		if (this.mCurrentMessage != null){
+			switch (localName) {
+ 				case TITLE:
+					mCurrentMessage.setTitle(mBuilder.toString());
+ 				break;
+ 				case CHANNEL:
+					mCurrentMessage.setLink(mBuilder.toString());
+ 				break;
+ 				case LINK:
+					mCurrentMessage.setLink(mBuilder.toString());
+ 				break;
+ 				case DESCRIPTION:
+					mCurrentMessage.setDescription(mBuilder.toString());
+ 				break;
+				case PUB_DATE:
+					mCurrentMessage.setDate(mBuilder.toString());
+					break;
+				case ITEM:
+					mMessages.add(mCurrentMessage);
+					break;
 				default:
 					break;
-			}*/
-			if (localName.equalsIgnoreCase(TITLE)){
-				currentMessage.setTitle(builder.toString());
-			} else if (localName.equalsIgnoreCase(CHANNEL)){
-				currentMessage.setLink(builder.toString());
-			} else if (localName.equalsIgnoreCase(LINK)){
-				currentMessage.setLink(builder.toString());
-			} else if (localName.equalsIgnoreCase(DESCRIPTION)){
-				currentMessage.setDescription(builder.toString());
-			} else if (localName.equalsIgnoreCase(PUB_DATE)){
-				currentMessage.setDate(builder.toString());
-			} else if (localName.equalsIgnoreCase(ITEM)){
-				messages.add(currentMessage);
 			}
-			builder.setLength(0);	
+			mBuilder.setLength(0);
 		}
 	}
 
@@ -69,8 +70,8 @@ public class FeedHandler extends DefaultHandler {
 	public void startDocument() throws SAXException {
 		super.startDocument();
 
-		messages = new ArrayList<>();
-		builder = new StringBuilder();
+		mMessages = new ArrayList<>();
+		mBuilder = new StringBuilder();
 	}
 
 	@Override
@@ -79,7 +80,7 @@ public class FeedHandler extends DefaultHandler {
 		super.startElement(uri, localName, name, attributes);
 
 		if (localName.equalsIgnoreCase(ITEM)){
-			this.currentMessage = new Message();
+			this.mCurrentMessage = new Message();
 		}
 	}
 }

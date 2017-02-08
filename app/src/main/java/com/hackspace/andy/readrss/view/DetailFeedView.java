@@ -6,4 +6,6 @@ public interface DetailFeedView {
     void loadDetailFeed();
     void getDetailFeedFromDatabase();
     void getData();
+    boolean isOnline();
+    void messageBox(String method, String message);
 }

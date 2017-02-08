@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.widget.TextView;
@@ -29,34 +30,36 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-public class DetailFeedActivity extends Activity implements ILoaderData <List<Message>>,SwipeRefreshLayout.OnRefreshListener,DetailFeedView {
+public class DetailFeedActivity extends Activity implements ILoaderData<List<Message>>, SwipeRefreshLayout.OnRefreshListener, DetailFeedView {
 
     private static final String TAG = DetailFeedActivity.class.getName();
 
-    private static final String ARG_TITLE = "_TITLE_ARGUMENT";
-    private static final String ARG_DATE = "_DATE_ARGUMENT";
-    private static final String ARG_DESCRIPTION = "_DESCRIPTION_ARGUMENT";
-    private static final String ARG_LINK = "_LINK_ARGUMENT";
+    private static final String ARG_TITLE = "TITLE_ARGUMENT";
+    private static final String ARG_DATE = "DATE_ARGUMENT";
+    private static final String ARG_DESCRIPTION = "DESCRIPTION_ARGUMENT";
+    private static final String ARG_LINK = "LINK_ARGUMENT";
 
-    private static String title;
-    private static String date;
-    private static String description;
-    private static String url;
-    private Document doc;
+    private static final String P = "p";
 
-    private List<Message> list;
-    private Intent intent;
-    private String detailFeed;
+    private static String sTitle;
+    private static String sDate;
+    private static String sDescription;
+    private static String sUrl;
+    private Document mStructureDetailFeed;
 
-    private TextView txHead,txFeed,txLink,txDate;
+    private List<Message> mList;
+    private Intent mIntent;
+    private String mDetailFeed;
+
+    private TextView mTxHead, mTxFeed, mTxLink, mTxDate;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private CardView cardViewDF;
+    private CardView mCardViewDetailFeed;
 
-    private MessageService realm;
-    private RealmConfiguration configRealmWithDetailFeed;
+    private MessageService mRealm;
+    private RealmConfiguration mConfigRealmWithDetailFeed;
 
-    private static ConnectivityManager cm;
-    private static NetworkInfo netInfo;
+    private static ConnectivityManager sConnectManager;
+    private static NetworkInfo sNetworkInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,70 +72,69 @@ public class DetailFeedActivity extends Activity implements ILoaderData <List<Me
     }
 
     @Override
-    public void getData(){
-        if(isOnline(this)) {
+    public void getData() {
+        if (isOnline()) {
             loadDetailFeed();
-            Toast.makeText(this, R.string.load_from_network,Toast.LENGTH_LONG).show();
-        }else {
-            //TODO Use String.format instead of + concatenation. In this case you have a bug, resource id will converts to String with two numbers separated by \n symbol.
-            Toast.makeText(this, R.string.error_load_picture+"\n"+R.string.check_network,Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.load_from_network, Toast.LENGTH_LONG).show();
+        } else {
             getDetailFeedFromDatabase();
-            Toast.makeText(this,R.string.load_from_database,Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.load_from_database, Toast.LENGTH_LONG).show();
         }
     }
 
     @Override
-    public void loadDetailFeed(){
-        try{
-            txHead.setText(title);
-            txDate.setText(date);
-            txLink.setText(url);
-            new ThreadDetailFeed(txFeed).execute(url);
-        }catch (Exception e){
+    public void loadDetailFeed() {
+        try {
+            mTxHead.setText(sTitle);
+            mTxDate.setText(sDate);
+            mTxLink.setText(sUrl);
+            new ThreadDetailFeed(mTxFeed).execute(sUrl);
+        } catch (Exception e) {
+            messageBox("loadDetailFeed",e.getMessage());
             Log.e(TAG, "Error load detail page!", e);
         }
     }
 
     @Override
-    public void loadViews(){
+    public void loadViews() {
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE);
 
-        cardViewDF = (CardView) findViewById(R.id.cv);
+        mCardViewDetailFeed = (CardView) findViewById(R.id.cv);
 
-        txHead = (TextView) findViewById(R.id.head);
-        txDate = (TextView) findViewById(R.id.detailFeedDate);
-        txFeed = (TextView) findViewById(R.id.textFeed);
-        txLink = (TextView) findViewById(R.id.link);
+        mTxHead = (TextView) findViewById(R.id.head);
+        mTxDate = (TextView) findViewById(R.id.detailFeedDate);
+        mTxFeed = (TextView) findViewById(R.id.textFeed);
+        mTxLink = (TextView) findViewById(R.id.link);
 
-        configRealmWithDetailFeed = new RealmConfiguration.Builder(getApplicationContext()).build();
-        Realm.setDefaultConfiguration(configRealmWithDetailFeed);
+        mConfigRealmWithDetailFeed = new RealmConfiguration.Builder(getApplicationContext()).build();
+        Realm.setDefaultConfiguration(mConfigRealmWithDetailFeed);
 
-        realm = new MessageService(this);
+        mRealm = new MessageService(this);
     }
 
     @Override
-    public void getInfoFromActivity(){
-        intent = getIntent();
+    public void getInfoFromActivity() {
+        mIntent = getIntent();
 
-        title = intent.getStringExtra(ARG_TITLE);
-        date = intent.getStringExtra(ARG_DATE);
-        url = intent.getStringExtra(ARG_LINK);
-        description = intent.getStringExtra(ARG_DESCRIPTION);
+        sTitle = mIntent.getStringExtra(ARG_TITLE);
+        sDate = mIntent.getStringExtra(ARG_DATE);
+        sUrl = mIntent.getStringExtra(ARG_LINK);
+        sDescription = mIntent.getStringExtra(ARG_DESCRIPTION);
     }
 
     @Override
     public void endLoad(@NonNull List<Message> data) {
-        if(data.size() > 0){
-            txHead.setText(getIntent().getStringExtra(ARG_TITLE));
-            txDate.setText(getIntent().getStringExtra(ARG_DATE));
-            txLink.setText(getIntent().getStringExtra(ARG_LINK));
-            txFeed.setText(getIntent().getStringExtra(ARG_DESCRIPTION));
+        if (data.size() > 0) {
+            mTxHead.setText(getIntent().getStringExtra(ARG_TITLE));
+            mTxDate.setText(getIntent().getStringExtra(ARG_DATE));
+            mTxLink.setText(getIntent().getStringExtra(ARG_LINK));
+            mTxFeed.setText(getIntent().getStringExtra(ARG_DESCRIPTION));
         }
     }
 
-    public static Intent newInstance(Context context, String title, String date, String link, String description){
+    public static Intent newInstance(Context context, String title, String date, String link, String description) {
         Intent startIntent = new Intent(context, DetailFeedActivity.class);
 
         startIntent.putExtra(ARG_TITLE, title);
@@ -144,67 +146,78 @@ public class DetailFeedActivity extends Activity implements ILoaderData <List<Me
     }
 
     @Override
-    public void getDetailFeedFromDatabase(){
-        list = realm.query();
-        for (Message msg : list){
-            txHead.setText(msg.getTitle());
-            txDate.setText(msg.getDate());
-            new ThreadDetailFeed(txFeed).execute(url);
-            txLink.setText(msg.getLink());
+    public void getDetailFeedFromDatabase() {
+        try {
+            mList = mRealm.query();
+            for (Message msg : mList) {
+                mTxHead.setText(msg.getTitle());
+                mTxDate.setText(msg.getDate());
+                new ThreadDetailFeed(mTxFeed).execute(sUrl);
+                mTxLink.setText(sUrl);
+            }
+        }catch (Exception e){
+            messageBox("getDetailFeedFromDatabase",e.getMessage());
         }
     }
 
-    private static boolean isOnline(Context context)
-    {
-        cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        netInfo = cm.getActiveNetworkInfo();
-        //TODO Very complex why not write code like this.
-
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-
-        /*if (netInfo != null && netInfo.isConnectedOrConnecting())
-        {
-            return true;
+    @Override
+    public boolean isOnline() {
+        if(getApplicationContext() == null) {
+            return false;
         }
-        return false;*/
+        sConnectManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        sNetworkInfo = sConnectManager.getActiveNetworkInfo();
+        return sNetworkInfo != null && sNetworkInfo.isConnectedOrConnecting();
     }
 
     @Override
     public void onRefresh() {
         mSwipeRefreshLayout.setRefreshing(false);
-        if(isOnline(getApplicationContext())) {
+        if (isOnline()) {
             DetailFeedActivity.this.runOnUiThread(() -> loadDetailFeed());
-            Toast.makeText(getApplicationContext(),R.string.update_data,Toast.LENGTH_LONG).show();
-        }else {
-            //TODO Use String.format instead of + concatenation. In this case you have a bug, resource id will converts to String with two numbers separated by \n symbol.
-            Toast.makeText(getApplicationContext(),R.string.dont_update+"\n"+R.string.check_network,Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.update_data, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getApplicationContext(),String.format("%s\n%s",getString(R.string.dont_update),getString(R.string.check_network)),Toast.LENGTH_LONG).show();
         }
 
     }
 
+    @Override
+    public void messageBox(String method, String message)
+    {
+        Log.d("EXCEPTION: " + method,  message);
+
+        AlertDialog.Builder messageBox = new AlertDialog.Builder(this);
+        messageBox.setTitle(method);
+        messageBox.setMessage(message);
+        messageBox.setCancelable(false);
+        messageBox.setNeutralButton("OK", null);
+        messageBox.show();
+    }
+
     private class ThreadDetailFeed extends AsyncTask<String, Void, String> {
 
-        private TextView textFeed;
+        private TextView mTextViewFeed;
 
         public ThreadDetailFeed(TextView textViewFeed) {
-           this.textFeed  = textViewFeed;
+            this.mTextViewFeed = textViewFeed;
         }
 
         @Override
         protected String doInBackground(String... params) {
-            doc = Jsoup.parse(description);
-            //TODO Named constants.
-            doc.select("p");
-            doc.select("a[href]");
-            doc.select("br");
-            detailFeed = doc.text();
-            return detailFeed;
+            try {
+                mStructureDetailFeed = Jsoup.parse(sDescription);
+                mStructureDetailFeed.select(P);
+            }catch (Exception e){
+                messageBox("ThreadDetailFeed",e.getMessage());
+            }
+            return mDetailFeed = mStructureDetailFeed.text();
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            textFeed.setText(detailFeed);
+            mTextViewFeed.setText(mDetailFeed);
         }
     }
 }

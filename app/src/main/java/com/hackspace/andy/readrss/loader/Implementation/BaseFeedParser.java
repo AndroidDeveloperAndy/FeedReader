@@ -1,10 +1,11 @@
 package com.hackspace.andy.readrss.loader.Implementation;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.hackspace.andy.readrss.loader.FeedParser;
 import com.hackspace.andy.readrss.loader.ILoaderData;
+import com.hackspace.andy.readrss.view.Implementation.PrimaryFeedActivity;
+import com.hackspace.andy.readrss.view.PrimaryFeedView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,54 +21,46 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 	public static final String TITLE = "title";
 	public static final String ITEM = "item";
 
-	private static final String TAG = BaseFeedParser.class.getName();
+	private static final String FEED_URL = "https://habrahabr.ru/rss/feed/posts/6266e7ec4301addaf92d10eb212b4546";
 
-	private final URL feedUrl;
-	private ILoaderData<T> endDataPoint;
-	static private BaseFeedParser parser;
+	private final URL mFeedUrl;
+	private ILoaderData<T> mEndDataPoint;
+	static private BaseFeedParser sParser;
+	private T mObjectParse;
+	private PrimaryFeedView mFeedView = new PrimaryFeedActivity();
 
-	protected BaseFeedParser(String feedUrl, ILoaderData<T> endDataPoint){
-		this.endDataPoint = endDataPoint;
+	protected BaseFeedParser(ILoaderData<T> endDataPoint){
+		this.mEndDataPoint = endDataPoint;
 		try {
-			this.feedUrl = new URL(feedUrl);
+			this.mFeedUrl = new URL(FEED_URL);
 		} catch (MalformedURLException e) {
+			mFeedView.messageBox("BaseFeedParser",e.getMessage());
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static BaseFeedParser getParser(ILoaderData loaderData, String feedUrl) {
-		parser = new SaxFeedParser(feedUrl, loaderData);
-		return parser;
+	public static BaseFeedParser getParser(ILoaderData loaderData) {
+		sParser = new SaxFeedParser(loaderData);
+		return sParser;
 	}
 
 	@Override
 	protected T doInBackground(Void... params) {
-		T tmp = null;
-		try {
-			tmp = parse();
-		} catch (Exception e) {
-			//TODO do not ignore exceptions, think about business logic to notify user by TOAST ore some dialogue interaction (cancel, retry)
-			Log.e(TAG, "Error loaded feed!", e);
-		}
-		return tmp;
+		return mObjectParse = parse();
 	}
 
 	@Override
 	protected void onPostExecute(T t) {
 		if(t != null)
-			endDataPoint.endLoad(t);
+			mEndDataPoint.endLoad(t);
 	}
 
 	protected InputStream getInputStream() {
 		try {
-			return feedUrl.openStream();
+			return mFeedUrl.openStream();
 		} catch (IOException e) {
+			mFeedView.messageBox("getInputStream",e.getMessage());
 			throw new RuntimeException(e);
 		}
-	}
-
-	@Override
-	protected void onCancelled() {
-		super.onCancelled();
 	}
 }

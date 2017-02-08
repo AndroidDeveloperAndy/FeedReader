@@ -1,7 +1,11 @@
 package com.hackspace.andy.readrss.loader.Implementation;
 
+import android.util.Log;
+
 import com.hackspace.andy.readrss.loader.ILoaderData;
 import com.hackspace.andy.readrss.model.Entity.Message;
+import com.hackspace.andy.readrss.view.Implementation.PrimaryFeedActivity;
+import com.hackspace.andy.readrss.view.PrimaryFeedView;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -13,31 +17,33 @@ import javax.xml.parsers.SAXParserFactory;
 
 public class SaxFeedParser extends BaseFeedParser<List<Message>> {
 
-	//TODO init singleton in top of class file instead.
-	private SAXParserFactory factoryParser = SAXParserFactory.newInstance();
-	private SAXParser saxParser;
-	private XMLReader xmlReader; //TODO naming code conventions m for members fields etc...
-	private FeedHandler feedHandler;
-	private InputSource inputSource;
+	private static final String TAG = SaxFeedParser.class.getName();
 
-	public SaxFeedParser(String feedUrl, ILoaderData<List<Message>> endDataPoint) {
-		super(feedUrl, endDataPoint);
+	private SAXParserFactory mFactoryParser = SAXParserFactory.newInstance();
+	private PrimaryFeedView mFeedView = new PrimaryFeedActivity();
+	private SAXParser SaxParser;
+	private XMLReader XmlReader;
+	private FeedHandler mFeedHandler;
+	private InputSource mInputSource;
+
+	public SaxFeedParser(ILoaderData<List<Message>> endDataPoint) {
+		super(endDataPoint);
 	}
 	
 	public List<Message> parse() {
 		try {
-			saxParser = factoryParser.newSAXParser();
-			xmlReader = saxParser.getXMLReader();
-			feedHandler = new FeedHandler();
-			xmlReader.setContentHandler(feedHandler);
+			SaxParser = mFactoryParser.newSAXParser();
+			XmlReader = SaxParser.getXMLReader();
+			mFeedHandler = new FeedHandler();
+			XmlReader.setContentHandler(mFeedHandler);
 
-			inputSource = new InputSource(this.getInputStream());
+			mInputSource = new InputSource(this.getInputStream());
 
-			xmlReader.parse(inputSource);
+			XmlReader.parse(mInputSource);
 
-			return feedHandler.getMessages();
+			return mFeedHandler.getMessages();
 		} catch (Exception e) {
-			//TODO Check all similar cases, remember do not ignore exceptions like this, only if it's not necessary.
+			mFeedView.messageBox("parse",e.getMessage());
 			throw new RuntimeException(e);
 		}
 	}
