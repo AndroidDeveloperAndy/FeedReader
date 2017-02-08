@@ -74,11 +74,10 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
     public void getFeedFromNetwork(){
         try {
         mMessagesList = mPrimaryFeedPresenter.getNews();
-        FeedAdapter adapter = new FeedAdapter(mMessagesList);
-        mRvList.setAdapter(adapter);
+        mFeedAdapter = new FeedAdapter(mMessagesList);
+        mRvList.setAdapter(mFeedAdapter);
         Toast.makeText(this,R.string.load_from_network,Toast.LENGTH_LONG).show();
-        }
-        catch (Exception e){
+        } catch (Exception e){
             messageBox("getFeedFromNetwork",e.getMessage());
             getAlertDialogForConnectionError();
         }
@@ -92,8 +91,7 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
             mFeedAdapter = new FeedAdapter(mMessagesList);
             mRvList.setAdapter(mFeedAdapter);
             Toast.makeText(this, R.string.load_from_database, Toast.LENGTH_LONG).show();
-        }
-        catch (Exception e){
+        } catch (Exception e){
             messageBox("getFeedFromDatabase",e.getMessage());
         }
         return mMessagesList;
@@ -107,9 +105,9 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             if(isOnline()) {
                 PrimaryFeedActivity.this.runOnUiThread(() -> getFeedFromNetwork());
-                Toast.makeText(getApplicationContext(),R.string.update_data,Toast.LENGTH_LONG).show();
+                Toast.makeText(this,R.string.update_data,Toast.LENGTH_LONG).show();
             }else {
-                Toast.makeText(getApplicationContext(),String.format("%s\n%s",getString(R.string.dont_update),getString(R.string.check_network)),Toast.LENGTH_LONG).show();
+                Toast.makeText(this,String.format("%s\n%s",getString(R.string.dont_update),getString(R.string.check_network)),Toast.LENGTH_LONG).show();
             }
             mSwipeRefreshLayout.setRefreshing(false);
         });

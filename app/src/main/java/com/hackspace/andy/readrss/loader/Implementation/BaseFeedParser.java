@@ -26,7 +26,6 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 	private final URL mFeedUrl;
 	private ILoaderData<T> mEndDataPoint;
 	static private BaseFeedParser sParser;
-	private T mObjectParse;
 	private PrimaryFeedView mFeedView = new PrimaryFeedActivity();
 
 	protected BaseFeedParser(ILoaderData<T> endDataPoint){
@@ -46,7 +45,7 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 
 	@Override
 	protected T doInBackground(Void... params) {
-		return mObjectParse = parse();
+		return parse();
 	}
 
 	@Override

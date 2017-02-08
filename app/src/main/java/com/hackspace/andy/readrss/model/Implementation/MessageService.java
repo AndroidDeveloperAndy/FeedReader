@@ -22,10 +22,6 @@ public class MessageService implements MessagesServiceImpl {
         this.mContext = context;
     }
 
-    public static MessageService getInstance() {
-        return instance;
-    }
-
     public static MessageService with(Activity activity) {
 
         if (instance == null) {

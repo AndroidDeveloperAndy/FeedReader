@@ -210,12 +210,30 @@
     </item>
     <item
         is-multidex="false"
+        jar="B:\Android\Work\FeedReader\app\build\intermediates\exploded-aar\io.reactivex\rxandroid\1.2.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="5a2386ad9bfff580b206a7fe305cdccd00798159">
+        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\io.reactivex-rxandroid-1.2.1_80501953b0b6a52f258394599a37cf00b7769c54.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="B:\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\25.1.0\support-annotations-25.1.0.jar"
         jumboMode="true"
         optimize="true"
         revision="25.0.0"
         sha1="64cb6b229a8bdfd907bc8dd46839a0053e4c018d">
         <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\support-annotations-25.1.0_9d375b395ed929d41b0b89598ce6e37668108184.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Andy\.gradle\caches\modules-2\files-2.1\io.reactivex\rxjava\1.1.6\2586312cd2b8a511e4c6236736f5a039fc0f2273\rxjava-1.1.6.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="2586312cd2b8a511e4c6236736f5a039fc0f2273">
+        <dex dex="B:\Android\Work\FeedReader\app\build\intermediates\pre-dexed\debug\rxjava-1.1.6_c19c91cb0fdf4a6bbc8e497cef493ee7e862dfdf.jar" />
     </item>
 
 </items>

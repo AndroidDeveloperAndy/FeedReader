@@ -1,7 +1,5 @@
 package com.hackspace.andy.readrss.loader.Implementation;
 
-import android.util.Log;
-
 import com.hackspace.andy.readrss.loader.ILoaderData;
 import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.view.Implementation.PrimaryFeedActivity;
@@ -16,8 +14,6 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 public class SaxFeedParser extends BaseFeedParser<List<Message>> {
-
-	private static final String TAG = SaxFeedParser.class.getName();
 
 	private SAXParserFactory mFactoryParser = SAXParserFactory.newInstance();
 	private PrimaryFeedView mFeedView = new PrimaryFeedActivity();
