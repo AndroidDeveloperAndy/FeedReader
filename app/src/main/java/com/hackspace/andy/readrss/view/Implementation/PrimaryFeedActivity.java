@@ -24,21 +24,31 @@ import com.hackspace.andy.readrss.presenter.Implementation.PrimaryFeedPresenter;
 import com.hackspace.andy.readrss.presenter.PrimaryFeedPresenterImpl;
 import com.hackspace.andy.readrss.view.PrimaryFeedView;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
+
 import java.util.List;
+
+import javax.inject.Inject;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
+@EActivity(R.layout.activity_primary_feed)
 public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,ILoaderData<List<Message>>{
 
     private static final String TAG = PrimaryFeedActivity.class.getName();
-    private PrimaryFeedPresenterImpl mPrimaryFeedPresenter = new PrimaryFeedPresenter(this);
+
+    @Inject
+    PrimaryFeedPresenterImpl mPrimaryFeedPresenter = new PrimaryFeedPresenter(this);
 
     private List<Message> mMessagesList;
-    private FeedAdapter mFeedAdapter;
+    FeedAdapter mFeedAdapter;
 
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private RecyclerView mRvList;
+    @ViewById(R.id.swipeRefreshLayout) SwipeRefreshLayout mSwipeRefreshLayout;
+
+    @ViewById(android.R.id.list) RecyclerView mRvList;
 
     private MessageService mRealmService;
     private RealmConfiguration mConfigRealm;
@@ -50,10 +60,7 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_primary_feed);
 
-        createViews();
-        getFeedFromNetwork();
     }
 
     @Override
@@ -80,7 +87,6 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
         }
         catch (Exception e){
             messageBox("getFeedFromNetwork",e.getMessage());
-            getAlertDialogForConnectionError();
         }
     }
 
@@ -99,9 +105,9 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
         return mMessagesList;
     }
 
+    @AfterViews
     @Override
     public void createViews(){
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE);
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
@@ -114,13 +120,11 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
             mSwipeRefreshLayout.setRefreshing(false);
         });
 
-        mRvList = (RecyclerView) findViewById(android.R.id.list);
-
         LinearLayoutManager llm = new LinearLayoutManager(this);
         mRvList.setLayoutManager(llm);
         mRvList.setHasFixedSize(true);
 
-        mRvList.addOnItemTouchListener(new RecyclerClickListener(this, (view, position) -> startActivity(DetailFeedActivity.newInstance(PrimaryFeedActivity.this,
+        mRvList.addOnItemTouchListener(new RecyclerClickListener((view, position) -> startActivity(DetailFeedActivity.newInstance(PrimaryFeedActivity.this,
                 mMessagesList.get(position).getTitle(),
                 mMessagesList.get(position).getDate().toString(),
                 mMessagesList.get(position).getLink(),
@@ -128,6 +132,8 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
         );
         mConfigRealm = new RealmConfiguration.Builder(getApplicationContext()).build();
         Realm.setDefaultConfiguration(mConfigRealm);
+
+        getFeedFromNetwork();
     }
 
     @Override
@@ -163,8 +169,6 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
     @Override
     public void messageBox(String method, String message)
     {
-        Log.d("EXCEPTION: " + method,  message);
-
         AlertDialog.Builder messageBox = new AlertDialog.Builder(this);
         messageBox.setTitle(method);
         messageBox.setMessage(message);

@@ -11,6 +11,8 @@ import com.hackspace.andy.readrss.view.PrimaryFeedView;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class PrimaryFeedPresenter implements PrimaryFeedPresenterImpl {
 
     private static final String TAG = PrimaryFeedPresenter.class.getName();
@@ -18,6 +20,7 @@ public class PrimaryFeedPresenter implements PrimaryFeedPresenterImpl {
     private List<Message> mMessagesList;
     private final PrimaryFeedView mPrimaryFeedView;
 
+    @Inject
     public PrimaryFeedPresenter(PrimaryFeedView view) {
         mPrimaryFeedView = view;
     }

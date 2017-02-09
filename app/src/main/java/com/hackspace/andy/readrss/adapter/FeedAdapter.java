@@ -50,12 +50,14 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.PersonViewHold
     public FeedAdapter.PersonViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         mViewItem = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item, viewGroup, false);
         mPersonViewHolder = new PersonViewHolder(mViewItem);
+        //Seeeee
         Picasso.with(mViewItem.getContext()).load(PICTURE_URL).into(mPersonViewHolder.mImgHabra);
         return mPersonViewHolder;
     }
 
     @Override
     public void onBindViewHolder(FeedAdapter.PersonViewHolder personViewHolder, int position) {
+        //Seeeee
         personViewHolder.mNameFeed.setText(mMessageList.get(position).getTitle());
         personViewHolder.mDateFeed.setText(mMessageList.get(position).getDate());
     }
