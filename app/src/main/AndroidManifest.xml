@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.Implementation.PrimaryFeedActivity_"/>
-        <activity android:name=".view.Implementation.DetailFeedActivity"></activity>
+        <activity android:name=".view.Implementation.DetailFeedActivity_"></activity>
     </application>
 
 </manifest>

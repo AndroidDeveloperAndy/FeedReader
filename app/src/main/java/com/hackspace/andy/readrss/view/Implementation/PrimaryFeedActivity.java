@@ -124,7 +124,8 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
         mRvList.setLayoutManager(llm);
         mRvList.setHasFixedSize(true);
 
-        mRvList.addOnItemTouchListener(new RecyclerClickListener((view, position) -> startActivity(DetailFeedActivity.newInstance(PrimaryFeedActivity.this,
+        //TODO Check this click function!
+        mRvList.addOnItemTouchListener(new RecyclerClickListener((view, position) -> startActivity(DetailFeedActivity.newInstance(this,
                 mMessagesList.get(position).getTitle(),
                 mMessagesList.get(position).getDate().toString(),
                 mMessagesList.get(position).getLink(),

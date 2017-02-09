@@ -22,6 +22,9 @@ import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.model.Implementation.MessageService;
 import com.hackspace.andy.readrss.view.DetailFeedView;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -30,6 +33,7 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
+@EActivity(R.layout.activity_detail_feed)
 public class DetailFeedActivity extends Activity implements ILoaderData<List<Message>>, SwipeRefreshLayout.OnRefreshListener, DetailFeedView {
 
     private static final String TAG = DetailFeedActivity.class.getName();
@@ -51,9 +55,18 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     private Intent mIntent;
     private String mDetailFeed;
 
-    private TextView mTxHead, mTxFeed, mTxLink, mTxDate;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private CardView mCardViewDetailFeed;
+    @ViewById(R.id.head)
+    TextView mTxHead;
+    @ViewById(R.id.textFeed)
+    TextView mTxFeed;
+    @ViewById(R.id.link)
+    TextView mTxLink;
+    @ViewById(R.id.detailFeedDate)
+    TextView mTxDate;
+    @ViewById(R.id.swipe_container)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @ViewById(R.id.cv)
+    CardView mCardViewDetailFeed;
 
     private MessageService mRealm;
     private RealmConfiguration mConfigRealmWithDetailFeed;
@@ -65,10 +78,6 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_feed);
-
-        loadViews();
-        getInfoFromActivity();
-        getData();
     }
 
     @Override
@@ -95,23 +104,18 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
         }
     }
 
+    @AfterViews
     @Override
     public void loadViews() {
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE);
-
-        mCardViewDetailFeed = (CardView) findViewById(R.id.cv);
-
-        mTxHead = (TextView) findViewById(R.id.head);
-        mTxDate = (TextView) findViewById(R.id.detailFeedDate);
-        mTxFeed = (TextView) findViewById(R.id.textFeed);
-        mTxLink = (TextView) findViewById(R.id.link);
 
         mConfigRealmWithDetailFeed = new RealmConfiguration.Builder(getApplicationContext()).build();
         Realm.setDefaultConfiguration(mConfigRealmWithDetailFeed);
 
         mRealm = new MessageService(this);
+        getInfoFromActivity();
+        getData();
     }
 
     @Override
@@ -185,8 +189,6 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     @Override
     public void messageBox(String method, String message)
     {
-        Log.d("EXCEPTION: " + method,  message);
-
         AlertDialog.Builder messageBox = new AlertDialog.Builder(this);
         messageBox.setTitle(method);
         messageBox.setMessage(message);
