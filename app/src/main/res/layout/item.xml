@@ -3,14 +3,12 @@
 xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="match_parent"
 android:layout_height="wrap_content"
-android:id="@+id/cv"
-	>
+android:id="@+id/cv">
 
 <RelativeLayout
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:padding="16dp"
-	>
+	android:padding="20dp">
 
 	<ImageView
 		android:layout_width="40dp"
@@ -18,9 +16,7 @@ android:id="@+id/cv"
 		android:id="@+id/imgHab"
 		android:layout_alignParentLeft="true"
 		android:layout_alignParentTop="true"
-		android:layout_marginRight="16dp"
-
-		/>
+		android:layout_marginRight="16dp"/>
 
 	<TextView
 		android:layout_width="wrap_content"
@@ -31,8 +27,7 @@ android:id="@+id/cv"
 		android:textColor="@android:color/black"
 		android:textSize="14sp"
 		android:textStyle="bold"
-		android:fontFamily="cursive"
-		/>
+		android:fontFamily="cursive"/>
 
 	<TextView
 		android:layout_width="wrap_content"
@@ -43,8 +38,7 @@ android:id="@+id/cv"
 		android:textSize="14sp"
 		android:textStyle="bold"
 		android:textColor="@color/colorBlue"
-		android:fontFamily="casual"
-		/>
+		android:fontFamily="casual"/>
 
 </RelativeLayout>
 

@@ -24,6 +24,7 @@ import com.hackspace.andy.readrss.view.DetailFeedView;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -38,10 +39,14 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
 
     private static final String TAG = DetailFeedActivity.class.getName();
 
-    private static final String ARG_TITLE = "TITLE_ARGUMENT";
-    private static final String ARG_DATE = "DATE_ARGUMENT";
-    private static final String ARG_DESCRIPTION = "DESCRIPTION_ARGUMENT";
-    private static final String ARG_LINK = "LINK_ARGUMENT";
+    @Extra
+    static String ARG_TITLE = "TITLE_ARGUMENT";
+    @Extra
+    static String ARG_DATE = "DATE_ARGUMENT";
+    @Extra
+    static String ARG_DESCRIPTION = "DESCRIPTION_ARGUMENT";
+    @Extra
+    static String ARG_LINK = "LINK_ARGUMENT";
 
     private static final String P = "p";
 
@@ -69,15 +74,12 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     CardView mCardViewDetailFeed;
 
     private MessageService mRealm;
-    private RealmConfiguration mConfigRealmWithDetailFeed;
-
     private static ConnectivityManager sConnectManager;
     private static NetworkInfo sNetworkInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail_feed);
     }
 
     @Override
@@ -110,7 +112,7 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE);
 
-        mConfigRealmWithDetailFeed = new RealmConfiguration.Builder(getApplicationContext()).build();
+        RealmConfiguration mConfigRealmWithDetailFeed = new RealmConfiguration.Builder(getApplicationContext()).build();
         Realm.setDefaultConfiguration(mConfigRealmWithDetailFeed);
 
         mRealm = new MessageService(this);
@@ -139,7 +141,7 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     }
 
     public static Intent newInstance(Context context, String title, String date, String link, String description) {
-        Intent startIntent = new Intent(context, DetailFeedActivity.class);
+        Intent startIntent = DetailFeedActivity_.intent(context).get();
 
         startIntent.putExtra(ARG_TITLE, title);
         startIntent.putExtra(ARG_DATE, date);

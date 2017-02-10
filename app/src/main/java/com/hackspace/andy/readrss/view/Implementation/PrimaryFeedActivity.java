@@ -44,37 +44,23 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
     PrimaryFeedPresenterImpl mPrimaryFeedPresenter = new PrimaryFeedPresenter(this);
 
     private List<Message> mMessagesList;
-    FeedAdapter mFeedAdapter;
+    private FeedAdapter mFeedAdapter;
 
-    @ViewById(R.id.swipeRefreshLayout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @ViewById(R.id.swipeRefreshLayout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
-    @ViewById(android.R.id.list) RecyclerView mRvList;
+    @ViewById(android.R.id.list)
+    RecyclerView mRvList;
 
     private MessageService mRealmService;
     private RealmConfiguration mConfigRealm;
 
     private static ConnectivityManager sManagerConnect;
     private static NetworkInfo sNetworkInfo;
-    private AlertDialog.Builder mAlertDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-    }
-
-    @Override
-    public void getAlertDialogForConnectionError() {
-        mAlertDialog = new AlertDialog.Builder(this);
-        mAlertDialog.setTitle("Dialog");
-        mAlertDialog.setMessage("Error load feed. Reconnect for internet.");
-        mAlertDialog.setPositiveButton("Retry", (dialog, which) -> {
-            getFeedFromNetwork();
-        });
-        mAlertDialog.setNegativeButton("Cancel", (dialog, which) -> {
-        });
-        mAlertDialog.setCancelable(false);
-        mAlertDialog.show();
     }
 
     @Override
@@ -124,8 +110,8 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
         mRvList.setLayoutManager(llm);
         mRvList.setHasFixedSize(true);
 
-        //TODO Check this click function!
-        mRvList.addOnItemTouchListener(new RecyclerClickListener((view, position) -> startActivity(DetailFeedActivity.newInstance(this,
+        mRvList.addOnItemTouchListener(new RecyclerClickListener((view, position) ->
+                startActivity(DetailFeedActivity_.newInstance(this,
                 mMessagesList.get(position).getTitle(),
                 mMessagesList.get(position).getDate().toString(),
                 mMessagesList.get(position).getLink(),
@@ -165,6 +151,20 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
             messageBox("endLoad",t.getMessage());
             Log.e(TAG,"Error load list feed!",t);
         }
+    }
+
+    @Override
+    public void getAlertDialogForConnectionError() {
+        AlertDialog.Builder mAlertDialog = new AlertDialog.Builder(this);
+        mAlertDialog.setTitle("Dialog");
+        mAlertDialog.setMessage("Error load feed. Reconnect for internet.");
+        mAlertDialog.setPositiveButton("Retry", (dialog, which) -> {
+            getFeedFromNetwork();
+        });
+        mAlertDialog.setNegativeButton("Cancel", (dialog, which) -> {
+        });
+        mAlertDialog.setCancelable(false);
+        mAlertDialog.show();
     }
 
     @Override
