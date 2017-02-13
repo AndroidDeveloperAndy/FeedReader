@@ -57,6 +57,7 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
     private static ConnectivityManager sManagerConnect;
     private static NetworkInfo sNetworkInfo;
 
+    //TODO if you use AA you do not need anymore onCreate method because of @AfterViews.
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,7 +90,7 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
     }
 
     @AfterViews
-    @Override
+    @Override //TODO why this method is a part of View interface ? What if some one call this before *.xml inflation ?
     public void createViews(){
         mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE);
 

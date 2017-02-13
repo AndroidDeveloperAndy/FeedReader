@@ -21,7 +21,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.PersonViewHold
 
     public static class PersonViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.cv) CardView mCardView;
+        @BindView(R.id.cv) CardView mCardView;//TODO remove unused.
         private TextView mNameFeed;
         private TextView mDateFeed;
         private ImageView mImgHabra;
