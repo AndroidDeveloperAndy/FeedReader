@@ -40,7 +40,6 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
 
     private static final String TAG = PrimaryFeedActivity.class.getName();
 
-    @Inject
     PrimaryFeedPresenterImpl mPrimaryFeedPresenter = new PrimaryFeedPresenter(this);
 
     private List<Message> mMessagesList;
@@ -70,8 +69,7 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
         FeedAdapter adapter = new FeedAdapter(mMessagesList);
         mRvList.setAdapter(adapter);
         Toast.makeText(this,R.string.load_from_network,Toast.LENGTH_LONG).show();
-        }
-        catch (Exception e){
+        }catch (Exception e){
             messageBox("getFeedFromNetwork",e.getMessage());
         }
     }
@@ -84,8 +82,7 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
             mFeedAdapter = new FeedAdapter(mMessagesList);
             mRvList.setAdapter(mFeedAdapter);
             Toast.makeText(this, R.string.load_from_database, Toast.LENGTH_LONG).show();
-        }
-        catch (Exception e){
+        }catch (Exception e){
             messageBox("getFeedFromDatabase",e.getMessage());
         }
         return mMessagesList;
@@ -147,7 +144,7 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
             mRealmService = new MessageService(this);
             mRealmService.insert(mMessagesList);
 
-        } catch (Throwable t){
+        }catch (Throwable t){
             messageBox("endLoad",t.getMessage());
             Log.e(TAG,"Error load list feed!",t);
         }

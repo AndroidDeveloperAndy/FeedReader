@@ -20,7 +20,6 @@ public class PrimaryFeedPresenter implements PrimaryFeedPresenterImpl {
     private List<Message> mMessagesList;
     private final PrimaryFeedView mPrimaryFeedView;
 
-    @Inject
     public PrimaryFeedPresenter(PrimaryFeedView view) {
         mPrimaryFeedView = view;
     }
