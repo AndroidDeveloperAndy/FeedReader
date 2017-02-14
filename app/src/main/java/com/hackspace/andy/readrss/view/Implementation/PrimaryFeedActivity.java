@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -20,6 +21,7 @@ import com.hackspace.andy.readrss.R;
 import com.hackspace.andy.readrss.loader.ILoaderData;
 import com.hackspace.andy.readrss.model.Implementation.MessageService;
 import com.hackspace.andy.readrss.presenter.Implementation.PrimaryFeedPresenter;
+import com.hackspace.andy.readrss.presenter.PrimaryFeedPresenterImpl;
 import com.hackspace.andy.readrss.view.PrimaryFeedView;
 
 import org.androidannotations.annotations.AfterViews;
@@ -29,38 +31,39 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
 @EActivity(R.layout.activity_primary_feed)
 public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,ILoaderData<List<Message>>{
 
     private static final String TAG = PrimaryFeedActivity.class.getName();
 
     @Bean
-    PrimaryFeedPresenter mPrimaryFeedPresenter;
+    PrimaryFeedPresenterImpl mPrimaryFeedPresenter = new PrimaryFeedPresenter();
 
     private List<Message> mMessagesList;
-    @Bean FeedAdapter mFeedAdapter;
+    private FeedAdapter mFeedAdapter;
 
-    @ViewById(R.id.swipeRefreshLayout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @ViewById(android.R.id.list) RecyclerView mRvList;
+    @ViewById(R.id.swipeRefreshLayout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
-    @Bean
-    protected MessageService mRealmService;
+    @ViewById(android.R.id.list)
+    RecyclerView mRvList;
+
+    private MessageService mRealmService;
+    private RealmConfiguration mConfigRealm;
 
     private static ConnectivityManager sManagerConnect;
     private static NetworkInfo sNetworkInfo;
 
-    @AfterViews
     @Override
     public void getFeedFromNetwork(){
         try {
-            PrimaryFeedView view = new PrimaryFeedActivity();
-            mPrimaryFeedPresenter = new PrimaryFeedPresenter();
-            mPrimaryFeedPresenter.setPrimaryFeedView(view);
-            mMessagesList = mPrimaryFeedPresenter.getNews();
-            mFeedAdapter = new FeedAdapter();
-            mFeedAdapter.setFeedAdapter(mMessagesList);
-            mRvList.setAdapter(mFeedAdapter);
-            Toast.makeText(this,R.string.load_from_network,Toast.LENGTH_LONG).show();
+        mMessagesList = mPrimaryFeedPresenter.getNews();
+        FeedAdapter adapter = new FeedAdapter(mMessagesList);
+        mRvList.setAdapter(adapter);
+        Toast.makeText(this,R.string.load_from_network,Toast.LENGTH_LONG).show();
         }catch (Exception e){
             messageBox("getFeedFromNetwork",e.getMessage());
         }
@@ -71,8 +74,7 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
         try {
             mRealmService = new MessageService(this);
             mMessagesList = mRealmService.query();
-            mFeedAdapter = new FeedAdapter();
-            mFeedAdapter.setFeedAdapter(mMessagesList);
+            mFeedAdapter = new FeedAdapter(mMessagesList);
             mRvList.setAdapter(mFeedAdapter);
             Toast.makeText(this, R.string.load_from_database, Toast.LENGTH_LONG).show();
         }catch (Exception e){
@@ -81,7 +83,8 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
         return mMessagesList;
     }
 
-    @Override
+    @AfterViews
+    @Override //TODO why this method is a part of View interface ? What if some one call this before *.xml inflation ?
     public void createViews(){
         mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE);
 
@@ -106,6 +109,10 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
                 mMessagesList.get(position).getLink(),
                 mMessagesList.get(position).getDescription())))
         );
+        mConfigRealm = new RealmConfiguration.Builder(getApplicationContext()).build();
+        Realm.setDefaultConfiguration(mConfigRealm);
+
+        getFeedFromNetwork();
     }
 
     @Override
@@ -156,9 +163,11 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
     public void messageBox(String method, String message)
     {
         AlertDialog.Builder messageBox = new AlertDialog.Builder(this);
-        messageBox.setMessage(String.format("%s\n%s",getString(R.string.error_method)+method,getString(R.string.error)+message))
-                .setNeutralButton("OK", null)
-                .show();
+        messageBox.setTitle(method);
+        messageBox.setMessage(message);
+        messageBox.setCancelable(false);
+        messageBox.setNeutralButton("OK", null);
+        messageBox.show();
     }
 }
 
