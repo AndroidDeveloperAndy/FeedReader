@@ -7,4 +7,6 @@
     <string name="check_network">Подключитесь к интернету.</string>
     <string name="update_data">Данные обновлены.</string>
     <string name="dont_update">Обновление невозможно.</string>
+    <string name="error_method">Error in the method:</string>
+    <string name="error">Error:</string>
 </resources>

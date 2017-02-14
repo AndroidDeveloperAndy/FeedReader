@@ -9,18 +9,20 @@ import com.hackspace.andy.readrss.presenter.PrimaryFeedPresenterImpl;
 import com.hackspace.andy.readrss.view.Implementation.PrimaryFeedActivity;
 import com.hackspace.andy.readrss.view.PrimaryFeedView;
 
+import org.androidannotations.annotations.EBean;
+
 import java.util.List;
 
-import javax.inject.Inject;
 
+@EBean
 public class PrimaryFeedPresenter implements PrimaryFeedPresenterImpl {
 
     private static final String TAG = PrimaryFeedPresenter.class.getName();
     private BaseFeedParser<List<Message>> mListLoader;
     private List<Message> mMessagesList;
-    private final PrimaryFeedView mPrimaryFeedView;
+    private PrimaryFeedView mPrimaryFeedView;
 
-    public PrimaryFeedPresenter(PrimaryFeedView view) {
+    public void setPrimaryFeedView(PrimaryFeedView view){
         mPrimaryFeedView = view;
     }
 

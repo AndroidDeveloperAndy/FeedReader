@@ -6,32 +6,40 @@ import android.content.Context;
 import com.hackspace.andy.readrss.model.MessagesServiceImpl;
 import com.hackspace.andy.readrss.model.Entity.Message;
 
+import org.androidannotations.annotations.EBean;
+
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
+@EBean
 public class MessageService implements MessagesServiceImpl {
 
     private Realm mRealm;
-    private static MessageService instance;
+    private static MessageService sInstance;
     private Context mContext;
+    private RealmConfiguration mConfigRealm;
+
 
     public MessageService(Context context) {
-        mRealm = Realm.getDefaultInstance();
         this.mContext = context;
+        mConfigRealm = new RealmConfiguration.Builder(context.getApplicationContext()).build();
+        Realm.setDefaultConfiguration(mConfigRealm);
+        mRealm = Realm.getDefaultInstance();
     }
 
     public static MessageService getInstance() {
-        return instance;
+        return sInstance;
     }
 
     public static MessageService with(Activity activity) {
 
-        if (instance == null) {
-            instance = new MessageService(activity.getApplication());
+        if (sInstance == null) {
+            sInstance = new MessageService(activity.getApplication());
         }
-        return instance;
+        return sInstance;
     }
 
     @Override

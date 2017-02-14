@@ -7,11 +7,14 @@ import com.hackspace.andy.readrss.loader.ILoaderData;
 import com.hackspace.andy.readrss.view.Implementation.PrimaryFeedActivity;
 import com.hackspace.andy.readrss.view.PrimaryFeedView;
 
+import org.androidannotations.annotations.EBean;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+@EBean(scope = EBean.Scope.Singleton)
 public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implements FeedParser<T> {
 
 	public static final String CHANNEL = "channel";
@@ -26,7 +29,6 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 	private final URL mFeedUrl;
 	private ILoaderData<T> mEndDataPoint;
 	static private BaseFeedParser sParser;
-	private T mObjectParse;
 	private PrimaryFeedView mFeedView = new PrimaryFeedActivity();
 
 	protected BaseFeedParser(ILoaderData<T> endDataPoint){
@@ -46,7 +48,7 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 
 	@Override
 	protected T doInBackground(Void... params) {
-		return mObjectParse = parse();
+		return parse();
 	}
 
 	@Override

@@ -2,6 +2,8 @@ package com.hackspace.andy.readrss.presenter;
 
 import com.hackspace.andy.readrss.model.Entity.Message;
 
+import org.androidannotations.annotations.EBean;
+
 import java.util.List;
 
 public interface PrimaryFeedPresenterImpl {

@@ -12,16 +12,19 @@ import com.hackspace.andy.readrss.R;
 import com.hackspace.andy.readrss.model.Entity.Message;
 import com.squareup.picasso.Picasso;
 
+import org.androidannotations.annotations.EBean;
+
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+@EBean
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.PersonViewHolder>{
 
     public static class PersonViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.cv) CardView mCardView;
+        private CardView mCardView;
         private TextView mNameFeed;
         private TextView mDateFeed;
         private ImageView mImgHabra;
@@ -31,6 +34,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.PersonViewHold
             mImgHabra = (ImageView) itemView.findViewById(R.id.imgHab);
             mNameFeed = (TextView)  itemView.findViewById(R.id.feed);
             mDateFeed = (TextView)  itemView.findViewById(R.id.dateFeed);
+            mCardView = (CardView)  itemView.findViewById(R.id.cv);
             ButterKnife.bind(this, itemView);
         }
     }
@@ -40,7 +44,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.PersonViewHold
     private PersonViewHolder mPersonViewHolder;
     final static String PICTURE_URL = "https://habrastorage.org/getpro/habr/app/566/b4a/0ef/566b4a0efc6eb3f762c632a89f4a03a3.jpg";
 
-    public FeedAdapter(List<Message> messages){
+    public void setFeedAdapter(List<Message> messages){
         this.mMessageList = messages;
     }
 

@@ -2,12 +2,15 @@ package com.hackspace.andy.readrss.model.Entity;
 
 import android.util.Log;
 
+import org.androidannotations.annotations.EBean;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import io.realm.RealmObject;
 import io.realm.annotations.Required;
 
+@EBean
 public class Message extends RealmObject  {
 
 	private static final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss Z";
