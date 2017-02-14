@@ -16,7 +16,6 @@ import org.androidannotations.annotations.EBean;
 
 import java.util.List;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
 @EBean
