@@ -2,10 +2,8 @@ package com.hackspace.andy.readrss.view.Implementation;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -20,6 +18,7 @@ import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.R;
 import com.hackspace.andy.readrss.loader.ILoaderData;
 import com.hackspace.andy.readrss.model.Implementation.MessageService;
+import com.hackspace.andy.readrss.model.MessagesServiceImpl;
 import com.hackspace.andy.readrss.presenter.Implementation.PrimaryFeedPresenter;
 import com.hackspace.andy.readrss.presenter.PrimaryFeedPresenterImpl;
 import com.hackspace.andy.readrss.view.PrimaryFeedView;
@@ -31,39 +30,34 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
-
 @EActivity(R.layout.activity_primary_feed)
 public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,ILoaderData<List<Message>>{
 
     private static final String TAG = PrimaryFeedActivity.class.getName();
 
-    @Bean
-    PrimaryFeedPresenterImpl mPrimaryFeedPresenter = new PrimaryFeedPresenter();
+    PrimaryFeedPresenterImpl mPrimaryFeedPresenter = new PrimaryFeedPresenter(this);
 
     private List<Message> mMessagesList;
-    private FeedAdapter mFeedAdapter;
+    @Bean protected FeedAdapter mFeedAdapter;
 
-    @ViewById(R.id.swipeRefreshLayout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    @ViewById(R.id.swipeRefreshLayout) protected SwipeRefreshLayout mSwipeRefreshLayout;
+    @ViewById(android.R.id.list) protected RecyclerView mRvList;
 
-    @ViewById(android.R.id.list)
-    RecyclerView mRvList;
-
-    private MessageService mRealmService;
-    private RealmConfiguration mConfigRealm;
+    private MessagesServiceImpl mRealmService = new MessageService(this);
 
     private static ConnectivityManager sManagerConnect;
     private static NetworkInfo sNetworkInfo;
 
+    @AfterViews
     @Override
     public void getFeedFromNetwork(){
         try {
-        mMessagesList = mPrimaryFeedPresenter.getNews();
-        FeedAdapter adapter = new FeedAdapter(mMessagesList);
-        mRvList.setAdapter(adapter);
-        Toast.makeText(this,R.string.load_from_network,Toast.LENGTH_LONG).show();
+            mMessagesList = mPrimaryFeedPresenter.getNews();
+            setListFeed();
+            mFeedAdapter.setFeedAdapter(mMessagesList);
+            mRvList.setAdapter(mFeedAdapter);
+            Toast.makeText(this,R.string.load_from_network,Toast.LENGTH_LONG).show();
+            mRealmService.config(this);
         }catch (Exception e){
             messageBox("getFeedFromNetwork",e.getMessage());
         }
@@ -72,9 +66,9 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
     @Override
     public List<Message> getFeedFromDatabase(){
         try {
-            mRealmService = new MessageService(this);
             mMessagesList = mRealmService.query();
-            mFeedAdapter = new FeedAdapter(mMessagesList);
+            setListFeed();
+            mFeedAdapter.setFeedAdapter(mMessagesList);
             mRvList.setAdapter(mFeedAdapter);
             Toast.makeText(this, R.string.load_from_database, Toast.LENGTH_LONG).show();
         }catch (Exception e){
@@ -83,11 +77,24 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
         return mMessagesList;
     }
 
+
+    public void setListFeed(){
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        mRvList.setLayoutManager(llm);
+        mRvList.setHasFixedSize(true);
+        //TODO Have bug with two Detail Activity
+        mRvList.addOnItemTouchListener(new RecyclerClickListener((view, position) ->
+                startActivity(DetailFeedActivity_.newInstance(this,
+                        mMessagesList.get(position).getTitle(),
+                        mMessagesList.get(position).getDate().toString(),
+                        mMessagesList.get(position).getLink(),
+                        mMessagesList.get(position).getDescription())))
+        );
+    }
+
     @AfterViews
     @Override //TODO why this method is a part of View interface ? What if some one call this before *.xml inflation ?
-    public void createViews(){
-        mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE);
-
+    public void setSwipeRefreshLayout(){
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             if(isOnline()) {
                 PrimaryFeedActivity.this.runOnUiThread(() -> getFeedFromNetwork());
@@ -97,22 +104,6 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
             }
             mSwipeRefreshLayout.setRefreshing(false);
         });
-
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        mRvList.setLayoutManager(llm);
-        mRvList.setHasFixedSize(true);
-
-        mRvList.addOnItemTouchListener(new RecyclerClickListener((view, position) ->
-                startActivity(DetailFeedActivity_.newInstance(this,
-                mMessagesList.get(position).getTitle(),
-                mMessagesList.get(position).getDate().toString(),
-                mMessagesList.get(position).getLink(),
-                mMessagesList.get(position).getDescription())))
-        );
-        mConfigRealm = new RealmConfiguration.Builder(getApplicationContext()).build();
-        Realm.setDefaultConfiguration(mConfigRealm);
-
-        getFeedFromNetwork();
     }
 
     @Override
@@ -136,11 +127,9 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
                 msg.getDescription();
                 msg.getLink();
             }
-            mRealmService = new MessageService(this);
             mRealmService.insert(mMessagesList);
 
         }catch (Throwable t){
-            messageBox("endLoad",t.getMessage());
             Log.e(TAG,"Error load list feed!",t);
         }
     }
@@ -163,11 +152,9 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
     public void messageBox(String method, String message)
     {
         AlertDialog.Builder messageBox = new AlertDialog.Builder(this);
-        messageBox.setTitle(method);
-        messageBox.setMessage(message);
-        messageBox.setCancelable(false);
-        messageBox.setNeutralButton("OK", null);
-        messageBox.show();
+        messageBox.setMessage(String.format("%s\n%s",getString(R.string.error_method)+method,getString(R.string.error)+message))
+                .setNeutralButton("OK", null)
+                .show();
     }
 }
 

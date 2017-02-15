@@ -1,5 +1,7 @@
 package com.hackspace.andy.readrss.model;
 
+import android.app.Activity;
+
 import com.hackspace.andy.readrss.model.Entity.Message;
 
 import java.util.List;
@@ -10,5 +12,5 @@ public interface MessagesServiceImpl {
 
     void insert(List<Message> messages);
     RealmResults<Message> query();
-    boolean hasMessages();
+    void config(Activity activity);
 }
