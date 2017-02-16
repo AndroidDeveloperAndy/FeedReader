@@ -30,8 +30,11 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
 @EActivity(R.layout.activity_primary_feed)
-public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,ILoaderData<List<Message>>{
+public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,ILoaderData<List<Message>>,SwipeRefreshLayout.OnRefreshListener{
 
     private static final String TAG = PrimaryFeedActivity.class.getName();
 
@@ -43,21 +46,18 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
     @ViewById(R.id.swipeRefreshLayout) protected SwipeRefreshLayout mSwipeRefreshLayout;
     @ViewById(android.R.id.list) protected RecyclerView mRvList;
 
-    private MessagesServiceImpl mRealmService = new MessageService(this);
+    private MessagesServiceImpl mRealmService;
 
     private static ConnectivityManager sManagerConnect;
     private static NetworkInfo sNetworkInfo;
 
-    @AfterViews
     @Override
     public void getFeedFromNetwork(){
         try {
             mMessagesList = mPrimaryFeedPresenter.getNews();
-            setListFeed();
             mFeedAdapter.setFeedAdapter(mMessagesList);
             mRvList.setAdapter(mFeedAdapter);
             Toast.makeText(this,R.string.load_from_network,Toast.LENGTH_LONG).show();
-            mRealmService.config(this);
         }catch (Exception e){
             messageBox("getFeedFromNetwork",e.getMessage());
         }
@@ -66,8 +66,8 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
     @Override
     public List<Message> getFeedFromDatabase(){
         try {
+            mRealmService = new MessageService(this);
             mMessagesList = mRealmService.query();
-            setListFeed();
             mFeedAdapter.setFeedAdapter(mMessagesList);
             mRvList.setAdapter(mFeedAdapter);
             Toast.makeText(this, R.string.load_from_database, Toast.LENGTH_LONG).show();
@@ -77,12 +77,13 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
         return mMessagesList;
     }
 
-
+    @AfterViews
     public void setListFeed(){
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+
         LinearLayoutManager llm = new LinearLayoutManager(this);
         mRvList.setLayoutManager(llm);
         mRvList.setHasFixedSize(true);
-        //TODO Have bug with two Detail Activity
         mRvList.addOnItemTouchListener(new RecyclerClickListener((view, position) ->
                 startActivity(DetailFeedActivity_.newInstance(this,
                         mMessagesList.get(position).getTitle(),
@@ -90,20 +91,21 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
                         mMessagesList.get(position).getLink(),
                         mMessagesList.get(position).getDescription())))
         );
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this).build();
+        Realm.setDefaultConfiguration(realmConfiguration);
+
+        getFeedFromNetwork();
     }
 
-    @AfterViews
-    @Override //TODO why this method is a part of View interface ? What if some one call this before *.xml inflation ?
-    public void setSwipeRefreshLayout(){
-        mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            if(isOnline()) {
-                PrimaryFeedActivity.this.runOnUiThread(() -> getFeedFromNetwork());
-                Toast.makeText(getApplicationContext(),R.string.update_data,Toast.LENGTH_LONG).show();
-            }else {
-                Toast.makeText(getApplicationContext(),String.format("%s\n%s",getString(R.string.dont_update),getString(R.string.check_network)),Toast.LENGTH_LONG).show();
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-        });
+    @Override
+    public void onRefresh() {
+        mSwipeRefreshLayout.setRefreshing(false);
+        if(isOnline()) {
+            PrimaryFeedActivity.this.runOnUiThread(() -> getFeedFromNetwork());
+            Toast.makeText(getApplicationContext(),R.string.update_data,Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(getApplicationContext(),String.format("%s\n%s",getString(R.string.dont_update),getString(R.string.check_network)),Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -127,6 +129,7 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
                 msg.getDescription();
                 msg.getLink();
             }
+            mRealmService = new MessageService(this);
             mRealmService.insert(mMessagesList);
 
         }catch (Throwable t){

@@ -60,27 +60,16 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     private Intent mIntent;
     private String mDetailFeed;
 
-    @ViewById(R.id.head)
-    TextView mTxHead;
-    @ViewById(R.id.textFeed)
-    TextView mTxFeed;
-    @ViewById(R.id.link)
-    TextView mTxLink;
-    @ViewById(R.id.detailFeedDate)
-    TextView mTxDate;
-    @ViewById(R.id.swipe_container)
-    SwipeRefreshLayout mSwipeRefreshLayout;
-    @ViewById(R.id.cv)
-    CardView mCardViewDetailFeed;
+    @ViewById(R.id.head) protected TextView mTxHead;
+    @ViewById(R.id.textFeed) protected TextView mTxFeed;
+    @ViewById(R.id.link) protected TextView mTxLink;
+    @ViewById(R.id.detailFeedDate) protected TextView mTxDate;
+    @ViewById(R.id.swipe_container) protected SwipeRefreshLayout mSwipeRefreshLayout;
+    @ViewById(R.id.cv) protected CardView mCardViewDetailFeed;
 
     private MessageService mRealm;
     private static ConnectivityManager sConnectManager;
     private static NetworkInfo sNetworkInfo;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public void getData() {
@@ -110,9 +99,8 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     @Override
     public void loadViews() {
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE);
 
-        RealmConfiguration mConfigRealmWithDetailFeed = new RealmConfiguration.Builder(getApplicationContext()).build();
+        RealmConfiguration mConfigRealmWithDetailFeed = new RealmConfiguration.Builder(this).build();
         Realm.setDefaultConfiguration(mConfigRealmWithDetailFeed);
 
         mRealm = new MessageService(this);
@@ -156,10 +144,11 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
         try {
             mList = mRealm.query();
             for (Message msg : mList) {
+                //TODO Have a bug
                 mTxHead.setText(msg.getTitle());
                 mTxDate.setText(msg.getDate());
+                mTxLink.setText(msg.getLink());
                 new ThreadDetailFeed(mTxFeed).execute(sUrl);
-                mTxLink.setText(sUrl);
             }
         }catch (Exception e){
             messageBox("getDetailFeedFromDatabase",e.getMessage());
@@ -185,18 +174,15 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
         } else {
             Toast.makeText(getApplicationContext(),String.format("%s\n%s",getString(R.string.dont_update),getString(R.string.check_network)),Toast.LENGTH_LONG).show();
         }
-
     }
 
     @Override
     public void messageBox(String method, String message)
     {
         AlertDialog.Builder messageBox = new AlertDialog.Builder(this);
-        messageBox.setTitle(method);
-        messageBox.setMessage(message);
-        messageBox.setCancelable(false);
-        messageBox.setNeutralButton("OK", null);
-        messageBox.show();
+        messageBox.setMessage(String.format("%s\n%s",getString(R.string.error_method)+method,getString(R.string.error)+message))
+                .setNeutralButton("OK", null)
+                .show();
     }
 
     private class ThreadDetailFeed extends AsyncTask<String, Void, String> {

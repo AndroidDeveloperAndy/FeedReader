@@ -5,7 +5,6 @@ import com.hackspace.andy.readrss.model.Entity.Message;
 import java.util.List;
 
 public interface PrimaryFeedView {
-    void setSwipeRefreshLayout();
     void getFeedFromNetwork();
     List<Message> getFeedFromDatabase();
     void getAlertDialogForConnectionError();

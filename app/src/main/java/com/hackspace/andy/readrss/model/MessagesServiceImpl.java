@@ -12,5 +12,4 @@ public interface MessagesServiceImpl {
 
     void insert(List<Message> messages);
     RealmResults<Message> query();
-    void config(Activity activity);
 }

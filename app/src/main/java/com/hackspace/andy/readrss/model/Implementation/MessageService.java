@@ -9,7 +9,6 @@ import com.hackspace.andy.readrss.model.Entity.Message;
 import java.util.List;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 public class MessageService implements MessagesServiceImpl {
@@ -18,12 +17,8 @@ public class MessageService implements MessagesServiceImpl {
     private Context mContext;
 
     public MessageService(Context context) {
+        mRealm = Realm.getDefaultInstance();
         this.mContext = context;
-    }
-
-    public void config(Activity activity) {
-        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(activity).build();
-        Realm.setDefaultConfiguration(realmConfiguration);
     }
 
     @Override
