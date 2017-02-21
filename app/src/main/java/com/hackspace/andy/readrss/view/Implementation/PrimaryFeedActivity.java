@@ -34,12 +34,13 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
 @EActivity(R.layout.activity_primary_feed)
-public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,ILoaderData<List<Message>>,SwipeRefreshLayout.OnRefreshListener{
+public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
+                                                                ILoaderData<List<Message>>,
+                                                                SwipeRefreshLayout.OnRefreshListener{
 
     private static final String TAG = PrimaryFeedActivity.class.getName();
 
-    PrimaryFeedPresenterImpl mPrimaryFeedPresenter = new PrimaryFeedPresenter(this);
-
+    private PrimaryFeedPresenterImpl mPrimaryFeedPresenter = new PrimaryFeedPresenter(this);
     private List<Message> mMessagesList;
     @Bean protected FeedAdapter mFeedAdapter;
 
@@ -47,7 +48,6 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
     @ViewById(android.R.id.list) protected RecyclerView mRvList;
 
     private MessagesServiceImpl mRealmService;
-
     private static ConnectivityManager sManagerConnect;
     private static NetworkInfo sNetworkInfo;
 
@@ -57,7 +57,6 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
             mMessagesList = mPrimaryFeedPresenter.getNews();
             mFeedAdapter.setFeedAdapter(mMessagesList);
             mRvList.setAdapter(mFeedAdapter);
-            Toast.makeText(this,R.string.load_from_network,Toast.LENGTH_LONG).show();
         }catch (Exception e){
             messageBox("getFeedFromNetwork",e.getMessage());
         }
@@ -70,13 +69,21 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
             mMessagesList = mRealmService.query();
             mFeedAdapter.setFeedAdapter(mMessagesList);
             mRvList.setAdapter(mFeedAdapter);
-            Toast.makeText(this, R.string.load_from_database, Toast.LENGTH_LONG).show();
         }catch (Exception e){
             messageBox("getFeedFromDatabase",e.getMessage());
         }
         return mMessagesList;
     }
 
+    public void getData() {
+        if (isOnline()) {
+            getFeedFromNetwork();
+            Toast.makeText(this, R.string.load_from_network, Toast.LENGTH_LONG).show();
+        } else {
+            getFeedFromDatabase();
+            Toast.makeText(this, R.string.load_from_database, Toast.LENGTH_LONG).show();
+        }
+    }
     @AfterViews
     public void setListFeed(){
         mSwipeRefreshLayout.setOnRefreshListener(this);
@@ -84,6 +91,7 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
         LinearLayoutManager llm = new LinearLayoutManager(this);
         mRvList.setLayoutManager(llm);
         mRvList.setHasFixedSize(true);
+
         mRvList.addOnItemTouchListener(new RecyclerClickListener((view, position) ->
                 startActivity(DetailFeedActivity_.newInstance(this,
                         mMessagesList.get(position).getTitle(),
@@ -94,7 +102,7 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this).build();
         Realm.setDefaultConfiguration(realmConfiguration);
 
-        getFeedFromNetwork();
+        getData();
     }
 
     @Override
@@ -126,12 +134,9 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
             for (Message msg : mMessagesList){
                 msg.getTitle();
                 msg.getDate();
-                msg.getDescription();
-                msg.getLink();
             }
             mRealmService = new MessageService(this);
             mRealmService.insert(mMessagesList);
-
         }catch (Throwable t){
             Log.e(TAG,"Error load list feed!",t);
         }
@@ -140,15 +145,12 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView ,IL
     @Override
     public void getAlertDialogForConnectionError() {
         AlertDialog.Builder mAlertDialog = new AlertDialog.Builder(this);
-        mAlertDialog.setTitle("Dialog");
-        mAlertDialog.setMessage("Error load feed. Reconnect for internet.");
-        mAlertDialog.setPositiveButton("Retry", (dialog, which) -> {
-            getFeedFromNetwork();
-        });
-        mAlertDialog.setNegativeButton("Cancel", (dialog, which) -> {
-        });
-        mAlertDialog.setCancelable(false);
-        mAlertDialog.show();
+        mAlertDialog.setTitle("Dialog")
+                    .setMessage("Error load feed. Reconnect for internet.")
+                    .setPositiveButton("Retry", (dialog, which) -> getFeedFromNetwork())
+                    .setNegativeButton("Cancel", (dialog, which) -> {})
+                    .setCancelable(false)
+                    .show();
     }
 
     @Override

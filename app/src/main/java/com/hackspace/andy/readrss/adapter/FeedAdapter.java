@@ -42,7 +42,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.PersonViewHold
     private List<Message> mMessageList = new ArrayList<>();
     private View mViewItem;
     private PersonViewHolder mPersonViewHolder;
-    final static String PICTURE_URL = "https://habrastorage.org/getpro/habr/app/566/b4a/0ef/566b4a0efc6eb3f762c632a89f4a03a3.jpg";
+    final static String PICTURE_URL = "https://habrahabr.ru/images/logo.png";
 
     public void setFeedAdapter(List<Message> messages) {
         this.mMessageList = messages;

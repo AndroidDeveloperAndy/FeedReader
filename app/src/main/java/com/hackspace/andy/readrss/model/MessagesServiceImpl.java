@@ -1,7 +1,5 @@
 package com.hackspace.andy.readrss.model;
 
-import android.app.Activity;
-
 import com.hackspace.andy.readrss.model.Entity.Message;
 
 import java.util.List;

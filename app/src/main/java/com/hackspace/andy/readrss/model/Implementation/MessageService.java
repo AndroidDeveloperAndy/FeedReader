@@ -1,6 +1,5 @@
 package com.hackspace.andy.readrss.model.Implementation;
 
-import android.app.Activity;
 import android.content.Context;
 
 import com.hackspace.andy.readrss.model.MessagesServiceImpl;
@@ -23,7 +22,6 @@ public class MessageService implements MessagesServiceImpl {
 
     @Override
     public void insert(List<Message> messages) {
-        mRealm = Realm.getDefaultInstance();
         for (Message message : messages) {
             mRealm.executeTransaction(transaction -> mRealm.copyToRealm(message));
         }

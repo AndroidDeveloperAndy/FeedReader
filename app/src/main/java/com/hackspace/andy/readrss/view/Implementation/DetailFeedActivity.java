@@ -3,13 +3,11 @@ package com.hackspace.andy.readrss.view.Implementation;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -20,6 +18,7 @@ import com.hackspace.andy.readrss.R;
 import com.hackspace.andy.readrss.loader.ILoaderData;
 import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.model.Implementation.MessageService;
+import com.hackspace.andy.readrss.model.MessagesServiceImpl;
 import com.hackspace.andy.readrss.view.DetailFeedView;
 
 import org.androidannotations.annotations.AfterViews;
@@ -35,7 +34,9 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
 @EActivity(R.layout.activity_detail_feed)
-public class DetailFeedActivity extends Activity implements ILoaderData<List<Message>>, SwipeRefreshLayout.OnRefreshListener, DetailFeedView {
+public class DetailFeedActivity extends Activity implements ILoaderData<List<Message>>,
+                                                            SwipeRefreshLayout.OnRefreshListener,
+                                                            DetailFeedView{
 
     private static final String TAG = DetailFeedActivity.class.getName();
 
@@ -60,14 +61,14 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     private Intent mIntent;
     private String mDetailFeed;
 
-    @ViewById(R.id.head) protected TextView mTxHead;
-    @ViewById(R.id.textFeed) protected TextView mTxFeed;
-    @ViewById(R.id.link) protected TextView mTxLink;
-    @ViewById(R.id.detailFeedDate) protected TextView mTxDate;
-    @ViewById(R.id.swipe_container) protected SwipeRefreshLayout mSwipeRefreshLayout;
     @ViewById(R.id.cv) protected CardView mCardViewDetailFeed;
+    @ViewById(R.id.head) protected TextView mTxHead;
+    @ViewById(R.id.detailFeedDate) protected TextView mTxDate;
+    @ViewById(R.id.link) protected TextView mTxLink;
+    @ViewById(R.id.textFeed) protected TextView mTxFeed;
+    @ViewById(R.id.swipe_container) protected SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private MessageService mRealm;
+    private MessagesServiceImpl mRealm;
     private static ConnectivityManager sConnectManager;
     private static NetworkInfo sNetworkInfo;
 
@@ -99,10 +100,8 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     @Override
     public void loadViews() {
         mSwipeRefreshLayout.setOnRefreshListener(this);
-
-        RealmConfiguration mConfigRealmWithDetailFeed = new RealmConfiguration.Builder(this).build();
+        RealmConfiguration mConfigRealmWithDetailFeed = new RealmConfiguration.Builder(getApplicationContext()).build();
         Realm.setDefaultConfiguration(mConfigRealmWithDetailFeed);
-
         mRealm = new MessageService(this);
         getInfoFromActivity();
         getData();
@@ -141,14 +140,13 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
 
     @Override
     public void getDetailFeedFromDatabase() {
+        mList = mRealm.query();
         try {
-            mList = mRealm.query();
             for (Message msg : mList) {
-                //TODO Have a bug
-                mTxHead.setText(msg.getTitle());
-                mTxDate.setText(msg.getDate());
-                mTxLink.setText(msg.getLink());
-                new ThreadDetailFeed(mTxFeed).execute(sUrl);
+                mTxHead.setText(sTitle);
+                mTxDate.setText(sDate);
+                mTxLink.setText(sUrl);
+                new ThreadDetailFeed(mTxFeed).execute(msg.getLink());
             }
         }catch (Exception e){
             messageBox("getDetailFeedFromDatabase",e.getMessage());
