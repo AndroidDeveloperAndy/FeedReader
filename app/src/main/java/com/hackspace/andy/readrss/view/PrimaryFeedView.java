@@ -7,7 +7,7 @@ import java.util.List;
 public interface PrimaryFeedView {
     void getFeedFromNetwork();
     List<Message> getFeedFromDatabase();
-    void getAlertDialogForConnectionError();
-    boolean isOnline();
-    void messageBox(String method, String message);
+    void showFeed(List<Message> listFeed);
+    void showError();
+    void getData();
 }

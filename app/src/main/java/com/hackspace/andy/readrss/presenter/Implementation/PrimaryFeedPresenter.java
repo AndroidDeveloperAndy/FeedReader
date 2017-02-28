@@ -3,14 +3,19 @@ package com.hackspace.andy.readrss.presenter.Implementation;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.hackspace.andy.readrss.injection.ConfigPersistent;
 import com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser;
 import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.presenter.PrimaryFeedPresenterImpl;
+import com.hackspace.andy.readrss.util.NetworkUtil;
 import com.hackspace.andy.readrss.view.Implementation.PrimaryFeedActivity;
 import com.hackspace.andy.readrss.view.PrimaryFeedView;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+@ConfigPersistent
 public class PrimaryFeedPresenter implements PrimaryFeedPresenterImpl {
 
     private static final String TAG = PrimaryFeedPresenter.class.getName();
@@ -18,13 +23,13 @@ public class PrimaryFeedPresenter implements PrimaryFeedPresenterImpl {
     private List<Message> mMessagesList;
     private PrimaryFeedView mPrimaryFeedView;
 
+    @Inject
     public PrimaryFeedPresenter(PrimaryFeedView view){
        this.mPrimaryFeedView = view;
     }
 
     @Override
     public List<Message> getNews() {
-        if(mPrimaryFeedView.isOnline()) {
             try {
                 if ((mListLoader != null) && mListLoader.getStatus() != AsyncTask.Status.RUNNING) {
                     if (mListLoader.isCancelled()) {
@@ -56,13 +61,10 @@ public class PrimaryFeedPresenter implements PrimaryFeedPresenterImpl {
                     mMessagesList = mListLoader.get();
                 }
             } catch (Exception e) {
-                mPrimaryFeedView.getAlertDialogForConnectionError();
+                mPrimaryFeedView.showError();
                 e.getMessage();
                 Log.e(TAG, "Error load feed in the home page!", e);
             }
-        }else {
-            mMessagesList = mPrimaryFeedView.getFeedFromDatabase();
-        }
         return mMessagesList;
     }
 }

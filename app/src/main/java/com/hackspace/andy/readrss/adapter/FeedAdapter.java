@@ -17,34 +17,36 @@ import org.androidannotations.annotations.EBean;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 @EBean
-public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.PersonViewHolder>{
+public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder>{
 
-    public static class PersonViewHolder extends RecyclerView.ViewHolder {
+    public static class FeedViewHolder extends RecyclerView.ViewHolder {
 
-        private CardView mCardView;
-        private TextView mNameFeed;
-        private TextView mDateFeed;
-        private ImageView mImgHabra;
+        @BindView(R.id.cv) CardView mCardView;
+        @BindView (R.id.feed) TextView mNameFeed;
+        @BindView (R.id.dateFeed) TextView mDateFeed;
+        @BindView (R.id.imgHab) ImageView mImgHabra;
 
-        PersonViewHolder(View itemView) {
+        FeedViewHolder(View itemView) {
             super(itemView);
-            mImgHabra = (ImageView) itemView.findViewById(R.id.imgHab);
-            mNameFeed = (TextView)  itemView.findViewById(R.id.feed);
-            mDateFeed = (TextView)  itemView.findViewById(R.id.dateFeed);
-            mCardView = (CardView)  itemView.findViewById(R.id.cv);
             ButterKnife.bind(this, itemView);
         }
     }
 
-    private List<Message> mMessageList = new ArrayList<>();
-    private View mViewItem;
-    private PersonViewHolder mPersonViewHolder;
+    private List<Message> mMessageList;
     final static String PICTURE_URL = "https://habrahabr.ru/images/logo.png";
 
-    public void setFeedAdapter(List<Message> messages) {
+    @Inject
+    public FeedAdapter(){
+        mMessageList = new ArrayList<>();
+    }
+
+    public void setFeed(List<Message> messages) {
         this.mMessageList = messages;
     }
 
@@ -54,17 +56,17 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.PersonViewHold
     }
 
     @Override
-    public FeedAdapter.PersonViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        mViewItem = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item, viewGroup, false);
-        mPersonViewHolder = new PersonViewHolder(mViewItem);
+    public FeedAdapter.FeedViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        View mViewItem = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item, viewGroup, false);
+        FeedViewHolder mPersonViewHolder = new FeedViewHolder(mViewItem);
         Picasso.with(mViewItem.getContext()).load(PICTURE_URL).into(mPersonViewHolder.mImgHabra);
         return mPersonViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(FeedAdapter.PersonViewHolder personViewHolder, int position) {
-        personViewHolder.mNameFeed.setText(mMessageList.get(position).getTitle());
-        personViewHolder.mDateFeed.setText(mMessageList.get(position).getDate());
+    public void onBindViewHolder(FeedAdapter.FeedViewHolder holder, int position) {
+        holder.mNameFeed.setText(mMessageList.get(position).getTitle());
+        holder.mDateFeed.setText(mMessageList.get(position).getDate());
     }
 
     @Override

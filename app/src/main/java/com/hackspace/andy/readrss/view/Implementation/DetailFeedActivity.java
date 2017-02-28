@@ -3,14 +3,10 @@ package com.hackspace.andy.readrss.view.Implementation;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +15,8 @@ import com.hackspace.andy.readrss.loader.ILoaderData;
 import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.model.Implementation.MessageService;
 import com.hackspace.andy.readrss.model.MessagesServiceImpl;
+import com.hackspace.andy.readrss.util.DialogFactory;
+import com.hackspace.andy.readrss.util.NetworkUtil;
 import com.hackspace.andy.readrss.view.DetailFeedView;
 
 import org.androidannotations.annotations.AfterViews;
@@ -38,8 +36,6 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
                                                             SwipeRefreshLayout.OnRefreshListener,
                                                             DetailFeedView{
 
-    private static final String TAG = DetailFeedActivity.class.getName();
-
     @Extra
     static String ARG_TITLE = "TITLE_ARGUMENT";
     @Extra
@@ -51,15 +47,10 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
 
     private static final String P = "p";
 
-    private static String sTitle;
-    private static String sDate;
-    private static String sDescription;
-    private static String sUrl;
-    private Document mStructureDetailFeed;
+    private static String sTitle,sDate,sDescription,sUrl;
 
     private List<Message> mList;
     private Intent mIntent;
-    private String mDetailFeed;
 
     @ViewById(R.id.cv) protected CardView mCardViewDetailFeed;
     @ViewById(R.id.head) protected TextView mTxHead;
@@ -69,12 +60,10 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     @ViewById(R.id.swipe_container) protected SwipeRefreshLayout mSwipeRefreshLayout;
 
     private MessagesServiceImpl mRealm;
-    private static ConnectivityManager sConnectManager;
-    private static NetworkInfo sNetworkInfo;
 
     @Override
     public void getData() {
-        if (isOnline()) {
+        if (NetworkUtil.isNetworkAvailable(this)) {
             loadDetailFeed();
             Toast.makeText(this, R.string.load_from_network, Toast.LENGTH_LONG).show();
         } else {
@@ -91,8 +80,8 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
             mTxLink.setText(sUrl);
             new ThreadDetailFeed(mTxFeed).execute(sUrl);
         } catch (Exception e) {
-            messageBox("loadDetailFeed",e.getMessage());
-            Log.e(TAG, "Error load detail page!", e);
+            showError();
+            NetworkUtil.messageBox("loadDetailFeed",e.getMessage(),this);
         }
     }
 
@@ -149,24 +138,15 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
                 new ThreadDetailFeed(mTxFeed).execute(msg.getLink());
             }
         }catch (Exception e){
-            messageBox("getDetailFeedFromDatabase",e.getMessage());
+            showError();
+            NetworkUtil.messageBox("getDetailFeedFromDatabase",e.getMessage(),this);
         }
-    }
-
-    @Override
-    public boolean isOnline() {
-        if(getApplicationContext() == null) {
-            return false;
-        }
-        sConnectManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        sNetworkInfo = sConnectManager.getActiveNetworkInfo();
-        return sNetworkInfo != null && sNetworkInfo.isConnectedOrConnecting();
     }
 
     @Override
     public void onRefresh() {
         mSwipeRefreshLayout.setRefreshing(false);
-        if (isOnline()) {
+        if (NetworkUtil.isNetworkAvailable(this)) {
             DetailFeedActivity.this.runOnUiThread(() -> loadDetailFeed());
             Toast.makeText(getApplicationContext(), R.string.update_data, Toast.LENGTH_LONG).show();
         } else {
@@ -175,17 +155,16 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     }
 
     @Override
-    public void messageBox(String method, String message)
-    {
-        AlertDialog.Builder messageBox = new AlertDialog.Builder(this);
-        messageBox.setMessage(String.format("%s\n%s",getString(R.string.error_method)+method,getString(R.string.error)+message))
-                .setNeutralButton("OK", null)
+    public void showError() {
+        DialogFactory.createGenericErrorDialog(this, getString(R.string.error_loading_feed))
                 .show();
     }
 
     private class ThreadDetailFeed extends AsyncTask<String, Void, String> {
 
         private TextView mTextViewFeed;
+        private Document mStructureDetailFeed;
+        private String mDetailFeed;
 
         public ThreadDetailFeed(TextView textViewFeed) {
             this.mTextViewFeed = textViewFeed;
@@ -197,7 +176,7 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
                 mStructureDetailFeed = Jsoup.parse(sDescription);
                 mStructureDetailFeed.select(P);
             }catch (Exception e){
-                messageBox("ThreadDetailFeed",e.getMessage());
+                showError();
             }
             return mDetailFeed = mStructureDetailFeed.text();
         }
