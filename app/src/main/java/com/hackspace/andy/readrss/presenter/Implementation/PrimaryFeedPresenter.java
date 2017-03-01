@@ -3,28 +3,24 @@ package com.hackspace.andy.readrss.presenter.Implementation;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.hackspace.andy.readrss.injection.ConfigPersistent;
-import com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser;
+import com.hackspace.andy.readrss.loader.implementation.BaseFeedParser;
 import com.hackspace.andy.readrss.model.Entity.Message;
-import com.hackspace.andy.readrss.presenter.PrimaryFeedPresenterImpl;
-import com.hackspace.andy.readrss.util.NetworkUtil;
+import com.hackspace.andy.readrss.presenter.interfaces.PrimaryFeedPresenterImpl;
 import com.hackspace.andy.readrss.view.Implementation.PrimaryFeedActivity;
-import com.hackspace.andy.readrss.view.PrimaryFeedView;
+import com.hackspace.andy.readrss.view.interfaces.PrimaryFeedView;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-@ConfigPersistent
 public class PrimaryFeedPresenter implements PrimaryFeedPresenterImpl {
 
     private static final String TAG = PrimaryFeedPresenter.class.getName();
     private BaseFeedParser<List<Message>> mListLoader;
     private List<Message> mMessagesList;
-    private PrimaryFeedView mPrimaryFeedView;
+    private PrimaryFeedActivity mPrimaryFeedView;
 
-    @Inject
-    public PrimaryFeedPresenter(PrimaryFeedView view){
+    public PrimaryFeedPresenter(PrimaryFeedActivity view){
        this.mPrimaryFeedView = view;
     }
 

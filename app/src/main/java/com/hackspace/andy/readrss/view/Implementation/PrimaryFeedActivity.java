@@ -1,6 +1,7 @@
 package com.hackspace.andy.readrss.view.Implementation;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,18 +10,16 @@ import android.widget.Toast;
 
 import com.hackspace.andy.readrss.adapter.FeedAdapter;
 import com.hackspace.andy.readrss.adapter.RecyclerClickListener;
-import com.hackspace.andy.readrss.injection.component.ActivityComponent;
-import com.hackspace.andy.readrss.injection.component.ConfigPersistentComponent;
-import com.hackspace.andy.readrss.injection.module.ActivityModule;
+import com.hackspace.andy.readrss.injection.FeedReaderApp;
 import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.R;
-import com.hackspace.andy.readrss.loader.ILoaderData;
+import com.hackspace.andy.readrss.loader.interfaces.ILoaderData;
 import com.hackspace.andy.readrss.model.Implementation.MessageService;
-import com.hackspace.andy.readrss.model.MessagesServiceImpl;
+import com.hackspace.andy.readrss.model.interfaces.MessagesServiceImpl;
 import com.hackspace.andy.readrss.presenter.Implementation.PrimaryFeedPresenter;
 import com.hackspace.andy.readrss.util.DialogFactory;
 import com.hackspace.andy.readrss.util.NetworkUtil;
-import com.hackspace.andy.readrss.view.PrimaryFeedView;
+import com.hackspace.andy.readrss.view.interfaces.PrimaryFeedView;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -31,15 +30,13 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.BindView;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 @EActivity(R.layout.activity_primary_feed)
 public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
                                                                 ILoaderData<List<Message>>,
                                                                 SwipeRefreshLayout.OnRefreshListener{
 
-    @Inject PrimaryFeedPresenter mPrimaryFeedPresenter;
+    PrimaryFeedPresenter mPrimaryFeedPresenter;
     @Inject FeedAdapter mFeedAdapter;
 
     @ViewById(R.id.swipeRefreshLayout) protected SwipeRefreshLayout mSwipeRefreshLayout;
@@ -47,7 +44,13 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
 
     private List<Message> mMessagesList;
     private MessagesServiceImpl mRealmService;
-    private ActivityComponent mActivityComponent;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ((FeedReaderApp) getApplication()).getComponent().inject(this);
+        getData();
+    }
 
     @Override
     public void getFeedFromNetwork(){
@@ -57,7 +60,7 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
             showFeed(mMessagesList);
         }catch (Exception e){
             showError();
-            NetworkUtil.messageBox("getFeedFromNetwork",e.getMessage(),this);
+            DialogFactory.messageBox("getFeedFromNetwork",e.getMessage(),this);
         }
     }
 
@@ -69,7 +72,7 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
             showFeed(mMessagesList);
         }catch (Exception e){
             showError();
-            NetworkUtil.messageBox("getFeedFromDatabase",e.getMessage(),this);
+            DialogFactory.messageBox("getFeedFromDatabase",e.getMessage(),this);
         }
         return mMessagesList;
     }
@@ -86,19 +89,16 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
     @Override
     public void getData() {
         if (NetworkUtil.isNetworkAvailable(this)) {
+            DialogFactory.createProgressDialog(this,R.string.load_from_network);
             getFeedFromNetwork();
-            Toast.makeText(this, R.string.load_from_network, Toast.LENGTH_LONG).show();
         } else {
+            DialogFactory.createProgressDialog(this,R.string.load_from_database);
             getFeedFromDatabase();
-            Toast.makeText(this, R.string.load_from_database, Toast.LENGTH_LONG).show();
         }
     }
 
     @AfterViews
     public void setListFeed(){
-
-        mActivityComponent.inject(this);
-
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
         mRvList.addOnItemTouchListener(new RecyclerClickListener((view, position) ->
@@ -108,10 +108,6 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
                         mMessagesList.get(position).getLink(),
                         mMessagesList.get(position).getDescription())))
         );
-        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this).build();
-        Realm.setDefaultConfiguration(realmConfiguration);
-
-        getData();
     }
 
     @Override
@@ -119,7 +115,7 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
         mSwipeRefreshLayout.setRefreshing(false);
         if(NetworkUtil.isNetworkAvailable(this)) {
             PrimaryFeedActivity.this.runOnUiThread(() -> getFeedFromNetwork());
-            Toast.makeText(getApplicationContext(),R.string.update_data,Toast.LENGTH_LONG).show();
+            DialogFactory.createProgressDialog(this,R.string.update_data);
         }else {
             Toast.makeText(getApplicationContext(),String.format("%s\n%s",getString(R.string.dont_update),getString(R.string.check_network)),Toast.LENGTH_LONG).show();
         }
@@ -138,14 +134,13 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
             mRealmService.insert(mMessagesList);
         }catch (Throwable t){
             showError();
-            NetworkUtil.messageBox("getFeedFromDatabase",t.getMessage(),this);
+            DialogFactory.messageBox("getFeedFromDatabase",t.getMessage(),this);
         }
     }
 
     @Override
     public void showError() {
-        DialogFactory.createGenericErrorDialog(this, getString(R.string.error_loading_feed))
-                .show();
+        DialogFactory.createGenericErrorDialog(this, getString(R.string.error_loading_feed)).show();
     }
 }
 

@@ -1,4 +1,4 @@
-package com.hackspace.andy.readrss.presenter;
+package com.hackspace.andy.readrss.presenter.interfaces;
 
 import com.hackspace.andy.readrss.model.Entity.Message;
 

@@ -18,12 +18,4 @@ public class NetworkUtil {
             return false;
         }
     }
-
-    public static void messageBox(String method, String message,Activity activity)
-    {
-        AlertDialog.Builder messageBox = new AlertDialog.Builder(activity);
-        messageBox.setMessage(String.format("%s\n%s",activity.getString(R.string.error_method)+method,activity.getString(R.string.error)+message))
-                .setNeutralButton("OK", null)
-                .show();
-    }
 }

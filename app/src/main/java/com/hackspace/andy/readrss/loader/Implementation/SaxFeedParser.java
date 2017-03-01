@@ -1,9 +1,11 @@
-package com.hackspace.andy.readrss.loader.Implementation;
+package com.hackspace.andy.readrss.loader.implementation;
 
-import com.hackspace.andy.readrss.loader.ILoaderData;
+import android.util.Log;
+
+import com.hackspace.andy.readrss.loader.interfaces.ILoaderData;
 import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.view.Implementation.PrimaryFeedActivity;
-import com.hackspace.andy.readrss.view.PrimaryFeedView;
+import com.hackspace.andy.readrss.view.interfaces.PrimaryFeedView;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -15,6 +17,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 public class SaxFeedParser extends BaseFeedParser<List<Message>> {
 
+	private static final String TAG = SaxFeedParser.class.getName();
 	private SAXParserFactory mFactoryParser = SAXParserFactory.newInstance();
 	private PrimaryFeedView mFeedView = new PrimaryFeedActivity();
 	private SAXParser SaxParser;
@@ -39,7 +42,8 @@ public class SaxFeedParser extends BaseFeedParser<List<Message>> {
 
 			return mFeedHandler.getMessages();
 		} catch (Exception e) {
-			mFeedView.messageBox("parse",e.getMessage());
+			mFeedView.showError();
+			Log.d(TAG,"parse: ",e);
 			throw new RuntimeException(e);
 		}
 	}

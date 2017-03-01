@@ -1,11 +1,14 @@
-package com.hackspace.andy.readrss.loader.Implementation;
+package com.hackspace.andy.readrss.loader.implementation;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
-import com.hackspace.andy.readrss.loader.FeedParser;
-import com.hackspace.andy.readrss.loader.ILoaderData;
+import com.hackspace.andy.readrss.loader.interfaces.FeedParser;
+import com.hackspace.andy.readrss.loader.interfaces.ILoaderData;
+import com.hackspace.andy.readrss.util.DialogFactory;
+import com.hackspace.andy.readrss.util.NetworkUtil;
 import com.hackspace.andy.readrss.view.Implementation.PrimaryFeedActivity;
-import com.hackspace.andy.readrss.view.PrimaryFeedView;
+import com.hackspace.andy.readrss.view.interfaces.PrimaryFeedView;
 
 import org.androidannotations.annotations.EBean;
 
@@ -25,6 +28,7 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 	public static final String ITEM = "item";
 
 	private static final String FEED_URL = "https://habrahabr.ru/rss/feed/posts/6266e7ec4301addaf92d10eb212b4546";
+	private static final String TAG = BaseFeedParser.class.getName();
 
 	private final URL mFeedUrl;
 	private ILoaderData<T> mEndDataPoint;
@@ -36,7 +40,8 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 		try {
 			this.mFeedUrl = new URL(FEED_URL);
 		} catch (MalformedURLException e) {
-			mFeedView.messageBox("BaseFeedParser",e.getMessage());
+			mFeedView.showError();
+			Log.d(TAG,"BaseFeedParser: ",e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -61,7 +66,8 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 		try {
 			return mFeedUrl.openStream();
 		} catch (IOException e) {
-			mFeedView.messageBox("getInputStream",e.getMessage());
+			mFeedView.showError();
+			Log.d(TAG,"getInputStream: ",e);
 			throw new RuntimeException(e);
 		}
 	}

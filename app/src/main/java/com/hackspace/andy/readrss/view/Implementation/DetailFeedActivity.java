@@ -11,13 +11,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hackspace.andy.readrss.R;
-import com.hackspace.andy.readrss.loader.ILoaderData;
+import com.hackspace.andy.readrss.loader.interfaces.ILoaderData;
 import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.model.Implementation.MessageService;
-import com.hackspace.andy.readrss.model.MessagesServiceImpl;
+import com.hackspace.andy.readrss.model.interfaces.MessagesServiceImpl;
 import com.hackspace.andy.readrss.util.DialogFactory;
 import com.hackspace.andy.readrss.util.NetworkUtil;
-import com.hackspace.andy.readrss.view.DetailFeedView;
+import com.hackspace.andy.readrss.view.interfaces.DetailFeedView;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -27,9 +27,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.util.List;
-
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 @EActivity(R.layout.activity_detail_feed)
 public class DetailFeedActivity extends Activity implements ILoaderData<List<Message>>,
@@ -64,11 +61,11 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     @Override
     public void getData() {
         if (NetworkUtil.isNetworkAvailable(this)) {
+            DialogFactory.createProgressDialog(this, R.string.load_from_network);
             loadDetailFeed();
-            Toast.makeText(this, R.string.load_from_network, Toast.LENGTH_LONG).show();
         } else {
+            DialogFactory.createProgressDialog(this, R.string.load_from_database);
             getDetailFeedFromDatabase();
-            Toast.makeText(this, R.string.load_from_database, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -81,7 +78,7 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
             new ThreadDetailFeed(mTxFeed).execute(sUrl);
         } catch (Exception e) {
             showError();
-            NetworkUtil.messageBox("loadDetailFeed",e.getMessage(),this);
+            DialogFactory.messageBox("loadDetailFeed",e.getMessage(),this);
         }
     }
 
@@ -89,8 +86,6 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     @Override
     public void loadViews() {
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        RealmConfiguration mConfigRealmWithDetailFeed = new RealmConfiguration.Builder(getApplicationContext()).build();
-        Realm.setDefaultConfiguration(mConfigRealmWithDetailFeed);
         mRealm = new MessageService(this);
         getInfoFromActivity();
         getData();
@@ -139,7 +134,7 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
             }
         }catch (Exception e){
             showError();
-            NetworkUtil.messageBox("getDetailFeedFromDatabase",e.getMessage(),this);
+            DialogFactory.messageBox("getDetailFeedFromDatabase",e.getMessage(),this);
         }
     }
 
@@ -147,8 +142,8 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     public void onRefresh() {
         mSwipeRefreshLayout.setRefreshing(false);
         if (NetworkUtil.isNetworkAvailable(this)) {
+            DialogFactory.createProgressDialog(this, R.string.update_data);
             DetailFeedActivity.this.runOnUiThread(() -> loadDetailFeed());
-            Toast.makeText(getApplicationContext(), R.string.update_data, Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(getApplicationContext(),String.format("%s\n%s",getString(R.string.dont_update),getString(R.string.check_network)),Toast.LENGTH_LONG).show();
         }
@@ -156,8 +151,7 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
 
     @Override
     public void showError() {
-        DialogFactory.createGenericErrorDialog(this, getString(R.string.error_loading_feed))
-                .show();
+        DialogFactory.createGenericErrorDialog(this, getString(R.string.error_loading_feed)).show();
     }
 
     private class ThreadDetailFeed extends AsyncTask<String, Void, String> {

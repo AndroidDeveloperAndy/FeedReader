@@ -1,13 +1,14 @@
 package com.hackspace.andy.readrss.injection.component;
 
-import com.hackspace.andy.readrss.injection.PerActivity;
 import com.hackspace.andy.readrss.injection.module.ActivityModule;
 import com.hackspace.andy.readrss.view.Implementation.PrimaryFeedActivity;
 
-import dagger.Subcomponent;
+import javax.inject.Singleton;
 
-@PerActivity
-@Subcomponent(modules = ActivityModule.class)
+import dagger.Component;
+
+@Singleton
+@Component(modules = ActivityModule.class)
 public interface ActivityComponent {
     void inject(PrimaryFeedActivity primaryFeedActivity);
 }

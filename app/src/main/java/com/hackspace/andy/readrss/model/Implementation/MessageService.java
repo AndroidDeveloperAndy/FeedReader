@@ -2,7 +2,7 @@ package com.hackspace.andy.readrss.model.Implementation;
 
 import android.content.Context;
 
-import com.hackspace.andy.readrss.model.MessagesServiceImpl;
+import com.hackspace.andy.readrss.model.interfaces.MessagesServiceImpl;
 import com.hackspace.andy.readrss.model.Entity.Message;
 
 import java.util.List;

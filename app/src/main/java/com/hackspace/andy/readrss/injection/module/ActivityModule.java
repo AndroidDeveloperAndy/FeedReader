@@ -1,9 +1,14 @@
 package com.hackspace.andy.readrss.injection.module;
 
-import android.app.Activity;
 import android.content.Context;
 
-import com.hackspace.andy.readrss.injection.ActivityContext;
+import com.hackspace.andy.readrss.model.Entity.Message;
+import com.hackspace.andy.readrss.model.Implementation.MessageService;
+import com.hackspace.andy.readrss.presenter.Implementation.PrimaryFeedPresenter;
+import com.hackspace.andy.readrss.view.Implementation.PrimaryFeedActivity;
+import com.hackspace.andy.readrss.view.interfaces.PrimaryFeedView;
+
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -11,20 +16,21 @@ import dagger.Provides;
 @Module
 public class ActivityModule {
 
-    private Activity mActivity;
+    private Context mContext;
 
-    public ActivityModule(Activity activity) {
-        mActivity = activity;
+    public ActivityModule(Context context){
+        this.mContext = context;
     }
 
+    @Singleton
     @Provides
-    Activity provideActivity() {
-        return mActivity;
+    PrimaryFeedPresenter providePresenter(PrimaryFeedActivity view) {
+        return new PrimaryFeedPresenter(view);
     }
 
+    @Singleton
     @Provides
-    @ActivityContext
-    Context providesContext() {
-        return mActivity;
+    MessageService provideService() {
+        return new MessageService(mContext);
     }
 }

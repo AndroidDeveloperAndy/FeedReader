@@ -1,4 +1,4 @@
-package com.hackspace.andy.readrss.view;
+package com.hackspace.andy.readrss.view.interfaces;
 
 public interface DetailFeedView {
     void loadViews();

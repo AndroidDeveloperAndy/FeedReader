@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'realm-android'
+
 def AAVersion = '4.0.0'
 android {
     compileSdkVersion 25
@@ -26,7 +28,14 @@ android {
         unitTests.returnDefaultValues = true
     }
 }
-
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "io.realm:realm-gradle-plugin:2.1.0"
+    }
+}
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
@@ -44,11 +53,11 @@ dependencies {
     compile  'io.reactivex:rxjava:1.1.6'
 
     compile 'com.googlecode.json-simple:json-simple:1.1'
-    compile 'io.realm:realm-android:0.87.4'
 
     compile 'com.android.support:cardview-v7:21.0.+'
     compile 'com.android.support:recyclerview-v7:21.0.+'
 
+    compile 'com.facebook.fresco:fresco:0.14.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
 
     compile 'com.jakewharton:butterknife:8.5.1'
