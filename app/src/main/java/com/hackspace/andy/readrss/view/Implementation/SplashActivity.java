@@ -1,4 +1,4 @@
-package com.hackspace.andy.readrss.view.Implementation;
+package com.hackspace.andy.readrss.view.implementation;
 
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;

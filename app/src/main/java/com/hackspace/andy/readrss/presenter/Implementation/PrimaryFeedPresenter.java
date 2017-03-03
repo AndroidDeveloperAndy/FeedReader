@@ -1,4 +1,4 @@
-package com.hackspace.andy.readrss.presenter.Implementation;
+package com.hackspace.andy.readrss.presenter.implementation;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -6,16 +6,14 @@ import android.util.Log;
 import com.hackspace.andy.readrss.loader.implementation.BaseFeedParser;
 import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.presenter.interfaces.PrimaryFeedPresenterImpl;
-import com.hackspace.andy.readrss.view.Implementation.PrimaryFeedActivity;
-import com.hackspace.andy.readrss.view.interfaces.PrimaryFeedView;
+import com.hackspace.andy.readrss.view.implementation.PrimaryFeedActivity;
 
 import java.util.List;
-
-import javax.inject.Inject;
 
 public class PrimaryFeedPresenter implements PrimaryFeedPresenterImpl {
 
     private static final String TAG = PrimaryFeedPresenter.class.getName();
+
     private BaseFeedParser<List<Message>> mListLoader;
     private List<Message> mMessagesList;
     private PrimaryFeedActivity mPrimaryFeedView;

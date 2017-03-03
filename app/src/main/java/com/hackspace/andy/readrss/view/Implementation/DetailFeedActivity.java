@@ -1,4 +1,4 @@
-package com.hackspace.andy.readrss.view.Implementation;
+package com.hackspace.andy.readrss.view.implementation;
 
 import android.app.Activity;
 import android.content.Context;
@@ -21,72 +21,39 @@ import com.hackspace.andy.readrss.view.interfaces.DetailFeedView;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.util.List;
 
+import static com.hackspace.andy.readrss.util.StringsUtils.ARG_DATE;
+import static com.hackspace.andy.readrss.util.StringsUtils.ARG_DESCRIPTION;
+import static com.hackspace.andy.readrss.util.StringsUtils.ARG_LINK;
+import static com.hackspace.andy.readrss.util.StringsUtils.ARG_TITLE;
+import static com.hackspace.andy.readrss.util.StringsUtils.TAB;
+
 @EActivity(R.layout.activity_detail_feed)
 public class DetailFeedActivity extends Activity implements ILoaderData<List<Message>>,
                                                             SwipeRefreshLayout.OnRefreshListener,
                                                             DetailFeedView{
 
-    @Extra
-    static String ARG_TITLE = "TITLE_ARGUMENT";
-    @Extra
-    static String ARG_DATE = "DATE_ARGUMENT";
-    @Extra
-    static String ARG_DESCRIPTION = "DESCRIPTION_ARGUMENT";
-    @Extra
-    static String ARG_LINK = "LINK_ARGUMENT";
-
-    private static final String P = "p";
+    @ViewById(R.id.cv)              CardView mCardViewDetailFeed;
+    @ViewById(R.id.head)            TextView mTxHead;
+    @ViewById(R.id.detailFeedDate)  TextView mTxDate;
+    @ViewById(R.id.link)            TextView mTxLink;
+    @ViewById(R.id.textFeed)        TextView mTxFeed;
+    @ViewById(R.id.swipe_container) SwipeRefreshLayout mSwipeRefreshLayout;
 
     private static String sTitle,sDate,sDescription,sUrl;
-
+    private MessagesServiceImpl mRealm;
     private List<Message> mList;
     private Intent mIntent;
-
-    @ViewById(R.id.cv) protected CardView mCardViewDetailFeed;
-    @ViewById(R.id.head) protected TextView mTxHead;
-    @ViewById(R.id.detailFeedDate) protected TextView mTxDate;
-    @ViewById(R.id.link) protected TextView mTxLink;
-    @ViewById(R.id.textFeed) protected TextView mTxFeed;
-    @ViewById(R.id.swipe_container) protected SwipeRefreshLayout mSwipeRefreshLayout;
-
-    private MessagesServiceImpl mRealm;
-
-    @Override
-    public void getData() {
-        if (NetworkUtil.isNetworkAvailable(this)) {
-            DialogFactory.createProgressDialog(this, R.string.load_from_network);
-            loadDetailFeed();
-        } else {
-            DialogFactory.createProgressDialog(this, R.string.load_from_database);
-            getDetailFeedFromDatabase();
-        }
-    }
-
-    @Override
-    public void loadDetailFeed() {
-        try {
-            mTxHead.setText(sTitle);
-            mTxDate.setText(sDate);
-            mTxLink.setText(sUrl);
-            new ThreadDetailFeed(mTxFeed).execute(sUrl);
-        } catch (Exception e) {
-            showError();
-            DialogFactory.messageBox("loadDetailFeed",e.getMessage(),this);
-        }
-    }
 
     @AfterViews
     @Override
     public void loadViews() {
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        mRealm = new MessageService(this);
         getInfoFromActivity();
         getData();
     }
@@ -102,28 +69,32 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     }
 
     @Override
-    public void endLoad(@NonNull List<Message> data) {
-        if (data.size() > 0) {
-            mTxHead.setText(getIntent().getStringExtra(ARG_TITLE));
-            mTxDate.setText(getIntent().getStringExtra(ARG_DATE));
-            mTxLink.setText(getIntent().getStringExtra(ARG_LINK));
-            mTxFeed.setText(getIntent().getStringExtra(ARG_DESCRIPTION));
+    public void getData() {
+        if (NetworkUtil.isNetworkAvailable(this)) {
+            DialogFactory.createProgressDialog(this, R.string.load_from_network);
+            loadDetailFeedFromNetwork();
+        } else {
+            DialogFactory.createProgressDialog(this, R.string.load_from_database);
+            loadDetailFeedFromDatabase();
         }
     }
 
-    public static Intent newInstance(Context context, String title, String date, String link, String description) {
-        Intent startIntent = DetailFeedActivity_.intent(context).get();
-
-        startIntent.putExtra(ARG_TITLE, title);
-        startIntent.putExtra(ARG_DATE, date);
-        startIntent.putExtra(ARG_LINK, link);
-        startIntent.putExtra(ARG_DESCRIPTION, description);
-
-        return startIntent;
+    @Override
+    public void loadDetailFeedFromNetwork() {
+        try {
+            mTxHead.setText(sTitle);
+            mTxDate.setText(sDate);
+            mTxLink.setText(sUrl);
+            new ThreadDetailFeed(mTxFeed).execute(sUrl);
+        } catch (Exception e) {
+            showError();
+            DialogFactory.messageBox("loadDetailFeed",e.getMessage(),this);
+        }
     }
 
     @Override
-    public void getDetailFeedFromDatabase() {
+    public void loadDetailFeedFromDatabase() {
+        mRealm = new MessageService();
         mList = mRealm.query();
         try {
             for (Message msg : mList) {
@@ -139,13 +110,32 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     }
 
     @Override
+    public void endLoad(@NonNull List<Message> data) {
+        if (data.size() > 0) {
+            mTxHead.setText(getIntent().getStringExtra(ARG_TITLE));
+            mTxDate.setText(getIntent().getStringExtra(ARG_DATE));
+            mTxLink.setText(getIntent().getStringExtra(ARG_LINK));
+            mTxFeed.setText(getIntent().getStringExtra(ARG_DESCRIPTION));
+        }
+    }
+
+    public static Intent newInstance(Context context, String title, String date, String link, String description) {
+        Intent startIntent = DetailFeedActivity_.intent(context).get();
+        startIntent.putExtra(ARG_TITLE, title);
+        startIntent.putExtra(ARG_DATE, date);
+        startIntent.putExtra(ARG_LINK, link);
+        startIntent.putExtra(ARG_DESCRIPTION, description);
+        return startIntent;
+    }
+
+    @Override
     public void onRefresh() {
         mSwipeRefreshLayout.setRefreshing(false);
         if (NetworkUtil.isNetworkAvailable(this)) {
             DialogFactory.createProgressDialog(this, R.string.update_data);
-            DetailFeedActivity.this.runOnUiThread(() -> loadDetailFeed());
+            DetailFeedActivity.this.runOnUiThread(() -> loadDetailFeedFromNetwork());
         } else {
-            Toast.makeText(getApplicationContext(),String.format("%s\n%s",getString(R.string.dont_update),getString(R.string.check_network)),Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),String.format(TAB,getString(R.string.dont_update),getString(R.string.check_network)),Toast.LENGTH_LONG).show();
         }
     }
 
@@ -168,7 +158,7 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
         protected String doInBackground(String... params) {
             try {
                 mStructureDetailFeed = Jsoup.parse(sDescription);
-                mStructureDetailFeed.select(P);
+                mStructureDetailFeed.select("p");
             }catch (Exception e){
                 showError();
             }

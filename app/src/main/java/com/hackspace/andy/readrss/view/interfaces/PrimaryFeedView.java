@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface PrimaryFeedView {
     void getFeedFromNetwork();
-    List<Message> getFeedFromDatabase();
+    void getFeedFromDatabase();
     void showFeed(List<Message> listFeed);
     void showError();
     void getData();

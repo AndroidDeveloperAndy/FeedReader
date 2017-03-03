@@ -3,9 +3,6 @@ package com.hackspace.andy.readrss.util;
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.support.v7.app.AlertDialog;
-
-import com.hackspace.andy.readrss.R;
 
 public class NetworkUtil {
 

@@ -6,10 +6,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Handler;
 import android.support.annotation.StringRes;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 
 import com.hackspace.andy.readrss.R;
+
+import static com.hackspace.andy.readrss.util.StringsUtils.TAB;
 
 public final class DialogFactory {
 
@@ -74,8 +75,8 @@ public final class DialogFactory {
     public static void messageBox(String method, String message,Activity activity)
     {
         AlertDialog.Builder messageBox = new AlertDialog.Builder(activity);
-        messageBox.setMessage(String.format("%s\n%s",activity.getString(R.string.error_method)+method,activity.getString(R.string.error)+message))
-                .setNeutralButton("OK", null)
+        messageBox.setMessage(String.format(TAB,activity.getString(R.string.error_method)+method,activity.getString(R.string.error)+message))
+                .setNeutralButton(R.string.dialog_action_ok, null)
                 .show();
     }
 }

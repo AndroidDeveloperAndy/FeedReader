@@ -1,8 +1,9 @@
-package com.hackspace.andy.readrss;
+package com.hackspace.andy.readrss.activity;
 
+import com.hackspace.andy.readrss.BuildConfig;
 import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.util.DefaultConfig;
-import com.hackspace.andy.readrss.view.Implementation.PrimaryFeedActivity;
+import com.hackspace.andy.readrss.view.implementation.DetailFeedActivity;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,23 +15,19 @@ import static junit.framework.Assert.assertNotNull;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = DefaultConfig.EMULATE_SDK)
-public class PrimaryFeedActivityTest {
+public class DetailFeedActivityTest {
 
-    private PrimaryFeedActivity mActivity;
-    private Message message;
+    private DetailFeedActivity mActivity;
+    private Message mMessage;
 
     @Before
-    public void setUp() throws Exception{
-        mActivity = new PrimaryFeedActivity();
-        message = new Message();
+    public void setUp() throws Exception {
+        mActivity = new DetailFeedActivity();
+        mMessage = new Message();
     }
 
     @Test
-    public void checkActivityNotNull() throws Exception{
+    public void checkActivityNotNull() throws Exception {
         assertNotNull(mActivity);
-    }
-    @Test
-    public void checkMessageNotNull() throws Exception{
-        assertNotNull(message);
     }
 }

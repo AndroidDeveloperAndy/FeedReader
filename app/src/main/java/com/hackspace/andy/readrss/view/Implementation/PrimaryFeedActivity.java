@@ -1,4 +1,4 @@
-package com.hackspace.andy.readrss.view.Implementation;
+package com.hackspace.andy.readrss.view.implementation;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -8,15 +8,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import com.hackspace.andy.readrss.R;
 import com.hackspace.andy.readrss.adapter.FeedAdapter;
 import com.hackspace.andy.readrss.adapter.RecyclerClickListener;
 import com.hackspace.andy.readrss.injection.FeedReaderApp;
-import com.hackspace.andy.readrss.model.Entity.Message;
-import com.hackspace.andy.readrss.R;
 import com.hackspace.andy.readrss.loader.interfaces.ILoaderData;
+import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.model.Implementation.MessageService;
 import com.hackspace.andy.readrss.model.interfaces.MessagesServiceImpl;
-import com.hackspace.andy.readrss.presenter.Implementation.PrimaryFeedPresenter;
+import com.hackspace.andy.readrss.presenter.implementation.PrimaryFeedPresenter;
+import com.hackspace.andy.readrss.presenter.interfaces.PrimaryFeedPresenterImpl;
 import com.hackspace.andy.readrss.util.DialogFactory;
 import com.hackspace.andy.readrss.util.NetworkUtil;
 import com.hackspace.andy.readrss.view.interfaces.PrimaryFeedView;
@@ -29,18 +30,17 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
+import static com.hackspace.andy.readrss.util.StringsUtils.TAB;
 
 @EActivity(R.layout.activity_primary_feed)
 public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
                                                                 ILoaderData<List<Message>>,
                                                                 SwipeRefreshLayout.OnRefreshListener{
 
-    PrimaryFeedPresenter mPrimaryFeedPresenter;
-    @Inject FeedAdapter mFeedAdapter;
-
-    @ViewById(R.id.swipeRefreshLayout) protected SwipeRefreshLayout mSwipeRefreshLayout;
-    @BindView(android.R.id.list) protected RecyclerView mRvList;
+    @Inject                             PrimaryFeedPresenterImpl mPrimaryFeedPresenter;
+    @Inject                             FeedAdapter mFeedAdapter;
+    @ViewById(R.id.swipeRefreshLayout)  SwipeRefreshLayout mSwipeRefreshLayout;
+    @ViewById(android.R.id.list)        RecyclerView mRvList;
 
     private List<Message> mMessagesList;
     private MessagesServiceImpl mRealmService;
@@ -48,7 +48,7 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((FeedReaderApp) getApplication()).getComponent().inject(this);
+        FeedReaderApp.getComponent().inject(this);
         getData();
     }
 
@@ -65,16 +65,15 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
     }
 
     @Override
-    public List<Message> getFeedFromDatabase(){
+    public void getFeedFromDatabase(){
         try {
-            mRealmService = new MessageService(this);
+            mRealmService = new MessageService();
             mMessagesList = mRealmService.query();
             showFeed(mMessagesList);
         }catch (Exception e){
             showError();
             DialogFactory.messageBox("getFeedFromDatabase",e.getMessage(),this);
         }
-        return mMessagesList;
     }
 
     @Override
@@ -100,7 +99,6 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
     @AfterViews
     public void setListFeed(){
         mSwipeRefreshLayout.setOnRefreshListener(this);
-
         mRvList.addOnItemTouchListener(new RecyclerClickListener((view, position) ->
                 startActivity(DetailFeedActivity_.newInstance(this,
                         mMessagesList.get(position).getTitle(),
@@ -112,12 +110,11 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
 
     @Override
     public void onRefresh() {
-        mSwipeRefreshLayout.setRefreshing(false);
         if(NetworkUtil.isNetworkAvailable(this)) {
             PrimaryFeedActivity.this.runOnUiThread(() -> getFeedFromNetwork());
             DialogFactory.createProgressDialog(this,R.string.update_data);
         }else {
-            Toast.makeText(getApplicationContext(),String.format("%s\n%s",getString(R.string.dont_update),getString(R.string.check_network)),Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),String.format(TAB,getString(R.string.dont_update),getString(R.string.check_network)),Toast.LENGTH_LONG).show();
         }
     }
 
@@ -129,8 +126,7 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
                 msg.getTitle();
                 msg.getDate();
             }
-
-            mRealmService = new MessageService(this);
+            mRealmService = new MessageService();
             mRealmService.insert(mMessagesList);
         }catch (Throwable t){
             showError();

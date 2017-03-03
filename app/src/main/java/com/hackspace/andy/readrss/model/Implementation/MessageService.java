@@ -1,9 +1,7 @@
 package com.hackspace.andy.readrss.model.Implementation;
 
-import android.content.Context;
-
-import com.hackspace.andy.readrss.model.interfaces.MessagesServiceImpl;
 import com.hackspace.andy.readrss.model.Entity.Message;
+import com.hackspace.andy.readrss.model.interfaces.MessagesServiceImpl;
 
 import java.util.List;
 
@@ -13,11 +11,9 @@ import io.realm.RealmResults;
 public class MessageService implements MessagesServiceImpl {
 
     private Realm mRealm;
-    private Context mContext;
 
-    public MessageService(Context context) {
+    public MessageService() {
         mRealm = Realm.getDefaultInstance();
-        this.mContext = context;
     }
 
     @Override

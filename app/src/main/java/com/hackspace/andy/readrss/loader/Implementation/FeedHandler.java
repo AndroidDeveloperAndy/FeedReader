@@ -9,12 +9,12 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.hackspace.andy.readrss.loader.implementation.BaseFeedParser.CHANNEL;
-import static com.hackspace.andy.readrss.loader.implementation.BaseFeedParser.DESCRIPTION;
-import static com.hackspace.andy.readrss.loader.implementation.BaseFeedParser.ITEM;
-import static com.hackspace.andy.readrss.loader.implementation.BaseFeedParser.LINK;
-import static com.hackspace.andy.readrss.loader.implementation.BaseFeedParser.PUB_DATE;
-import static com.hackspace.andy.readrss.loader.implementation.BaseFeedParser.TITLE;
+import static com.hackspace.andy.readrss.util.StringsUtils.CHANNEL;
+import static com.hackspace.andy.readrss.util.StringsUtils.DESCRIPTION;
+import static com.hackspace.andy.readrss.util.StringsUtils.ITEM;
+import static com.hackspace.andy.readrss.util.StringsUtils.LINK;
+import static com.hackspace.andy.readrss.util.StringsUtils.PUB_DATE;
+import static com.hackspace.andy.readrss.util.StringsUtils.TITLE;
 
 public class FeedHandler extends DefaultHandler {
 
@@ -30,7 +30,6 @@ public class FeedHandler extends DefaultHandler {
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
 		super.characters(ch, start, length);
-
 		mBuilder.append(ch, start, length);
 	}
 
@@ -69,7 +68,6 @@ public class FeedHandler extends DefaultHandler {
 	@Override
 	public void startDocument() throws SAXException {
 		super.startDocument();
-
 		mMessages = new ArrayList<>();
 		mBuilder = new StringBuilder();
 	}

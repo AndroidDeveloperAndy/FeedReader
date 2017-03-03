@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.hackspace.andy.readrss.loader.interfaces.ILoaderData;
 import com.hackspace.andy.readrss.model.Entity.Message;
-import com.hackspace.andy.readrss.view.Implementation.PrimaryFeedActivity;
+import com.hackspace.andy.readrss.view.implementation.PrimaryFeedActivity;
 import com.hackspace.andy.readrss.view.interfaces.PrimaryFeedView;
 
 import org.xml.sax.InputSource;

@@ -8,24 +8,18 @@ import java.text.SimpleDateFormat;
 import io.realm.RealmObject;
 import io.realm.annotations.Required;
 
+import static com.hackspace.andy.readrss.util.StringsUtils.DATE_FORMAT;
+
 public class Message extends RealmObject  {
 
-	private static final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss Z";
+	private static final String TAG = Message.class.getName();
+
 	private static final SimpleDateFormat FORMATTER = new SimpleDateFormat(DATE_FORMAT);
 
-	@Required
-	private String title;
-
-	@Required
-	private String link;
-
-	@Required
-	private String description;
-
-	@Required
-	private String date;
-
-	private static final String TAG = Message.class.getName();
+	@Required private String title;
+	@Required private String link;
+	@Required private String description;
+	@Required private String date;
 
 	public String getTitle() {
 		return title;
