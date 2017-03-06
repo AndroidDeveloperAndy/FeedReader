@@ -30,7 +30,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import static com.hackspace.andy.readrss.util.StringsUtils.TAB;
+import static com.hackspace.andy.readrss.util.ResourceUtils.TAB;
 
 @EActivity(R.layout.activity_primary_feed)
 public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
@@ -55,7 +55,7 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
     @Override
     public void getFeedFromNetwork(){
         try {
-            mPrimaryFeedPresenter = new PrimaryFeedPresenter(this);
+            mPrimaryFeedPresenter = new PrimaryFeedPresenter();
             mMessagesList = mPrimaryFeedPresenter.getNews();
             showFeed(mMessagesList);
         }catch (Exception e){

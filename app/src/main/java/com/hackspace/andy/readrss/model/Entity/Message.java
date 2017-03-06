@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import io.realm.RealmObject;
 import io.realm.annotations.Required;
 
-import static com.hackspace.andy.readrss.util.StringsUtils.DATE_FORMAT;
+import static com.hackspace.andy.readrss.util.ResourceUtils.DATE_FORMAT;
 
 public class Message extends RealmObject  {
 

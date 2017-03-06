@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.hackspace.andy.readrss.util.StringsUtils.PICTURE_URL;
+import static com.hackspace.andy.readrss.util.ResourceUtils.PICTURE_URL;
 
 @EBean
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder>{

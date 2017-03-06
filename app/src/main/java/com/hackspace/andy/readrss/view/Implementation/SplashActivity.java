@@ -6,10 +6,10 @@ import android.os.Bundle;
 
 import org.androidannotations.annotations.EActivity;
 
+import static com.hackspace.andy.readrss.util.ResourceUtils.LENGTH;
+
 @EActivity
 public class SplashActivity extends AppCompatActivity {
-
-    private int LENGTH = 1500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +18,6 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(()->{
         PrimaryFeedActivity_.intent(this).start();
         finish();
-        },LENGTH);
+        }, LENGTH);
     }
 }

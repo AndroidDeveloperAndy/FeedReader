@@ -16,11 +16,6 @@ public class PrimaryFeedPresenter implements PrimaryFeedPresenterImpl {
 
     private BaseFeedParser<List<Message>> mListLoader;
     private List<Message> mMessagesList;
-    private PrimaryFeedActivity mPrimaryFeedView;
-
-    public PrimaryFeedPresenter(PrimaryFeedActivity view){
-       this.mPrimaryFeedView = view;
-    }
 
     @Override
     public List<Message> getNews() {
@@ -55,7 +50,6 @@ public class PrimaryFeedPresenter implements PrimaryFeedPresenterImpl {
                     mMessagesList = mListLoader.get();
                 }
             } catch (Exception e) {
-                mPrimaryFeedView.showError();
                 e.getMessage();
                 Log.e(TAG, "Error load feed in the home page!", e);
             }

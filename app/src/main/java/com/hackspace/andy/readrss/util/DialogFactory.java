@@ -10,7 +10,7 @@ import android.support.v7.app.AlertDialog;
 
 import com.hackspace.andy.readrss.R;
 
-import static com.hackspace.andy.readrss.util.StringsUtils.TAB;
+import static com.hackspace.andy.readrss.util.ResourceUtils.TAB;
 
 public final class DialogFactory {
 
@@ -24,10 +24,7 @@ public final class DialogFactory {
         return alertDialog.create();
     }
 
-    public static Dialog createSimpleOkErrorDialog(Context context,
-                                                   @StringRes int titleResource,
-                                                   @StringRes int messageResource) {
-
+    public static Dialog createSimpleOkErrorDialog(Context context, @StringRes int titleResource,@StringRes int messageResource) {
         return createSimpleOkErrorDialog(context,
                 context.getString(titleResource),
                 context.getString(messageResource));

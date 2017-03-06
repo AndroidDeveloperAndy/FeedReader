@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static com.hackspace.andy.readrss.util.StringsUtils.FEED_URL;
+import static com.hackspace.andy.readrss.util.ResourceUtils.FEED_URL;
 
 @EBean(scope = EBean.Scope.Singleton)
 public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implements FeedParser<T> {

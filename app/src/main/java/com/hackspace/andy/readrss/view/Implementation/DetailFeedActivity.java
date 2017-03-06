@@ -21,17 +21,18 @@ import com.hackspace.andy.readrss.view.interfaces.DetailFeedView;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.util.List;
 
-import static com.hackspace.andy.readrss.util.StringsUtils.ARG_DATE;
-import static com.hackspace.andy.readrss.util.StringsUtils.ARG_DESCRIPTION;
-import static com.hackspace.andy.readrss.util.StringsUtils.ARG_LINK;
-import static com.hackspace.andy.readrss.util.StringsUtils.ARG_TITLE;
-import static com.hackspace.andy.readrss.util.StringsUtils.TAB;
+import static com.hackspace.andy.readrss.util.ResourceUtils.DATE_ARG;
+import static com.hackspace.andy.readrss.util.ResourceUtils.DESCRIPTION_ARG;
+import static com.hackspace.andy.readrss.util.ResourceUtils.LINK_ARG;
+import static com.hackspace.andy.readrss.util.ResourceUtils.TAB;
+import static com.hackspace.andy.readrss.util.ResourceUtils.TITLE_ARG;
 
 @EActivity(R.layout.activity_detail_feed)
 public class DetailFeedActivity extends Activity implements ILoaderData<List<Message>>,
@@ -44,6 +45,10 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     @ViewById(R.id.link)            TextView mTxLink;
     @ViewById(R.id.textFeed)        TextView mTxFeed;
     @ViewById(R.id.swipe_container) SwipeRefreshLayout mSwipeRefreshLayout;
+    @Extra(TITLE_ARG)               public static String ARG_TITLE;
+    @Extra(DATE_ARG)                public static String ARG_DATE;
+    @Extra(DESCRIPTION_ARG)         public static String ARG_DESCRIPTION;
+    @Extra(LINK_ARG)                public static String ARG_LINK;
 
     private static String sTitle,sDate,sDescription,sUrl;
     private MessagesServiceImpl mRealm;

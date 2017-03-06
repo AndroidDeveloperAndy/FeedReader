@@ -8,7 +8,7 @@ import javax.inject.Singleton;
 import dagger.Component;
 
 @Singleton
-@Component(modules = ActivityModule.class)
+@Component(modules = {ActivityModule.class})
 public interface ActivityComponent {
     void inject(PrimaryFeedActivity primaryFeedActivity);
 }

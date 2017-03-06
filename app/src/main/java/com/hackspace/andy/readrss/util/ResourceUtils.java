@@ -1,8 +1,6 @@
 package com.hackspace.andy.readrss.util;
 
-import org.androidannotations.annotations.Extra;
-
-public class StringsUtils {
+public class ResourceUtils {
 
     public static final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss Z";
     public static final String PICTURE_URL = "https://habrahabr.ru/images/logo.png";
@@ -16,9 +14,10 @@ public class StringsUtils {
     public static final String TITLE = "title";
     public static final String ITEM = "item";
 
-    @Extra("TITLE_ARGUMENT")       public static String ARG_TITLE;
-    @Extra("DATE_ARGUMENT")        public static String ARG_DATE;
-    @Extra("DESCRIPTION_ARGUMENT") public static String ARG_DESCRIPTION;
-    @Extra("LINK_ARGUMENT")        public static String ARG_LINK;
+    public static final String TITLE_ARG = "TITLE_ARGUMENT";
+    public static final String DATE_ARG = "DATE_ARGUMENT";
+    public static final String DESCRIPTION_ARG = "DESCRIPTION_ARGUMENT";
+    public static final String LINK_ARG = "LINK_ARGUMENT";
 
+    public static int LENGTH = 1500;
 }

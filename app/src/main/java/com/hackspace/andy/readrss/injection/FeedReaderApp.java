@@ -3,6 +3,7 @@ package com.hackspace.andy.readrss.injection;
 import android.app.Application;
 
 import com.hackspace.andy.readrss.injection.component.ActivityComponent;
+import com.hackspace.andy.readrss.injection.component.DaggerActivityComponent;
 import com.hackspace.andy.readrss.injection.module.ActivityModule;
 
 import io.realm.Realm;
@@ -22,8 +23,8 @@ public class FeedReaderApp extends Application {
     }
 
     private ActivityComponent buildComponent() {
-        return DaggerAppComponent.builder()
-                .topActivityModule(new ActivityModule())
+        return DaggerActivityComponent.builder()
+                .activityModule(new ActivityModule())
                 .build();
     }
 

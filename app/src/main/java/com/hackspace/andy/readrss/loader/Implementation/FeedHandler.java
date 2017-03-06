@@ -9,12 +9,12 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.hackspace.andy.readrss.util.StringsUtils.CHANNEL;
-import static com.hackspace.andy.readrss.util.StringsUtils.DESCRIPTION;
-import static com.hackspace.andy.readrss.util.StringsUtils.ITEM;
-import static com.hackspace.andy.readrss.util.StringsUtils.LINK;
-import static com.hackspace.andy.readrss.util.StringsUtils.PUB_DATE;
-import static com.hackspace.andy.readrss.util.StringsUtils.TITLE;
+import static com.hackspace.andy.readrss.util.ResourceUtils.CHANNEL;
+import static com.hackspace.andy.readrss.util.ResourceUtils.DESCRIPTION;
+import static com.hackspace.andy.readrss.util.ResourceUtils.ITEM;
+import static com.hackspace.andy.readrss.util.ResourceUtils.LINK;
+import static com.hackspace.andy.readrss.util.ResourceUtils.PUB_DATE;
+import static com.hackspace.andy.readrss.util.ResourceUtils.TITLE;
 
 public class FeedHandler extends DefaultHandler {
 
