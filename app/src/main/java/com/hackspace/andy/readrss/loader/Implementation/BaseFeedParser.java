@@ -8,38 +8,33 @@ import com.hackspace.andy.readrss.loader.interfaces.ILoaderData;
 import com.hackspace.andy.readrss.view.implementation.PrimaryFeedActivity;
 import com.hackspace.andy.readrss.view.interfaces.PrimaryFeedView;
 
-import org.androidannotations.annotations.EBean;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import static com.hackspace.andy.readrss.util.ResourceUtils.FEED_URL;
+import static com.hackspace.andy.readrss.util.ResourceUtils.TAG_BASE_PARSER;
 
-@EBean(scope = EBean.Scope.Singleton)
 public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implements FeedParser<T> {
-
-	private static final String TAG = BaseFeedParser.class.getName();
 
 	private final URL mFeedUrl;
 	private ILoaderData<T> mEndDataPoint;
-	static private BaseFeedParser sParser;
 	private PrimaryFeedView mFeedView = new PrimaryFeedActivity();
 
-	protected BaseFeedParser(ILoaderData<T> endDataPoint){
+	BaseFeedParser(ILoaderData<T> endDataPoint){
 		this.mEndDataPoint = endDataPoint;
 		try {
 			this.mFeedUrl = new URL(FEED_URL);
 		} catch (MalformedURLException e) {
 			mFeedView.showError();
-			Log.d(TAG,"BaseFeedParser: ",e);
+			Log.d(TAG_BASE_PARSER,"BaseFeedParser: ",e);
 			throw new RuntimeException(e);
 		}
 	}
 
 	public static BaseFeedParser getParser(ILoaderData loaderData) {
-		return sParser = new SaxFeedParser(loaderData);
+		return new SaxFeedParser(loaderData);
 	}
 
 	@Override
@@ -53,12 +48,12 @@ public abstract class BaseFeedParser<T> extends AsyncTask <Void, Void, T> implem
 			mEndDataPoint.endLoad(t);
 	}
 
-	protected InputStream getInputStream() {
+	InputStream getInputStream() {
 		try {
 			return mFeedUrl.openStream();
 		} catch (IOException e) {
 			mFeedView.showError();
-			Log.d(TAG,"getInputStream: ",e);
+			Log.d(TAG_BASE_PARSER,"getInputStream: ",e);
 			throw new RuntimeException(e);
 		}
 	}

@@ -16,13 +16,13 @@ import static com.hackspace.andy.readrss.util.ResourceUtils.LINK;
 import static com.hackspace.andy.readrss.util.ResourceUtils.PUB_DATE;
 import static com.hackspace.andy.readrss.util.ResourceUtils.TITLE;
 
-public class FeedHandler extends DefaultHandler {
+class FeedHandler extends DefaultHandler {
 
 	private List<Message> mMessages;
 	private Message mCurrentMessage;
 	private StringBuilder mBuilder;
 	
-	public List<Message> getMessages(){
+	List<Message> getMessages(){
 		return this.mMessages;
 	}
 

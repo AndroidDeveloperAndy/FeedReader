@@ -7,15 +7,21 @@ import com.hackspace.andy.readrss.loader.implementation.BaseFeedParser;
 import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.presenter.interfaces.PrimaryFeedPresenterImpl;
 import com.hackspace.andy.readrss.view.implementation.PrimaryFeedActivity;
+import com.hackspace.andy.readrss.view.interfaces.PrimaryFeedView;
 
 import java.util.List;
 
-public class PrimaryFeedPresenter implements PrimaryFeedPresenterImpl {
+import static com.hackspace.andy.readrss.util.ResourceUtils.TAG_PRESENTER;
 
-    private static final String TAG = PrimaryFeedPresenter.class.getName();
+public class PrimaryFeedPresenter implements PrimaryFeedPresenterImpl {
 
     private BaseFeedParser<List<Message>> mListLoader;
     private List<Message> mMessagesList;
+    private PrimaryFeedView mPrimaryFeedView;
+
+    public PrimaryFeedPresenter(PrimaryFeedView view){
+        this.mPrimaryFeedView = view;
+    }
 
     @Override
     public List<Message> getNews() {
@@ -50,8 +56,9 @@ public class PrimaryFeedPresenter implements PrimaryFeedPresenterImpl {
                     mMessagesList = mListLoader.get();
                 }
             } catch (Exception e) {
+                mPrimaryFeedView.showError();
                 e.getMessage();
-                Log.e(TAG, "Error load feed in the home page!", e);
+                Log.e(TAG_PRESENTER, "Error load feed in the home page!", e);
             }
         return mMessagesList;
     }

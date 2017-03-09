@@ -45,15 +45,13 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     @ViewById(R.id.link)            TextView mTxLink;
     @ViewById(R.id.textFeed)        TextView mTxFeed;
     @ViewById(R.id.swipe_container) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Extra(TITLE_ARG)               public static String ARG_TITLE;
-    @Extra(DATE_ARG)                public static String ARG_DATE;
-    @Extra(DESCRIPTION_ARG)         public static String ARG_DESCRIPTION;
-    @Extra(LINK_ARG)                public static String ARG_LINK;
+
+    @Extra static String ARG_TITLE = TITLE_ARG;
+    @Extra static String ARG_DATE = DATE_ARG;
+    @Extra static String ARG_DESCRIPTION = DESCRIPTION_ARG;
+    @Extra static String ARG_LINK = LINK_ARG;
 
     private static String sTitle,sDate,sDescription,sUrl;
-    private MessagesServiceImpl mRealm;
-    private List<Message> mList;
-    private Intent mIntent;
 
     @AfterViews
     @Override
@@ -65,7 +63,7 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
 
     @Override
     public void getInfoFromActivity() {
-        mIntent = getIntent();
+        Intent mIntent = getIntent();
 
         sTitle = mIntent.getStringExtra(ARG_TITLE);
         sDate = mIntent.getStringExtra(ARG_DATE);
@@ -76,11 +74,11 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     @Override
     public void getData() {
         if (NetworkUtil.isNetworkAvailable(this)) {
-            DialogFactory.createProgressDialog(this, R.string.load_from_network);
             loadDetailFeedFromNetwork();
+            Toast.makeText(this, R.string.load_from_network,Toast.LENGTH_LONG).show();
         } else {
-            DialogFactory.createProgressDialog(this, R.string.load_from_database);
             loadDetailFeedFromDatabase();
+            Toast.makeText(this, R.string.load_from_database,Toast.LENGTH_LONG).show();
         }
     }
 
@@ -99,8 +97,8 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
 
     @Override
     public void loadDetailFeedFromDatabase() {
-        mRealm = new MessageService();
-        mList = mRealm.query();
+        MessagesServiceImpl mRealm = new MessageService(this);
+        List<Message> mList = mRealm.query();
         try {
             for (Message msg : mList) {
                 mTxHead.setText(sTitle);
@@ -137,8 +135,8 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
     public void onRefresh() {
         mSwipeRefreshLayout.setRefreshing(false);
         if (NetworkUtil.isNetworkAvailable(this)) {
-            DialogFactory.createProgressDialog(this, R.string.update_data);
-            DetailFeedActivity.this.runOnUiThread(() -> loadDetailFeedFromNetwork());
+            DetailFeedActivity.this.runOnUiThread(this::loadDetailFeedFromNetwork);
+            Toast.makeText(this,R.string.update_data,Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(getApplicationContext(),String.format(TAB,getString(R.string.dont_update),getString(R.string.check_network)),Toast.LENGTH_LONG).show();
         }
@@ -155,7 +153,7 @@ public class DetailFeedActivity extends Activity implements ILoaderData<List<Mes
         private Document mStructureDetailFeed;
         private String mDetailFeed;
 
-        public ThreadDetailFeed(TextView textViewFeed) {
+        ThreadDetailFeed(TextView textViewFeed) {
             this.mTextViewFeed = textViewFeed;
         }
 

@@ -1,6 +1,5 @@
 package com.hackspace.andy.readrss.adapter;
 
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,12 +13,8 @@ import com.squareup.picasso.Picasso;
 
 import org.androidannotations.annotations.EBean;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.hackspace.andy.readrss.util.ResourceUtils.PICTURE_URL;
@@ -29,22 +24,19 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
     private List<Message> mMessageList;
 
-    public static class FeedViewHolder extends RecyclerView.ViewHolder {
+    static class FeedViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.cv)       CardView mCardView;
-        @BindView(R.id.feed)     TextView mNameFeed;
-        @BindView(R.id.dateFeed) TextView mDateFeed;
-        @BindView(R.id.imgHab)   ImageView mImage;
+        private TextView mNameFeed;
+        private TextView mDateFeed;
+        private ImageView mImage;
 
         FeedViewHolder(View itemView) {
             super(itemView);
+            mImage = (ImageView) itemView.findViewById(R.id.imgHab);
+            mNameFeed = (TextView)  itemView.findViewById(R.id.feed);
+            mDateFeed = (TextView)  itemView.findViewById(R.id.dateFeed);
             ButterKnife.bind(this, itemView);
         }
-    }
-
-    @Inject
-    public FeedAdapter(){
-        mMessageList = new ArrayList<>();
     }
 
     public void setFeed(List<Message> messages) {

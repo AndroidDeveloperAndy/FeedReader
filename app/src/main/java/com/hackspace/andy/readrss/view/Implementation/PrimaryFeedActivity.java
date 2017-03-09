@@ -23,6 +23,7 @@ import com.hackspace.andy.readrss.util.NetworkUtil;
 import com.hackspace.andy.readrss.view.interfaces.PrimaryFeedView;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
@@ -30,32 +31,34 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
 import static com.hackspace.andy.readrss.util.ResourceUtils.TAB;
 
 @EActivity(R.layout.activity_primary_feed)
 public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
                                                                 ILoaderData<List<Message>>,
                                                                 SwipeRefreshLayout.OnRefreshListener{
+    @Inject PrimaryFeedPresenterImpl mPrimaryFeedPresenter;
+    @Bean   FeedAdapter mFeedAdapter;
 
-    @Inject                             PrimaryFeedPresenterImpl mPrimaryFeedPresenter;
-    @Inject                             FeedAdapter mFeedAdapter;
     @ViewById(R.id.swipeRefreshLayout)  SwipeRefreshLayout mSwipeRefreshLayout;
     @ViewById(android.R.id.list)        RecyclerView mRvList;
 
-    private List<Message> mMessagesList;
     private MessagesServiceImpl mRealmService;
+    private List<Message> mMessagesList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FeedReaderApp.getComponent().inject(this);
-        getData();
     }
 
     @Override
     public void getFeedFromNetwork(){
         try {
-            mPrimaryFeedPresenter = new PrimaryFeedPresenter();
+            mPrimaryFeedPresenter = new PrimaryFeedPresenter(this);
             mMessagesList = mPrimaryFeedPresenter.getNews();
             showFeed(mMessagesList);
         }catch (Exception e){
@@ -67,7 +70,7 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
     @Override
     public void getFeedFromDatabase(){
         try {
-            mRealmService = new MessageService();
+            mRealmService = new MessageService(this);
             mMessagesList = mRealmService.query();
             showFeed(mMessagesList);
         }catch (Exception e){
@@ -79,8 +82,6 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
     @Override
     public void showFeed(List<Message> listFeed){
         mRvList.setAdapter(mFeedAdapter);
-        mRvList.setLayoutManager(new LinearLayoutManager(this));
-        mRvList.setHasFixedSize(true);
         mFeedAdapter.setFeed(listFeed);
         mFeedAdapter.notifyDataSetChanged();
     }
@@ -88,11 +89,11 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
     @Override
     public void getData() {
         if (NetworkUtil.isNetworkAvailable(this)) {
-            DialogFactory.createProgressDialog(this,R.string.load_from_network);
             getFeedFromNetwork();
+            DialogFactory.createProgressDialog(this,R.string.load_from_network);
         } else {
-            DialogFactory.createProgressDialog(this,R.string.load_from_database);
             getFeedFromDatabase();
+            DialogFactory.createProgressDialog(this,R.string.load_from_database);
         }
     }
 
@@ -102,16 +103,22 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
         mRvList.addOnItemTouchListener(new RecyclerClickListener((view, position) ->
                 startActivity(DetailFeedActivity_.newInstance(this,
                         mMessagesList.get(position).getTitle(),
-                        mMessagesList.get(position).getDate().toString(),
+                        mMessagesList.get(position).getDate(),
                         mMessagesList.get(position).getLink(),
                         mMessagesList.get(position).getDescription())))
         );
+        mRvList.setLayoutManager(new LinearLayoutManager(this));
+        mRvList.setHasFixedSize(true);
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this).build();
+        Realm.setDefaultConfiguration(realmConfiguration);
+        getData();
     }
 
     @Override
     public void onRefresh() {
+        mSwipeRefreshLayout.setRefreshing(false);
         if(NetworkUtil.isNetworkAvailable(this)) {
-            PrimaryFeedActivity.this.runOnUiThread(() -> getFeedFromNetwork());
+            PrimaryFeedActivity.this.runOnUiThread(this::getFeedFromNetwork);
             DialogFactory.createProgressDialog(this,R.string.update_data);
         }else {
             Toast.makeText(getApplicationContext(),String.format(TAB,getString(R.string.dont_update),getString(R.string.check_network)),Toast.LENGTH_LONG).show();
@@ -126,11 +133,11 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
                 msg.getTitle();
                 msg.getDate();
             }
-            mRealmService = new MessageService();
+            mRealmService = new MessageService(this);
             mRealmService.insert(mMessagesList);
         }catch (Throwable t){
             showError();
-            DialogFactory.messageBox("getFeedFromDatabase",t.getMessage(),this);
+            DialogFactory.messageBox("endLoad",t.getMessage(),this);
         }
     }
 

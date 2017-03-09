@@ -6,8 +6,6 @@ import com.hackspace.andy.readrss.injection.component.ActivityComponent;
 import com.hackspace.andy.readrss.injection.component.DaggerActivityComponent;
 import com.hackspace.andy.readrss.injection.module.ActivityModule;
 
-import io.realm.Realm;
-
 public class FeedReaderApp extends Application {
 
     private static ActivityComponent sComponent;
@@ -18,7 +16,6 @@ public class FeedReaderApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Realm.init(this);
         sComponent = buildComponent();
     }
 

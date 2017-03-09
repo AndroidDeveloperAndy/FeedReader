@@ -1,20 +1,9 @@
 package com.hackspace.andy.readrss.model.Entity;
 
-import android.util.Log;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
 import io.realm.RealmObject;
 import io.realm.annotations.Required;
 
-import static com.hackspace.andy.readrss.util.ResourceUtils.DATE_FORMAT;
-
 public class Message extends RealmObject  {
-
-	private static final String TAG = Message.class.getName();
-
-	private static final SimpleDateFormat FORMATTER = new SimpleDateFormat(DATE_FORMAT);
 
 	@Required private String title;
 	@Required private String link;
@@ -50,10 +39,6 @@ public class Message extends RealmObject  {
 	}
 
 	public void setDate(String date) {
-		try {
-			this.date = String.valueOf(FORMATTER.parse(date.trim()));
-		} catch (ParseException e) {
-			Log.e(TAG, "Error set date!", e);
-		}
+			this.date = date;
 	}
 }

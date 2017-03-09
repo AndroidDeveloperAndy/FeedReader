@@ -1,45 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView
 xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
 android:layout_width="match_parent"
 android:layout_height="wrap_content"
-android:id="@+id/cv">
+android:id="@+id/cv"
+app:cardUseCompatPadding="true"
+app:cardCornerRadius="4dp">
 
-<RelativeLayout
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:padding="20dp">
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="horizontal"
+		android:padding="15dp">
 
-	<ImageView
-		android:layout_width="40dp"
-		android:layout_height="40dp"
-		android:id="@+id/imgHab"
-		android:layout_alignParentLeft="true"
-		android:layout_alignParentTop="true"
-		android:layout_marginRight="16dp"/>
+		<ImageView
+			android:id="@+id/imgHab"
+			android:layout_width="40dp"
+			android:layout_height="40dp"
+			android:layout_alignParentLeft="true"
+			android:layout_marginRight="10dp"/>
 
-	<TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:id="@+id/feed"
-		android:layout_toRightOf="@+id/imgHab"
-		android:layout_alignParentTop="true"
-		android:textColor="@android:color/black"
-		android:textSize="14sp"
-		android:textStyle="bold"
-		android:fontFamily="cursive"/>
+		<TextView
+			android:id="@+id/feed"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_toRightOf="@+id/imgHab"
+			android:textColor="@color/colorDarkBlue"
+			android:textSize="14sp" />
 
-	<TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:id="@+id/dateFeed"
-		android:layout_toRightOf="@+id/imgHab"
-		android:layout_below="@+id/feed"
-		android:textSize="14sp"
-		android:textStyle="bold"
-		android:textColor="@color/colorBlue"
-		android:fontFamily="casual"/>
+		<TextView
+			android:id="@+id/dateFeed"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_below="@+id/feed"
+			android:layout_toRightOf="@+id/imgHab"
+			android:textColor="@color/colorPrimaryDark"
+			android:textSize="14sp" />
 
-</RelativeLayout>
+	</RelativeLayout>
 
 </android.support.v7.widget.CardView>

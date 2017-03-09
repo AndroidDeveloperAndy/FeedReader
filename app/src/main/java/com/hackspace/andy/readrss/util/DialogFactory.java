@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
 
@@ -14,21 +15,7 @@ import static com.hackspace.andy.readrss.util.ResourceUtils.TAB;
 
 public final class DialogFactory {
 
-    private static Handler h;
-
-    public static Dialog createSimpleOkErrorDialog(Context context, String title, String message) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context)
-                .setTitle(title)
-                .setMessage(message)
-                .setNeutralButton(R.string.dialog_action_ok, null);
-        return alertDialog.create();
-    }
-
-    public static Dialog createSimpleOkErrorDialog(Context context, @StringRes int titleResource,@StringRes int messageResource) {
-        return createSimpleOkErrorDialog(context,
-                context.getString(titleResource),
-                context.getString(messageResource));
-    }
+    private static Handler handle;
 
     public static Dialog createGenericErrorDialog(Context context, String message) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context)
@@ -38,29 +25,35 @@ public final class DialogFactory {
         return alertDialog.create();
     }
 
-    public static Dialog createGenericErrorDialog(Context context, @StringRes int messageResource) {
-        return createGenericErrorDialog(context, context.getString(messageResource));
-    }
-
-    public static ProgressDialog createProgressDialog(Context context, String message) {
+    private static ProgressDialog createProgressDialog(Context context, String message) {
         ProgressDialog progressDialog = new ProgressDialog(context);
         progressDialog.setMessage(message);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setMax(20);
-        progressDialog.setIndeterminate(true);
-        h = new Handler() {
-            public void handle() {
-                progressDialog.setIndeterminate(false);
-                if (progressDialog.getProgress() < progressDialog.getMax()) {
-                    progressDialog.incrementProgressBy(50);
-                    progressDialog.incrementSecondaryProgressBy(75);
-                    h.sendEmptyMessageDelayed(0, 100);
-                } else {
-                    progressDialog.dismiss();
+        progressDialog.show();
+        new Thread(() -> {
+            try {
+                while (progressDialog.getProgress() <= progressDialog
+                        .getMax()) {
+                    Thread.sleep(200);
+                    handle.sendMessage(handle.obtainMessage());
+                    if (progressDialog.getProgress() == progressDialog
+                            .getMax()) {
+                        progressDialog.dismiss();
+                    }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+       handle = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                progressDialog.incrementProgressBy(1);
             }
         };
-        h.sendEmptyMessageDelayed(0, 250);
         return progressDialog;
     }
 
