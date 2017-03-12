@@ -4,8 +4,6 @@ import android.content.Context;
 
 import com.hackspace.andy.readrss.model.Implementation.MessageService;
 import com.hackspace.andy.readrss.presenter.implementation.PrimaryFeedPresenter;
-import com.hackspace.andy.readrss.presenter.interfaces.PrimaryFeedPresenterImpl;
-import com.hackspace.andy.readrss.view.interfaces.PrimaryFeedView;
 
 import javax.inject.Singleton;
 
@@ -15,14 +13,14 @@ import dagger.Provides;
 @Module
 public class ActivityModule {
 
-    @Provides
     @Singleton
-    PrimaryFeedPresenterImpl providesTopPresenter(PrimaryFeedView view) {
-        return new PrimaryFeedPresenter(view);
+    @Provides
+    PrimaryFeedPresenter providesTopPresenter() {
+        return new PrimaryFeedPresenter();
     }
 
-    @Provides
     @Singleton
+    @Provides
     MessageService provideService(Context context) {
         return new MessageService(context);
     }

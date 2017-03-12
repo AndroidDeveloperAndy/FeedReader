@@ -19,10 +19,9 @@ public class PrimaryFeedPresenter implements PrimaryFeedPresenterImpl {
     private List<Message> mMessagesList;
     private PrimaryFeedView mPrimaryFeedView;
 
-    public PrimaryFeedPresenter(PrimaryFeedView view){
+    public void setView(PrimaryFeedView view){
         this.mPrimaryFeedView = view;
     }
-
     @Override
     public List<Message> getNews() {
             try {

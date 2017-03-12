@@ -11,13 +11,12 @@ import android.widget.Toast;
 import com.hackspace.andy.readrss.R;
 import com.hackspace.andy.readrss.adapter.FeedAdapter;
 import com.hackspace.andy.readrss.adapter.RecyclerClickListener;
-import com.hackspace.andy.readrss.injection.FeedReaderApp;
+import com.hackspace.andy.readrss.FeedReaderApp;
 import com.hackspace.andy.readrss.loader.interfaces.ILoaderData;
 import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.model.Implementation.MessageService;
 import com.hackspace.andy.readrss.model.interfaces.MessagesServiceImpl;
 import com.hackspace.andy.readrss.presenter.implementation.PrimaryFeedPresenter;
-import com.hackspace.andy.readrss.presenter.interfaces.PrimaryFeedPresenterImpl;
 import com.hackspace.andy.readrss.util.DialogFactory;
 import com.hackspace.andy.readrss.util.NetworkUtil;
 import com.hackspace.andy.readrss.view.interfaces.PrimaryFeedView;
@@ -40,7 +39,7 @@ import static com.hackspace.andy.readrss.util.ResourceUtils.TAB;
 public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
                                                                 ILoaderData<List<Message>>,
                                                                 SwipeRefreshLayout.OnRefreshListener{
-    @Inject PrimaryFeedPresenterImpl mPrimaryFeedPresenter;
+    @Inject PrimaryFeedPresenter mPrimaryFeedPresenter;
     @Bean   FeedAdapter mFeedAdapter;
 
     @ViewById(R.id.swipeRefreshLayout)  SwipeRefreshLayout mSwipeRefreshLayout;
@@ -53,12 +52,13 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FeedReaderApp.getComponent().inject(this);
+        mPrimaryFeedPresenter.setView(this);
     }
 
     @Override
     public void getFeedFromNetwork(){
         try {
-            mPrimaryFeedPresenter = new PrimaryFeedPresenter(this);
+            mPrimaryFeedPresenter = new PrimaryFeedPresenter();
             mMessagesList = mPrimaryFeedPresenter.getNews();
             showFeed(mMessagesList);
         }catch (Exception e){

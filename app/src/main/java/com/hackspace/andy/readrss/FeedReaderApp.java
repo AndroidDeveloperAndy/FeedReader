@@ -1,4 +1,4 @@
-package com.hackspace.andy.readrss.injection;
+package com.hackspace.andy.readrss;
 
 import android.app.Application;
 
@@ -9,9 +9,6 @@ import com.hackspace.andy.readrss.injection.module.ActivityModule;
 public class FeedReaderApp extends Application {
 
     private static ActivityComponent sComponent;
-    public static ActivityComponent getComponent(){
-        return sComponent;
-    }
 
     @Override
     public void onCreate() {
@@ -23,6 +20,10 @@ public class FeedReaderApp extends Application {
         return DaggerActivityComponent.builder()
                 .activityModule(new ActivityModule())
                 .build();
+    }
+
+    public static ActivityComponent getComponent(){
+        return sComponent;
     }
 
 }
