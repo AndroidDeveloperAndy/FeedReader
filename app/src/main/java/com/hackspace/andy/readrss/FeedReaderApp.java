@@ -2,27 +2,30 @@ package com.hackspace.andy.readrss;
 
 import android.app.Application;
 
-import com.hackspace.andy.readrss.injection.component.ActivityComponent;
-import com.hackspace.andy.readrss.injection.component.DaggerActivityComponent;
-import com.hackspace.andy.readrss.injection.module.ActivityModule;
+import com.hackspace.andy.readrss.injection.component.AppComponent;
+import com.hackspace.andy.readrss.injection.component.DaggerAppComponent;
+import com.hackspace.andy.readrss.injection.module.PrimaryFeedModule;
+
+import io.realm.Realm;
 
 public class FeedReaderApp extends Application {
 
-    private static ActivityComponent sComponent;
+    private static AppComponent sComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        Realm.init(this);
         sComponent = buildComponent();
     }
 
-    private ActivityComponent buildComponent() {
-        return DaggerActivityComponent.builder()
-                .activityModule(new ActivityModule())
+    private AppComponent buildComponent() {
+        return DaggerAppComponent.builder()
+                .primaryFeedModule(new PrimaryFeedModule())
                 .build();
     }
 
-    public static ActivityComponent getComponent(){
+    public static AppComponent getComponent(){
         return sComponent;
     }
 

@@ -1,9 +1,9 @@
 package com.hackspace.andy.readrss.presenter;
 
+import com.hackspace.andy.readrss.BuildConfig;
 import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.model.Implementation.MessageService;
 import com.hackspace.andy.readrss.presenter.implementation.PrimaryFeedPresenter;
-import com.hackspace.andy.readrss.util.DefaultConfig;
 import com.hackspace.andy.readrss.util.NetworkUtil;
 import com.hackspace.andy.readrss.view.implementation.PrimaryFeedActivity_;
 import com.hackspace.andy.readrss.view.interfaces.PrimaryFeedView;
@@ -23,9 +23,8 @@ import java.util.List;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = DefaultConfig.class)
+@Config(constants = BuildConfig.class)
 public class PresenterTest {
 
     private PrimaryFeedPresenter mPresenter;

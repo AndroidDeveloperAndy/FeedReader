@@ -2,7 +2,6 @@ package com.hackspace.andy.readrss.model;
 
 import com.hackspace.andy.readrss.BuildConfig;
 import com.hackspace.andy.readrss.model.Implementation.MessageService;
-import com.hackspace.andy.readrss.view.implementation.PrimaryFeedActivity_;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,13 +17,11 @@ import static org.junit.Assert.assertNotNull;
 @Config(constants = BuildConfig.class)
 public class ModelTest {
 
-    private MessageService mMessageService;
-    @Mock PrimaryFeedActivity_ mActivity;
+    @Mock MessageService mMessageService;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        mMessageService = new MessageService(mActivity.getApplicationContext());
     }
 
     @Test

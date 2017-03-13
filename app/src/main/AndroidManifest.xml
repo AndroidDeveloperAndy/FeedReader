@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
+        android:name=".FeedReaderApp"
         android:allowBackup="true"
         android:supportsRtl="true"
         android:icon="@mipmap/hub"

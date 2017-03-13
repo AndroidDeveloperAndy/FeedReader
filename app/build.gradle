@@ -4,11 +4,11 @@ apply plugin: 'realm-android'
 apply plugin: 'android-apt'
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion "25.0.0"
     defaultConfig {
         applicationId "com.hackspace.andy.readrss"
-        minSdkVersion 19
-        targetSdkVersion 25
+        minSdkVersion 16
+        targetSdkVersion 24
         versionCode 1
         versionName "1.0"
     }
@@ -31,7 +31,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath "io.realm:realm-gradle-plugin:0.88.2"
+        classpath "io.realm:realm-gradle-plugin:2.1.0"
     }
 }
 dependencies {
@@ -40,14 +40,14 @@ dependencies {
     testCompile 'org.robolectric:robolectric:3.2.2'
     testCompile "org.mockito:mockito-core:2.0.57-beta"
 
-    apt 'com.google.dagger:dagger-compiler:2.8'
+    apt 'com.google.dagger:dagger-compiler:2.9'
     apt "org.androidannotations:androidannotations:4.2.0"
 
     provided 'javax.annotation:jsr250-api:1.0'
 
     compile "org.androidannotations:androidannotations-api:4.2.0"
     compile 'com.android.support:design:25.1.0'
-    compile 'com.google.dagger:dagger:2.2'
+    compile 'com.google.dagger:dagger:2.9'
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'org.jsoup:jsoup:1.8.3'
     compile 'io.reactivex:rxjava:1.1.6'

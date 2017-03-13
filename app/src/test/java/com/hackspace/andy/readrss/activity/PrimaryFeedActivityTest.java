@@ -1,8 +1,9 @@
 package com.hackspace.andy.readrss.activity;
 
 import com.hackspace.andy.readrss.BuildConfig;
+import com.hackspace.andy.readrss.FeedReaderForTest;
+import com.hackspace.andy.readrss.model.Implementation.MessageService;
 import com.hackspace.andy.readrss.presenter.implementation.PrimaryFeedPresenter;
-import com.hackspace.andy.readrss.util.DefaultConfig;
 import com.hackspace.andy.readrss.view.implementation.PrimaryFeedActivity_;
 
 import org.junit.Before;
@@ -18,12 +19,13 @@ import static junit.framework.Assert.assertNotNull;
 import static org.mockito.Mockito.verify;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = DefaultConfig.EMULATE_SDK)
+@Config(constants = BuildConfig.class,application = FeedReaderForTest.class)
 public class PrimaryFeedActivityTest {
 
-    @Mock
-    public static PrimaryFeedPresenter mPrimaryPresenter;
+    @Mock public static PrimaryFeedPresenter mPrimaryPresenter;
+    @Mock MessageService mService;
     private PrimaryFeedActivity_ mActivity;
+
 
     @Before
     public void setUp() throws Exception{
@@ -37,7 +39,12 @@ public class PrimaryFeedActivityTest {
     }
 
     @Test
-    public void checkGetData() {
+    public void checkGetDataFromInternet() {
         verify(mPrimaryPresenter).getNews();
+    }
+
+    @Test
+    public void checkGetDataFromRealm() {
+        verify(mService).query();
     }
 }

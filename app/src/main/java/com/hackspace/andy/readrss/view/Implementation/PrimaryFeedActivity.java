@@ -8,15 +8,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import com.hackspace.andy.readrss.FeedReaderApp;
 import com.hackspace.andy.readrss.R;
 import com.hackspace.andy.readrss.adapter.FeedAdapter;
 import com.hackspace.andy.readrss.adapter.RecyclerClickListener;
-import com.hackspace.andy.readrss.FeedReaderApp;
 import com.hackspace.andy.readrss.loader.interfaces.ILoaderData;
 import com.hackspace.andy.readrss.model.Entity.Message;
 import com.hackspace.andy.readrss.model.Implementation.MessageService;
 import com.hackspace.andy.readrss.model.interfaces.MessagesServiceImpl;
 import com.hackspace.andy.readrss.presenter.implementation.PrimaryFeedPresenter;
+import com.hackspace.andy.readrss.presenter.interfaces.PrimaryFeedPresenterImpl;
 import com.hackspace.andy.readrss.util.DialogFactory;
 import com.hackspace.andy.readrss.util.NetworkUtil;
 import com.hackspace.andy.readrss.view.interfaces.PrimaryFeedView;
@@ -30,16 +31,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
-
 import static com.hackspace.andy.readrss.util.ResourceUtils.TAB;
 
 @EActivity(R.layout.activity_primary_feed)
 public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
                                                                 ILoaderData<List<Message>>,
                                                                 SwipeRefreshLayout.OnRefreshListener{
-    @Inject PrimaryFeedPresenter mPrimaryFeedPresenter;
+    @Inject PrimaryFeedPresenterImpl mPrimaryFeedPresenter;
     @Bean   FeedAdapter mFeedAdapter;
 
     @ViewById(R.id.swipeRefreshLayout)  SwipeRefreshLayout mSwipeRefreshLayout;
@@ -109,8 +107,6 @@ public class PrimaryFeedActivity extends Activity implements PrimaryFeedView,
         );
         mRvList.setLayoutManager(new LinearLayoutManager(this));
         mRvList.setHasFixedSize(true);
-        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this).build();
-        Realm.setDefaultConfiguration(realmConfiguration);
         getData();
     }
 
