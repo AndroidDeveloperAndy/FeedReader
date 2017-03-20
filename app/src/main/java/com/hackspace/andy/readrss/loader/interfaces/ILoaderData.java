@@ -1,4 +1,4 @@
-package com.hackspace.andy.readrss.loader;
+package com.hackspace.andy.readrss.loader.interfaces;
 
 import android.support.annotation.NonNull;
 

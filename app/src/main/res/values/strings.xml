@@ -1,12 +1,16 @@
 <resources>
-    <string name="app_name">Habrahabr</string>
+    <string name="app_name">eReader Habra</string>
     <string name="feed">News from Habrahabr</string>
-    <string name="load_from_network">Выполнена загрузка данных из Интернета.</string>
-    <string name="load_from_database">Выполнена загрузка данных из базы данных.</string>
-    <string name="error_load_picture">Ошибка загрузки картинки.</string>
-    <string name="check_network">Подключитесь к интернету.</string>
-    <string name="update_data">Данные обновлены.</string>
-    <string name="dont_update">Обновление невозможно.</string>
-    <string name="error_method">Error in the method:</string>
+    <string name="load_from_network">Boot from the Internet.</string>
+    <string name="load_from_database">Boot from the database.</string>
+    <string name="error_load_picture">Error loading image.</string>
+    <string name="check_network">Connect to the Internet.</string>
+    <string name="update_data">Data updated.</string>
+    <string name="dont_update">Could not update.</string>
+    <string name="dialog_action_ok">Okey</string>
+    <string name="dialog_action_cancel">Cancel</string>
+    <string name="dialog_error_title">Sorry</string>
+    <string name="error_loading_feed">There was a problem loading the feed.</string>
     <string name="error">Error:</string>
+    <string name="error_method">Method:</string>
 </resources>

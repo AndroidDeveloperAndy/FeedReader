@@ -1,4 +1,4 @@
-package com.hackspace.andy.readrss.loader.Implementation;
+package com.hackspace.andy.readrss.loader.implementation;
 
 import com.hackspace.andy.readrss.model.Entity.Message;
 
@@ -9,20 +9,20 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser.CHANNEL;
-import static com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser.DESCRIPTION;
-import static com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser.ITEM;
-import static com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser.LINK;
-import static com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser.PUB_DATE;
-import static com.hackspace.andy.readrss.loader.Implementation.BaseFeedParser.TITLE;
+import static com.hackspace.andy.readrss.util.ResourceUtils.CHANNEL;
+import static com.hackspace.andy.readrss.util.ResourceUtils.DESCRIPTION;
+import static com.hackspace.andy.readrss.util.ResourceUtils.ITEM;
+import static com.hackspace.andy.readrss.util.ResourceUtils.LINK;
+import static com.hackspace.andy.readrss.util.ResourceUtils.PUB_DATE;
+import static com.hackspace.andy.readrss.util.ResourceUtils.TITLE;
 
-public class FeedHandler extends DefaultHandler {
+class FeedHandler extends DefaultHandler {
 
 	private List<Message> mMessages;
 	private Message mCurrentMessage;
 	private StringBuilder mBuilder;
 	
-	public List<Message> getMessages(){
+	List<Message> getMessages(){
 		return this.mMessages;
 	}
 
@@ -30,7 +30,6 @@ public class FeedHandler extends DefaultHandler {
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
 		super.characters(ch, start, length);
-
 		mBuilder.append(ch, start, length);
 	}
 
@@ -69,7 +68,6 @@ public class FeedHandler extends DefaultHandler {
 	@Override
 	public void startDocument() throws SAXException {
 		super.startDocument();
-
 		mMessages = new ArrayList<>();
 		mBuilder = new StringBuilder();
 	}

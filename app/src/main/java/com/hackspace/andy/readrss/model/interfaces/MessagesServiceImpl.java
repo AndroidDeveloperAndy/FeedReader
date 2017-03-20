@@ -1,4 +1,4 @@
-package com.hackspace.andy.readrss.model;
+package com.hackspace.andy.readrss.model.interfaces;
 
 import com.hackspace.andy.readrss.model.Entity.Message;
 
@@ -10,4 +10,5 @@ public interface MessagesServiceImpl {
 
     void insert(List<Message> messages);
     RealmResults<Message> query();
+    boolean hasRanks();
 }
